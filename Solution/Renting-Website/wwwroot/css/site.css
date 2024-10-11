@@ -1,3 +1,9 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 /* Color Palette */
 :root {
     --primary-light: #7C93C3;
@@ -18,6 +24,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     background-color: white;
+    line-height: 1.5;
 }
 
 .wrapper {
@@ -47,16 +54,12 @@ main {
     }
 }
 
+
 .welcome-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
-
-h1 {
-    font-size: 48px;
-    margin: 0;
 }
 
 .custom-navbar {
@@ -111,21 +114,27 @@ h1 {
 
 
 .section-1 {
-    height: 100vh; 
+    position: relative;
+    min-height: 100vh; /* Ensure section 1 takes full height */
+    padding-top: 80px; /* Prevent overlap with navbar */
+    padding-bottom: 60px; /* Prevent overlap with section 2 */
     background-image: url('../images/csm_skiverleih-rentaski-reischach-kategorien_a16f2ad484.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed; 
+    background-attachment: fixed;
     display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align containers and title properly */
     align-items: center;
-    justify-content: center;
-    color: white;
     text-align: center;
+    overflow: hidden; /* Prevent content from overflowing section 1 */
 }
+
+    
 
 .section-2 {
     height: 25vh; 
-    background-color: #ffeb3b; 
+    background-color: #E8C547; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -144,4 +153,93 @@ h1 {
     justify-content: center;
     color: white;
     text-align: center;
+}
+.section-3::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, white 95%);
+    pointer-events: none; 
+}
+
+.faded-title {
+    font-size: 3rem;
+    color: white;
+    padding: 20px 30px;
+    background: rgba(0, 110, 178, 0.7);
+    position: relative;
+    z-index: 10;
+    margin-bottom: 100px; /* Create space between the title and the content */
+    width: 100%;
+    text-align: center;
+    margin-top: -61px;
+}
+
+/* Container Grid Layout in Section 1 */
+.container-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    grid-gap: 20px;
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Content Box Styling */
+.content-box {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+/* Adjust position of the boxes */
+.left-box {
+    grid-column: 1 / 2; /* Stay in the first column */
+}
+
+.right-box {
+    grid-column: 2 / 3; /* Stay in the second column */
+    grid-row: 2; /* Slightly lower */
+}
+
+.lower-box {
+    grid-column: 1 / 2;
+    grid-row: 3;
+    margin-bottom: 50px; /* Add extra space at the bottom */
+}
+
+/* Section 2 Styling */
+.section-2 {
+    padding: 50px 20px;
+    background-color: var(--highlight);
+    text-align: center;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    .faded-title {
+        font-size: 2rem; /* Smaller title for smaller screens */
+    }
+
+    .container-grid {
+        grid-template-columns: 1fr; /* Stack containers vertically */
+        grid-template-rows: auto auto auto;
+    }
+
+    .content-box {
+        margin-bottom: 20px; /* Add space between stacked boxes */
+    }
+
+    .right-box, .lower-box {
+        grid-column: 1 / 2; /* Ensure all boxes stay in the single column */
+        grid-row: auto; /* Natural flow in one column */
+    }
+
+    .section-1 {
+        padding-bottom: 80px; /* Ensure space between section 1 and section 2 */
+    }
 }

@@ -2,3 +2,65 @@
 @model Renting_Website.Pages.RegisterModel
 @{
 }
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card p-5 bg-light" style="width: 400px;">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-4">@Model.PageTitle</h5>
+
+            <form method="post">
+
+                <div class="form-group mb-3">
+                    <label asp-for="Customer.FirstName">First Name:*</label>
+                    <span asp-validation-for="Customer.FirstName" class="text-danger"></span>
+                    <input asp-for="Customer.FirstName" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Customer.LastName">Last Name:*</label>
+                    <span asp-validation-for="Customer.LastName" class="text-danger"></span>
+                    <input asp-for="Customer.LastName" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Customer.Username">Username:*</label>
+                    <span asp-validation-for="Customer.Username" class="text-danger"></span>
+                    <input asp-for="Customer.Username" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Customer.Email">Email:*</label>
+                    <span asp-validation-for="Customer.Email" class="text-danger"></span>
+                    <input asp-for="Customer.Email" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Customer.PhoneNumber">Phone Number:*</label>
+                    <span asp-validation-for="Customer.PhoneNumber" class="text-danger"></span>
+                    <input asp-for="Customer.PhoneNumber" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Customer.Address">Address:*</label>
+                    <span asp-validation-for="Customer.Address" class="text-danger"></span>
+                    <input asp-for="Customer.Address" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Customer.Password">Password:*</label>
+                    <span asp-validation-for="Customer.Password" class="text-danger"></span>
+                    <input asp-for="Customer.Password" class="form-control" type="password" />
+                </div>
+
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Enable client-side validation -->
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,15 @@
+﻿@page
+@model Renting_Website.Pages.CustomerProfileModel
+@{
+    ViewData["Title"] = "Customer Profile";
+}
+@using System.Security.Claims
+
+
+<h2>Customer Profile</h2>
+
+<p>Welcome, @User.FindFirst("FullName")?.Value!</p>
+<p>Email: @User.FindFirst(ClaimTypes.Email)?.Value</p>
+<p>Username: @User.Identity.Name</p>
+D
+<a asp-page="/Logout" class="btn btn-danger">Logout</a>

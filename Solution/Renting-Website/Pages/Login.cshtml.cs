@@ -1,12 +1,75 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClassLibrary.ObjectClasses;
+using System.ComponentModel.DataAnnotations;
+using ClassLibrary.Managers;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Renting_Website.Pages
 {
     public class LoginModel : PageModel
     {
-        public void OnGet()
+        [BindProperty]
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
+        public string Email { get; set; }
+
+        [BindProperty]
+        [Required(ErrorMessage = "Password is required.")]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
+        public string Password { get; set; }
+
+        private readonly CustomerManager _customerManager;
+        public string PageTitle { get; private set; } = "Login";
+        public LoginModel(CustomerManager customerManager)
         {
+            _customerManager = customerManager;
         }
+
+        public IActionResult OnGet()
+        {
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);  // Log the error messages
+                }
+                return Page();
+            }
+
+            var customer = _customerManager.CheckCredentials(Email, Password);
+
+            if (customer == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                return Page();  
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, customer.Username),
+                new Claim(ClaimTypes.Email, customer.Email),
+                new Claim("FullName", $"{customer.FirstName} {customer.LastName}"),
+                new Claim(ClaimTypes.Role, "Customer")
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return RedirectToPage("/Profile");
+        }
+
+
+        
     }
 }
