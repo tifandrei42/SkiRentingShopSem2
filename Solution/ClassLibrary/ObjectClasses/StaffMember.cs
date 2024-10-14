@@ -12,26 +12,27 @@ namespace ClassLibrary.ObjectClasses
     {
         [Required(ErrorMessage = "Position is required.")]
         [StringLength(50, ErrorMessage = "Position cannot be longer than 50 characters.")]
-        public string Position { get; set; }
+        public int StaffId { get; set; }
 
         [Required(ErrorMessage = "Salary is required.")]
         [Range(0, double.MaxValue, ErrorMessage = "Salary must be a positive number.")]
-        public decimal Salary { get; set; }
+        public string Role { get; set; }
 
-        public StaffMember(int userId, string firstName, string lastName, string username, string email, string password, string position, decimal salary)
+        public StaffMember(int userId, string firstName, string lastName, string username, string email, string password, int staffId, string role)
             : base(userId, firstName, lastName, username, email, password)
         {
-            this.Position = position;
-            this.Salary = salary;
+            this.StaffId = staffId;
+            this.Role = role;
         }
 
-        public StaffMember(string firstName, string lastName, string username, string email, string password, string position, decimal salary)
+        public StaffMember(string firstName, string lastName, string username, string email, string password, int staffId, string role)
             : base(firstName, lastName, username, email, password)
         {
-            this.Position = position;
-            this.Salary = salary;
+            this.StaffId = staffId;
+            this.Role = role;
         }
 
+        public StaffMember() { }
         public override void Login()
         {
             
