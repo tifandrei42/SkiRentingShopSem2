@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,15 +13,18 @@ namespace ClassLibrary.Managers
     public class CustomerManager
     {
         private readonly CustomerMediator _customerMediator;
+        private readonly List<Customer> _customerList;
 
         public CustomerManager()
         {
             _customerMediator = new CustomerMediator();  // Initialize the mediator for database interactions
+            _customerList = _customerMediator.GetCustomers();
         }
 
         public void AddCustomer(Customer customer)
         {
             _customerMediator.CreateCustomer(customer);  
+           
         }
 
         public Customer CheckCredentials(string email, string password)
@@ -46,6 +50,18 @@ namespace ClassLibrary.Managers
             customer.Password = BCrypt.Net.BCrypt.HashPassword(customer.Password);
 
             _customerMediator.CreateCustomer(customer);
+        }
+
+        public bool CheckEmail(Customer customer)
+        {
+
+            foreach (Customer cust in _customerList)
+            {
+                if (string.Equals(customer.Email, cust.Email, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

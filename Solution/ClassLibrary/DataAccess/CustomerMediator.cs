@@ -173,7 +173,7 @@ namespace ClassLibrary.DataAccess
                                 FirstName = reader["FirstName"].ToString(),
                                 LastName = reader["LastName"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                Password = reader["Password"].ToString() // Ensure passwords are hashed!
+                                Password = reader["Password"].ToString() 
                             };
                         }
                     }
@@ -190,6 +190,48 @@ namespace ClassLibrary.DataAccess
             }
 
             return customer;
+        }
+
+        public List<Customer> GetCustomers()
+        {
+            List<Customer> customers = new List<Customer>();
+            string query = "SELECT User_Id, Username, FirstName, LastName, Email, Password FROM [User]";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Customer customer = new Customer
+                            {
+                                UserId = (int)reader["User_Id"],
+                                Username = reader["Username"].ToString(),
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                Password = reader["Password"].ToString()
+                            };
+                            customers.Add(customer);
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                // Log exception (consider using a logging framework)
+                Console.WriteLine($"SQL Error: {ex.Message}");
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return customers;
         }
     }
 }
