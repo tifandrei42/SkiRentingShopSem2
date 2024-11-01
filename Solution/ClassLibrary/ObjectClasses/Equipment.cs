@@ -9,21 +9,13 @@ namespace ClassLibrary.ObjectClasses
     public class Equipment
     {
         public int EquipmentId { get; set; }
-        public string Name { get; set; }
-        public string Brand { get; set; }
+        public required string Name { get; set; }
+        public required string Brand { get; set; }
         public string Size { get; set; }
         public decimal PricePerDay { get; set; }
         public bool IsAvailable { get; set; }
-        public string EquipmentType { get; set; }
+        public required string EquipmentType { get; set; }
+        public string? ImagePath { get; set; }
 
-        public bool CheckAvailability(DateTime startDate, DateTime endDate)
-        {
-            return true;
-        }
-
-        public decimal CalculateRentalPrice(int days)
-        {
-            return PricePerDay * days;
-        }
     }
 }

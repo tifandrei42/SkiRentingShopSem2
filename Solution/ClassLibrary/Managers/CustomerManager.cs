@@ -27,16 +27,16 @@ namespace ClassLibrary.Managers
            
         }
 
-        public Customer CheckCredentials(string email, string password)
+        public async Task<Customer> CheckCredentialsAsync(string email, string password)
         {
-            var customer = _customerMediator.GetCustomerByEmail(email);
+            var customer = await _customerMediator.GetCustomerByEmailAsync(email);
 
-            if (customer != null && customer.Password == password)
+            if (customer != null && BCrypt.Net.BCrypt.Verify(password, customer.Password))
             {
-                return customer;  
+                return customer;
             }
 
-            return null; 
+            return null;
         }
 
         private bool VerifyPassword(string inputPassword, string storedHash)
@@ -62,6 +62,11 @@ namespace ClassLibrary.Managers
             }
 
             return false;
+        }
+
+        public string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
     }
 }

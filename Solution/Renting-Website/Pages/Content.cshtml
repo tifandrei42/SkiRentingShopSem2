@@ -1,4 +1,52 @@
 ﻿@page
 @model Renting_Website.Pages.ContentModel
 @{
+    ViewData["Title"] = "Equipment Content";
 }
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Equipment List</h1>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Brand</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Price Per Day</th>
+                    <th scope="col">Availability</th>
+                    <th scope="col">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var equipment in Model.EquipmentList)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(equipment.ImagePath))
+                            {
+                                <img src="@equipment.ImagePath" alt="@equipment.Name" class="img-thumbnail" style="width: 100px; height: auto;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">No image available</span>
+                            }
+                        </td>
+                        <td>@equipment.Name</td>
+                        <td>@equipment.Brand</td>
+                        <td>@equipment.Size</td>
+                        <td>@equipment.PricePerDay.ToString("C")</td>
+                        <td>
+                            <span class="badge badge-@(equipment.IsAvailable ? "success" : "danger")">
+                                @(equipment.IsAvailable ? "Available" : "Not Available")
+                            </span>
+                        </td>
+                        <td>@equipment.EquipmentType</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

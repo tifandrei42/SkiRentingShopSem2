@@ -29,17 +29,19 @@ namespace Renting_Website.Pages
         {
             if (ModelState.IsValid)
             {
-                if (CustomerManager.CheckEmail(Customer)) 
+                if (CustomerManager.CheckEmail(Customer))
                 {
                     ModelState.AddModelError("Customer.Email", "The email address is already taken.");
-                    return Page(); 
+                    return Page();
                 }
 
+                Customer.Password = CustomerManager.HashPassword(Customer.Password);
+
                 CustomerManager.AddCustomer(Customer);
-                return RedirectToPage("Index"); 
+                return RedirectToPage("Index");
             }
 
-            return Page(); 
+            return Page();
         }
     }
 }

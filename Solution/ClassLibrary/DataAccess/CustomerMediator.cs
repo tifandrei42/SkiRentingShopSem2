@@ -17,7 +17,6 @@ namespace ClassLibrary.DataAccess
         {
             try
             {
-                // Insert into the User table first
                 string userSql = @"
             INSERT INTO [User] (FirstName, LastName, Username, Email, Password)
             OUTPUT INSERTED.User_Id  -- Retrieve the newly inserted User_Id
@@ -32,45 +31,36 @@ namespace ClassLibrary.DataAccess
                     cmd.Parameters.AddWithValue("@LastName", customer.LastName);
                     cmd.Parameters.AddWithValue("@Username", customer.Username);
                     cmd.Parameters.AddWithValue("@Email", customer.Email);
-                    cmd.Parameters.AddWithValue("@Password", customer.Password);  // Ensure password is hashed
+                    cmd.Parameters.AddWithValue("@Password", customer.Password);  
 
                     connection.Open();
-
-                    // Execute query and get the newly generated User_Id
                     userId = (int)cmd.ExecuteScalar();
                 }
 
-                // Now insert into the Customer table using the User_Id
                 string customerSql = @"
             INSERT INTO [Customer] (Customer_Id, Phone_Number, Address)
             VALUES (@Customer_Id, @Phone_Number, @Address)";
 
                 using (SqlCommand cmd = new SqlCommand(customerSql, connection))
                 {
-                    // Add parameters for the Customer table
-                    cmd.Parameters.AddWithValue("@Customer_Id", userId);  // Use User_Id as Customer_Id
+                    cmd.Parameters.AddWithValue("@Customer_Id", userId);
                     cmd.Parameters.AddWithValue("@Phone_Number", customer.PhoneNumber);
                     cmd.Parameters.AddWithValue("@Address", customer.Address);
 
-                    // Execute the Customer insert
                     cmd.ExecuteNonQuery();
                 }
             }
             catch (SqlException ex)
             {
-                // Handle SQL error
                 Console.WriteLine($"SQL Error: {ex.Message}");
             }
             finally
             {
-                connection.Close();  // Ensure connection is closed
+                connection.Close();
             }
         }
 
 
-
-
-        // Get customer by ID (with JOIN between User and Customer tables)
         public SqlDataReader GetCustomerById(int customerId)
         {
             SqlDataReader reader = null;
@@ -149,7 +139,7 @@ namespace ClassLibrary.DataAccess
             }
         }
 
-        public Customer GetCustomerByEmail(string email)
+        public async Task<Customer> GetCustomerByEmailAsync(string email)
         {
             Customer customer = null;
             string query = "SELECT User_Id, Username, FirstName, LastName, Email, Password FROM [User] WHERE Email = @Email";
@@ -160,11 +150,11 @@ namespace ClassLibrary.DataAccess
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    connection.Open();
+                    await connection.OpenAsync();  // Open connection asynchronously
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())  // ExecuteReaderAsync for async reading
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync())  // Read asynchronously
                         {
                             customer = new Customer
                             {
@@ -173,7 +163,7 @@ namespace ClassLibrary.DataAccess
                                 FirstName = reader["FirstName"].ToString(),
                                 LastName = reader["LastName"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                Password = reader["Password"].ToString() 
+                                Password = reader["Password"].ToString()  // This is the hashed password
                             };
                         }
                     }
@@ -186,7 +176,7 @@ namespace ClassLibrary.DataAccess
             }
             finally
             {
-                connection.Close();
+                await connection.CloseAsync();  // Ensure connection is closed asynchronously
             }
 
             return customer;

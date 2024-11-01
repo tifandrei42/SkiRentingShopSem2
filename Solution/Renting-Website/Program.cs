@@ -13,7 +13,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         // Define the login page URL
         options.LoginPath = new PathString("/Login"); 
-        options.AccessDeniedPath = new PathString("/AccessDenied"); 
+        options.AccessDeniedPath = new PathString("/AccessDenied");
     });
 builder.Services.AddAuthorization(options =>
 {

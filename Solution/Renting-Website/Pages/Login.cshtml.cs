@@ -28,28 +28,25 @@ namespace Renting_Website.Pages
             _customerManager = customerManager;
         }
 
-        public IActionResult OnGet()
+        public IActionResult OnGet(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);  // Log the error messages
-                }
                 return Page();
             }
 
-            var customer = _customerManager.CheckCredentials(Email, Password);
+            var customer = await _customerManager.CheckCredentialsAsync(Email, Password);  // Async check
 
             if (customer == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password.");
-                return Page();  
+                return Page();
             }
 
             var claims = new List<Claim>
@@ -61,15 +58,20 @@ namespace Renting_Website.Pages
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddHours(1)
+                });
 
-            return RedirectToPage("/Profile");
+            returnUrl = returnUrl ?? Url.Page("/Profile");
+            return LocalRedirect(returnUrl);
         }
 
-
-        
     }
 }
