@@ -28,61 +28,75 @@
         /// </summary>
         private void InitializeComponent()
         {
-            menuStrip1 = new MenuStrip();
-            equipmentManagerToolStripMenuItem = new ToolStripMenuItem();
-            addEquipmentToolStripMenuItem = new ToolStripMenuItem();
-            employeeManagerToolStripMenuItem = new ToolStripMenuItem();
-            menuStrip1.SuspendLayout();
+            label1 = new Label();
+            btnStaff = new Button();
+            btnEquipment = new Button();
+            btnLogout = new Button();
             SuspendLayout();
             // 
-            // menuStrip1
+            // label1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { equipmentManagerToolStripMenuItem, employeeManagerToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(984, 24);
-            menuStrip1.TabIndex = 0;
-            menuStrip1.Text = "menuStrip1";
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI Semibold", 20.25F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            label1.Location = new Point(100, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(199, 74);
+            label1.TabIndex = 0;
+            label1.Text = "  Basic renting\r\nAdministration\r\n";
+            label1.Click += label1_Click;
             // 
-            // equipmentManagerToolStripMenuItem
+            // btnStaff
             // 
-            equipmentManagerToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { addEquipmentToolStripMenuItem });
-            equipmentManagerToolStripMenuItem.Name = "equipmentManagerToolStripMenuItem";
-            equipmentManagerToolStripMenuItem.Size = new Size(127, 20);
-            equipmentManagerToolStripMenuItem.Text = "Equipment Manager";
+            btnStaff.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnStaff.Location = new Point(76, 161);
+            btnStaff.Name = "btnStaff";
+            btnStaff.Size = new Size(250, 56);
+            btnStaff.TabIndex = 1;
+            btnStaff.Text = "Staff member management";
+            btnStaff.UseVisualStyleBackColor = true;
+            btnStaff.Click += btnStaff_Click;
             // 
-            // addEquipmentToolStripMenuItem
+            // btnEquipment
             // 
-            addEquipmentToolStripMenuItem.Name = "addEquipmentToolStripMenuItem";
-            addEquipmentToolStripMenuItem.Size = new Size(180, 22);
-            addEquipmentToolStripMenuItem.Text = "Add Equipment";
+            btnEquipment.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnEquipment.Location = new Point(76, 223);
+            btnEquipment.Name = "btnEquipment";
+            btnEquipment.Size = new Size(250, 56);
+            btnEquipment.TabIndex = 2;
+            btnEquipment.Text = "Equipment management";
+            btnEquipment.UseVisualStyleBackColor = true;
+            btnEquipment.Click += btnEquipment_Click;
             // 
-            // employeeManagerToolStripMenuItem
+            // btnLogout
             // 
-            employeeManagerToolStripMenuItem.Name = "employeeManagerToolStripMenuItem";
-            employeeManagerToolStripMenuItem.Size = new Size(121, 20);
-            employeeManagerToolStripMenuItem.Text = "Employee Manager";
+            btnLogout.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLogout.Location = new Point(76, 285);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(250, 56);
+            btnLogout.TabIndex = 3;
+            btnLogout.Text = "Logout";
+            btnLogout.UseVisualStyleBackColor = true;
             // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(984, 561);
-            Controls.Add(menuStrip1);
-            MainMenuStrip = menuStrip1;
+            ClientSize = new Size(415, 459);
+            Controls.Add(btnLogout);
+            Controls.Add(btnEquipment);
+            Controls.Add(btnStaff);
+            Controls.Add(label1);
             Name = "Menu";
             Text = "Menu";
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private MenuStrip menuStrip1;
-        private ToolStripMenuItem equipmentManagerToolStripMenuItem;
-        private ToolStripMenuItem addEquipmentToolStripMenuItem;
-        private ToolStripMenuItem employeeManagerToolStripMenuItem;
+        private Label label1;
+        private Button btnStaff;
+        private Button btnEquipment;
+        private Button btnLogout;
     }
 }

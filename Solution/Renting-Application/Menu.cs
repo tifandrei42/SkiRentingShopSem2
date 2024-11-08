@@ -19,5 +19,22 @@ namespace Renting_Application
         {
             InitializeComponent();
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnStaff_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnEquipment_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            EquipmentManagement equipmentManagement = new EquipmentManagement();
+            equipmentManagement.Show();
+        }
     }
 }

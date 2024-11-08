@@ -12,6 +12,8 @@ namespace ClassLibrary.DataAccess
     {
         public int CreateStaffMember(StaffMember staffMember)
         {
+            int newStaffId = 0;
+
             try
             {
                 using (SqlCommand cmd = new SqlCommand(
@@ -23,15 +25,28 @@ namespace ClassLibrary.DataAccess
                     cmd.Parameters.AddWithValue("@Email", staffMember.Email);
                     cmd.Parameters.AddWithValue("@Role", staffMember.Role);
 
-                    connection.Open();
-                    int newStaffId = (int)cmd.ExecuteScalar();
-                    return newStaffId;  // Return the new Staff ID
+                    if (connection.State == System.Data.ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    newStaffId = (int)cmd.ExecuteScalar();
                 }
             }
-            finally
+            catch (SqlException sqlEx)
             {
-                connection.Close();
+                Console.WriteLine("Database error: " + sqlEx.Message);
             }
+            catch (InvalidOperationException invEx)
+            {
+                Console.WriteLine("Invalid operation: " + invEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An unexpected error occurred: " + ex.Message);
+            }
+
+            return newStaffId;
         }
 
         public StaffMember GetStaffMemberById(int staffId)
@@ -59,6 +74,20 @@ namespace ClassLibrary.DataAccess
                     }
                 }
             }
+
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine("Database error: " + sqlEx.Message);
+            }
+            catch (InvalidOperationException invEx)
+            {
+                Console.WriteLine("Invalid operation: " + invEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An unexpected error occurred: " + ex.Message);
+            }
+
             finally
             {
                 connection.Close();
@@ -84,6 +113,20 @@ namespace ClassLibrary.DataAccess
                     cmd.ExecuteNonQuery();
                 }
             }
+
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine("Database error: " + sqlEx.Message);
+            }
+            catch (InvalidOperationException invEx)
+            {
+                Console.WriteLine("Invalid operation: " + invEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An unexpected error occurred: " + ex.Message);
+            }
+
             finally
             {
                 connection.Close();
@@ -101,6 +144,20 @@ namespace ClassLibrary.DataAccess
                     cmd.ExecuteNonQuery();
                 }
             }
+
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine("Database error: " + sqlEx.Message);
+            }
+            catch (InvalidOperationException invEx)
+            {
+                Console.WriteLine("Invalid operation: " + invEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An unexpected error occurred: " + ex.Message);
+            }
+
             finally
             {
                 connection.Close();
@@ -135,6 +192,20 @@ namespace ClassLibrary.DataAccess
                     }
                 }
             }
+
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine("Database error: " + sqlEx.Message);
+            }
+            catch (InvalidOperationException invEx)
+            {
+                Console.WriteLine("Invalid operation: " + invEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An unexpected error occurred: " + ex.Message);
+            }
+
             finally
             {
                 connection.Close();
@@ -173,12 +244,26 @@ namespace ClassLibrary.DataAccess
                     }
                 }
             }
+
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine("Database error: " + sqlEx.Message);
+            }
+            catch (InvalidOperationException invEx)
+            {
+                Console.WriteLine("Invalid operation: " + invEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An unexpected error occurred: " + ex.Message);
+            }
+
             finally
             {
                 connection.Close();
             }
 
-            return null;  // Staff member not found
+            return null;  
         }
     }
 }
