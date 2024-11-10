@@ -8,11 +8,17 @@ namespace Renting_Website.Pages
     public class ContentModel : PageModel
     {
         public List<Equipment> EquipmentList { get; set; }
+        private readonly EquipmentManager _equipmentManager;
+
+        public ContentModel(EquipmentManager equipmentManager)
+        {
+            _equipmentManager = equipmentManager;
+        }
 
         public void OnGet()
         {
-            EquipmentManager equipmentManager = new EquipmentManager();
-            EquipmentList = equipmentManager.GetAllEquipment();
+
+            EquipmentList = _equipmentManager.GetAllEquipment();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ClassLibrary.ObjectClasses;
+using BusinessLogic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary.DataAccess
 {
-    public class EquipmentMediator : DbAccess
+    public class EquipmentMediator : DbAccess, IEquipmentMediator
     {
         public EquipmentMediator() : base() { }
 

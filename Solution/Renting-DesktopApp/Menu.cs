@@ -1,4 +1,7 @@
-﻿using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.Interfaces;
+using ClassLibrary.DataAccess;
+using ClassLibrary.Managers;
+using ClassLibrary.ObjectClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,10 +17,14 @@ namespace Renting_Application
     public partial class Menu : Form
     {
         private StaffMember _loggedInStaffMember;
-
+        private readonly EquipmentManager _equipmentManager;
         public Menu(StaffMember staffMember)
         {
             InitializeComponent();
+            _loggedInStaffMember = staffMember;
+
+            IEquipmentMediator mediator = new EquipmentMediator();
+            _equipmentManager = new EquipmentManager(mediator);
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -33,7 +40,7 @@ namespace Renting_Application
         private void btnEquipment_Click(object sender, EventArgs e)
         {
             this.Hide();
-            EquipmentManagement equipmentManagement = new EquipmentManagement();
+            EquipmentManagement equipmentManagement = new EquipmentManagement(_equipmentManager);
             equipmentManagement.Show();
         }
     }

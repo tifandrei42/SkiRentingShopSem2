@@ -1,4 +1,5 @@
-﻿using ClassLibrary.DataAccess;
+﻿using BusinessLogic.Interfaces;
+using ClassLibrary.DataAccess;
 using ClassLibrary.ObjectClasses;
 using System;
 using System.Collections.Generic;
@@ -10,15 +11,19 @@ namespace ClassLibrary.Managers
 {
     public class EquipmentManager
     {
-        private readonly EquipmentMediator _equipmentMediator;
-
-        public EquipmentManager()
+        private readonly IEquipmentMediator _equipmentMediator;
+        public EquipmentManager(IEquipmentMediator equipmentMediator)
         {
-            _equipmentMediator = new EquipmentMediator();
+            _equipmentMediator = equipmentMediator;
         }
 
         public void AddEquipment(Equipment equipment)
         {
+            if (string.IsNullOrWhiteSpace(equipment.Name))
+            {
+                throw new ArgumentException("Equipment name cannot be empty.");
+            }
+
             _equipmentMediator.CreateEquipment(equipment);
         }
 

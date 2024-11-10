@@ -1,4 +1,6 @@
-﻿using ClassLibrary.Managers;
+﻿using BusinessLogic.Interfaces;
+using ClassLibrary.DataAccess;
+using ClassLibrary.Managers;
 using ClassLibrary.ObjectClasses;
 using System;
 using System.Collections.Generic;
@@ -16,10 +18,10 @@ namespace Renting_Application
     {
         private EquipmentManager _equipmentManager;
 
-        public EquipmentManagement()
+        public EquipmentManagement(EquipmentManager equipmentManager)
         {
             InitializeComponent();
-            _equipmentManager = new EquipmentManager();
+            _equipmentManager = equipmentManager;
         }
 
         private void EquipmentManagement_Load(object sender, EventArgs e)
