@@ -39,7 +39,7 @@ main {
 
 /* Footer styling */
 .footer {
-    margin-top: 50px; /* Add some margin to ensure content does not overlap */
+    margin-top: 50px;
     padding: 20px 0;
     background-color: var(--secondary);
     color: var(--highlight);
@@ -95,11 +95,7 @@ main {
     font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 0.05rem;
-    /*-webkit-transition: background-color 0.5s ease-in-out;
-    -moz-transition: background-color 0.5s ease-in-out;
-    -ms-transition: background-color 0.5s ease-in-out;
-    -o-transition: background-color 0.5s ease-in-out;
-    transition: background-color 0.5s ease-in-out;*/
+    
 }
 
 .navbar-nav {
@@ -115,19 +111,19 @@ main {
 
 .section-1 {
     position: relative;
-    min-height: 100vh; /* Ensure section 1 takes full height */
-    padding-top: 80px; /* Prevent overlap with navbar */
-    padding-bottom: 60px; /* Prevent overlap with section 2 */
+    min-height: 100vh; 
+    padding-top: 80px; 
+    padding-bottom: 60px;
     background-image: url('../images/csm_skiverleih-rentaski-reischach-kategorien_a16f2ad484.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Align containers and title properly */
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
-    overflow: hidden; /* Prevent content from overflowing section 1 */
+    overflow: hidden; 
 }
 
     
@@ -143,11 +139,11 @@ main {
 }
 
 .section-3 {
-    height: 100vh; /* Full viewport height */
+    height: 100vh; 
     background-image: url('../images/pexels-photo-5751035.jpeg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed; /* Keeps the background fixed while scrolling */
+    background-attachment: fixed; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -170,13 +166,12 @@ main {
     background: rgba(0, 110, 178, 0.7);
     position: relative;
     z-index: 10;
-    margin-bottom: 100px; /* Create space between the title and the content */
+    margin-bottom: 100px;
     width: 100%;
     text-align: center;
     margin-top: -61px;
 }
 
-/* Container Grid Layout in Section 1 */
 .container-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -187,7 +182,6 @@ main {
     padding: 20px;
 }
 
-/* Content Box Styling */
 .content-box {
     background-color: rgba(255, 255, 255, 0.9);
     color: black;
@@ -196,50 +190,55 @@ main {
     width: 100%;
 }
 
-/* Adjust position of the boxes */
+
 .left-box {
-    grid-column: 1 / 2; /* Stay in the first column */
+    grid-column: 1 / 2;
 }
 
 .right-box {
-    grid-column: 2 / 3; /* Stay in the second column */
-    grid-row: 2; /* Slightly lower */
+    grid-column: 2 / 3; 
+    grid-row: 2; 
 }
 
 .lower-box {
     grid-column: 1 / 2;
     grid-row: 3;
-    margin-bottom: 50px; /* Add extra space at the bottom */
+    margin-bottom: 50px; 
 }
 
-/* Section 2 Styling */
+
 .section-2 {
     padding: 50px 20px;
     background-color: var(--highlight);
     text-align: center;
 }
 
-/* Responsive Adjustments */
 @media screen and (max-width: 768px) {
     .faded-title {
-        font-size: 2rem; /* Smaller title for smaller screens */
+        font-size: 2rem;
     }
 
     .container-grid {
-        grid-template-columns: 1fr; /* Stack containers vertically */
+        grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
     }
 
     .content-box {
-        margin-bottom: 20px; /* Add space between stacked boxes */
+        margin-bottom: 20px;
     }
 
     .right-box, .lower-box {
-        grid-column: 1 / 2; /* Ensure all boxes stay in the single column */
-        grid-row: auto; /* Natural flow in one column */
+        grid-column: 1 / 2;
+        grid-row: auto; 
     }
 
     .section-1 {
-        padding-bottom: 80px; /* Ensure space between section 1 and section 2 */
+        padding-bottom: 80px;
     }
+}
+
+.card-img-top {
+    width: 100%;
+    height: 300px; 
+    object-fit: cover; 
 }

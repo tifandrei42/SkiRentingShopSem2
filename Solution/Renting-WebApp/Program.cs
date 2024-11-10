@@ -1,11 +1,14 @@
 using Westwind.AspNetCore.LiveReload;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ClassLibrary.Managers;
+using BusinessLogic.Interfaces;
+using ClassLibrary.DataAccess;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddScoped<IEquipmentMediator, EquipmentMediator>();
+builder.Services.AddScoped<EquipmentManager>();
 builder.Services.AddRazorPages();
 builder.Services.AddLiveReload();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

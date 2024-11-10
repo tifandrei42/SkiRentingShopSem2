@@ -97,12 +97,12 @@ namespace ClassLibrary.DataAccess
         public List<Equipment> GetAllEquipment()
         {
             List<Equipment> equipmentList = new List<Equipment>();
+            string sql = @"
+        SELECT Equipment_Id, Name, Brand, Size, PricePerDay, EquipmentType, ImagePath
+        FROM Equipment";
+
             try
             {
-                string sql = @"
-                SELECT EquipmentId, Name, Brand, Size, PricePerDay, EquipmentType, ImagePath
-                FROM Equipment";
-
                 using (SqlCommand cmd = new SqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -113,11 +113,11 @@ namespace ClassLibrary.DataAccess
                         {
                             Equipment equipment = new Equipment
                             {
-                                EquipmentId = (int)reader["EquipmentId"],
+                                EquipmentId = reader["Equipment_Id"] != DBNull.Value ? (int)reader["Equipment_Id"] : 0,
                                 Name = reader["Name"] as string,
                                 Brand = reader["Brand"] as string,
                                 Size = reader["Size"] as string,
-                                PricePerDay = (decimal)reader["PricePerDay"],
+                                PricePerDay = reader["PricePerDay"] != DBNull.Value ? (decimal)reader["PricePerDay"] : 0m,
                                 EquipmentType = reader["EquipmentType"] as string,
                                 ImagePath = reader["ImagePath"] as string
                             };
@@ -130,9 +130,9 @@ namespace ClassLibrary.DataAccess
             {
                 Console.WriteLine($"SQL Error in GetAllEquipment: {ex.Message}");
             }
-            finally
+            catch (Exception ex)
             {
-                connection.Close();
+                Console.WriteLine($"General Error in GetAllEquipment: {ex.Message}");
             }
 
             return equipmentList;

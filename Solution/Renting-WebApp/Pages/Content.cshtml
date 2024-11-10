@@ -4,41 +4,28 @@
     ViewData["Title"] = "Equipment Content";
 }
 
-<h2>Available Equipment</h2>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Brand</th>
-                <th>Size</th>
-                <th>Price Per Day</th>
-                <th>Type</th>
-                <th>Image</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var equipment in Model.EquipmentList)
-            {
-                <tr>
-                    <td>@equipment.Name</td>
-                    <td>@equipment.Brand</td>
-                    <td>@equipment.Size</td>
-                    <td>@equipment.PricePerDay.ToString("C")</td>
-                    <td>@equipment.EquipmentType</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(equipment.ImagePath))
-                        {
-                            <img src="@equipment.ImagePath" alt="@equipment.Name" width="50" />
-                        }
-                    </td>
-                    <td>
-                        <a asp-page="/ReserveEquipment" asp-route-id="@equipment.EquipmentId" class="btn btn-primary">Reserve</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<h2 class="align-content-center">Available Equipment</h2>
+
+<div class="row">
+    @foreach (var equipment in Model.EquipmentList)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                @if (!string.IsNullOrEmpty(equipment.ImagePath))
+                {
+                    <img class="card-img-top" src="@Url.Content($"~/{equipment.ImagePath}")" alt="@equipment.Name" />
+                }
+                else
+                {
+                    <img class="card-img-top" src="@Url.Content("~/images/placeholder.jpg")" alt="No image available" />
+                }
+                <div class="card-body text-center">
+                    <h5 class="card-title">@equipment.Name</h5>
+                    <p class="card-text">@equipment.PricePerDay.ToString("C")</p>
+                    <a asp-page="/ReserveEquipment" asp-route-id="@equipment.EquipmentId" class="btn btn-primary">Reserve</a>
+                </div>
+            </div>
+        </div>
+    }
 </div>
