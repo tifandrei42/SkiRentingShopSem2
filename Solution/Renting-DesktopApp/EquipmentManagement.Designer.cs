@@ -49,6 +49,7 @@
             btnAddEquipment.TabIndex = 1;
             btnAddEquipment.Text = "Add equipment";
             btnAddEquipment.UseVisualStyleBackColor = true;
+            btnAddEquipment.Click += btnAddEquipment_Click;
             // 
             // EquipmentManagement
             // 

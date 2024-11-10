@@ -113,6 +113,7 @@ namespace Renting_Application
             cbShowPassword.TabIndex = 7;
             cbShowPassword.Text = "Show password";
             cbShowPassword.UseVisualStyleBackColor = true;
+            cbShowPassword.CheckedChanged += cbShowPassword_CheckedChanged_1;
             // 
             // LoginForm
             // 

@@ -19,7 +19,7 @@ namespace Renting_Application
             string email = tbEmail.Text;
             string password = tbPassword.Text;
 
-            
+
             StaffMember staffMember = _staffMemberManager.CheckCredentials(email, password);
 
             if (staffMember != null)
@@ -41,7 +41,7 @@ namespace Renting_Application
             Application.Exit();
         }
 
-        private void cbShowPassword_CheckedChanged(object sender, EventArgs e)
+        private void cbShowPassword_CheckedChanged_1(object sender, EventArgs e)
         {
             if (cbShowPassword.Checked)
             {

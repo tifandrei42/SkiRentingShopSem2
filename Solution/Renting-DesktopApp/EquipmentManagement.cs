@@ -44,5 +44,14 @@ namespace Renting_Application
                 MessageBox.Show($"Error loading equipment data: {ex.Message}");
             }
         }
+
+        private void btnAddEquipment_Click(object sender, EventArgs e)
+        {
+            AddEquipment addForm = new AddEquipment(_equipmentManager);
+            if (addForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadEquipmentData();
+            }
+        }
     }
 }
