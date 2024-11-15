@@ -7,8 +7,8 @@ namespace SolutionTest
     [TestClass]
     public class EquipmentManagerTests
     {
-        private EquipmentManager _equipmentManager;
-        private FakeEquipmentMediator _fakeMediator;
+        private EquipmentManager? _equipmentManager;
+        private FakeEquipmentMediator? _fakeMediator;
 
         [TestInitialize]
         public void Setup()
@@ -32,8 +32,8 @@ namespace SolutionTest
 
             _equipmentManager.AddEquipment(equipment);
 
-            Assert.AreEqual(1, _fakeMediator.GetAllEquipment().Count);
-            var addedEquipment = _fakeMediator.GetEquipmentById(equipment.EquipmentId);
+            Assert.AreEqual(1, _equipmentManager.GetAllEquipment().Count);
+            var addedEquipment = _equipmentManager.GetEquipmentById(equipment.EquipmentId);
             Assert.IsNotNull(addedEquipment);
             Assert.AreEqual("Test Equipment", addedEquipment.Name);
             Assert.AreEqual("test_image.jpg", addedEquipment.ImagePath);
@@ -42,7 +42,7 @@ namespace SolutionTest
         [TestMethod]
         public void GetAllEquipment_ShouldReturnAllEquipment()
         {
-            _fakeMediator.CreateEquipment(new Equipment
+            _equipmentManager.AddEquipment(new Equipment
             {
                 Name = "Equipment 1",
                 Brand = "Brand A",
@@ -51,7 +51,7 @@ namespace SolutionTest
                 PricePerDay = 10.0m
             });
 
-            _fakeMediator.CreateEquipment(new Equipment
+            _equipmentManager.AddEquipment(new Equipment
             {
                 Name = "Equipment 2",
                 Brand = "Brand B",
@@ -71,13 +71,13 @@ namespace SolutionTest
         public void UpdateEquipment_ShouldModifyEquipment()
         {
             var equipment = new Equipment { Name = "Old Name", PricePerDay = 10.0m, Brand= "Old Brand", EquipmentType = "Type" };
-            _fakeMediator.CreateEquipment(equipment);
+            _equipmentManager.AddEquipment(equipment);
 
             equipment.Name = "New Name";
 
             _equipmentManager.UpdateEquipment(equipment);
 
-            var updatedEquipment = _fakeMediator.GetEquipmentById(equipment.EquipmentId);
+            var updatedEquipment = _equipmentManager.GetEquipmentById(equipment.EquipmentId);
             Assert.AreEqual("New Name", updatedEquipment.Name);
         }
 
@@ -85,11 +85,11 @@ namespace SolutionTest
         public void DeleteEquipment_ShouldRemoveEquipment()
         {
             var equipment = new Equipment { Name = "EquipmenttoDelete", PricePerDay = 10.0m, Brand = "Something", EquipmentType = "TypeTo delete" };
-            _fakeMediator.CreateEquipment(equipment);
+            _equipmentManager.AddEquipment(equipment);
 
             _equipmentManager.DeleteEquipment(equipment.EquipmentId);
 
-            Assert.IsNull(_fakeMediator.GetEquipmentById(equipment.EquipmentId));
+            Assert.IsNull(_equipmentManager.GetEquipmentById(equipment.EquipmentId));
         }
     }
 }

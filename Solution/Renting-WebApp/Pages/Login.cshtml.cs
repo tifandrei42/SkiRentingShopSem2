@@ -43,7 +43,7 @@ namespace Renting_Website.Pages
 
             var customer = await _customerManager.CheckCredentialsAsync(Email, Password);  // Async check
 
-            if (customer == null)
+            if (Password != customer.Password)
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return Page();

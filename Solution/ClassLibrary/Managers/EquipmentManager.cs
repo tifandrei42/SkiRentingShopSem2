@@ -27,7 +27,7 @@ namespace ClassLibrary.Managers
             _equipmentMediator.CreateEquipment(equipment);
         }
 
-        public Equipment GetEquipment(int equipmentId)
+        public Equipment GetEquipmentById(int equipmentId)
         {
             return _equipmentMediator.GetEquipmentById(equipmentId);
         }

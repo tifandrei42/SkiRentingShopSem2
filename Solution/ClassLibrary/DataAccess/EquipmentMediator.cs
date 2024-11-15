@@ -32,14 +32,12 @@ namespace ClassLibrary.DataAccess
                     cmd.Parameters.AddWithValue("@ImagePath", equipment.ImagePath ?? (object)DBNull.Value);
 
                     connection.Open();
-                    // Execute the insert command and get the generated EquipmentId
                     int equipmentId = Convert.ToInt32(cmd.ExecuteScalar());
-                    equipment.EquipmentId = equipmentId;  // Set the EquipmentId in the object
+                    equipment.EquipmentId = equipmentId;  
                 }
             }
             catch (SqlException ex)
             {
-                // Log or handle the exception
                 Console.WriteLine($"SQL Error in CreateEquipment: {ex.Message}");
             }
             finally
@@ -48,7 +46,6 @@ namespace ClassLibrary.DataAccess
             }
         }
 
-        // Read equipment by ID
         public Equipment GetEquipmentById(int equipmentId)
         {
             Equipment? equipment = null;

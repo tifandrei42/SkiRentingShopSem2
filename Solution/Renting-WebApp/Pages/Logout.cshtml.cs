@@ -10,7 +10,7 @@ namespace Renting_Website.Pages
         public async Task<IActionResult> OnGet()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToPage("/Index"); // Redirect to the home page after logout
+            return RedirectToPage("/Index");
         }
     }
 }

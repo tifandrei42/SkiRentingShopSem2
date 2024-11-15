@@ -221,7 +221,7 @@ namespace ClassLibrary.DataAccess
                 using (SqlCommand cmd = new SqlCommand(
                     "SELECT sm.Staff_Id, sm.Role, u.User_Id, u.FirstName, u.LastName, u.Email, u.Password " +
                     "FROM StaffMember sm " +
-                    "INNER JOIN [User] u ON sm.Staff_Id = u.User_Id " + // Corrected the JOIN
+                    "INNER JOIN [User] u ON sm.Staff_Id = u.User_Id " +
                     "WHERE u.Email = @Email", connection))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -234,11 +234,11 @@ namespace ClassLibrary.DataAccess
                             {
                                 StaffId = (int)reader["Staff_Id"],
                                 Role = reader["Role"].ToString(),
-                                UserId = (int)reader["User_Id"], // from User table
-                                FirstName = reader["FirstName"].ToString(), // from User table
-                                LastName = reader["LastName"].ToString(), // from User table
-                                Email = reader["Email"].ToString(), // from User table
-                                Password = reader["Password"].ToString() // from User table
+                                UserId = (int)reader["User_Id"],
+                                FirstName = reader["FirstName"].ToString(), 
+                                LastName = reader["LastName"].ToString(), 
+                                Email = reader["Email"].ToString(), 
+                                Password = reader["Password"].ToString() 
                             };
                         }
                     }

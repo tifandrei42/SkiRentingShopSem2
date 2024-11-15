@@ -12,7 +12,6 @@ namespace ClassLibrary.DataAccess
     {
         public CustomerMediator() : base() { }
 
-        // Create a new customer
         public void CreateCustomer(Customer customer)
         {
             try
@@ -26,7 +25,7 @@ namespace ClassLibrary.DataAccess
 
                 using (SqlCommand cmd = new SqlCommand(userSql, connection))
                 {
-                    // Add parameters for the User table
+                   
                     cmd.Parameters.AddWithValue("@FirstName", customer.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", customer.LastName);
                     cmd.Parameters.AddWithValue("@Username", customer.Username);
@@ -83,10 +82,10 @@ namespace ClassLibrary.DataAccess
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
 
-            return reader; // Caller must handle closing the reader.
+            return reader; 
         }
 
-        // Update customer details
+       
         public void UpdateCustomer(int customerId, string phoneNumber, string address)
         {
             try
@@ -113,7 +112,7 @@ namespace ClassLibrary.DataAccess
             }
         }
 
-        // Delete customer
+        
         public void DeleteCustomer(int customerId)
         {
             try
@@ -150,11 +149,11 @@ namespace ClassLibrary.DataAccess
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    await connection.OpenAsync();  // Open connection asynchronously
+                    await connection.OpenAsync(); 
 
-                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())  // ExecuteReaderAsync for async reading
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())  
                     {
-                        if (await reader.ReadAsync())  // Read asynchronously
+                        if (await reader.ReadAsync())  
                         {
                             customer = new Customer
                             {
@@ -163,7 +162,7 @@ namespace ClassLibrary.DataAccess
                                 FirstName = reader["FirstName"].ToString(),
                                 LastName = reader["LastName"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                Password = reader["Password"].ToString()  // This is the hashed password
+                                Password = reader["Password"].ToString()  
                             };
                         }
                     }
@@ -171,12 +170,12 @@ namespace ClassLibrary.DataAccess
             }
             catch (SqlException ex)
             {
-                // Log exception (consider using a logging framework)
+                
                 Console.WriteLine($"SQL Error: {ex.Message}");
             }
             finally
             {
-                await connection.CloseAsync();  // Ensure connection is closed asynchronously
+                await connection.CloseAsync();  
             }
 
             return customer;
@@ -213,7 +212,6 @@ namespace ClassLibrary.DataAccess
             }
             catch (SqlException ex)
             {
-                // Log exception (consider using a logging framework)
                 Console.WriteLine($"SQL Error: {ex.Message}");
             }
             finally
