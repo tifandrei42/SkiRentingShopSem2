@@ -17,7 +17,6 @@ namespace Renting_Website.Pages
 
         public void OnGet()
         {
-
             EquipmentList = _equipmentManager.GetAllEquipment();
         }
     }

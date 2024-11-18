@@ -46,48 +46,33 @@ namespace ClassLibrary.DataAccess
             }
         }
 
-        public Equipment GetEquipmentById(int equipmentId)
+        public Equipment GetEquipmentById(int id)
         {
-            Equipment? equipment = null;
-            try
+            Equipment equipment = null;
+            string query = "SELECT * FROM Equipment WHERE Equipment_Id = @Id";
+
+            using (var cmd = new SqlCommand(query, connection))
             {
-                string sql = @"
-                SELECT EquipmentId, Name, Brand, Size, PricePerDay, EquipmentType, ImagePath
-                FROM Equipment
-                WHERE EquipmentId = @EquipmentId";
-
-                using (SqlCommand cmd = new SqlCommand(sql, connection))
+                cmd.Parameters.AddWithValue("@Id", id);
+                connection.Open();
+                using (var reader = cmd.ExecuteReader())
                 {
-                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
-                    connection.Open();
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    if (reader.Read())
                     {
-                        if (reader.Read())
+                        equipment = new Equipment
                         {
-                            equipment = new Equipment
-                            {
-                                EquipmentId = (int)reader["EquipmentId"],
-                                Name = reader["Name"] as string,
-                                Brand = reader["Brand"] as string,
-                                Size = reader["Size"] as string,
-                                PricePerDay = (decimal)reader["PricePerDay"],
-                                EquipmentType = reader["EquipmentType"] as string,
-                                ImagePath = reader["ImagePath"] as string
-                            };
-                        }
+                            EquipmentId = (int)reader["Equipment_Id"],
+                            Name = reader["Name"].ToString(),
+                            Brand = reader["Brand"].ToString(),
+                            Size = reader["Size"].ToString(),
+                            EquipmentType = reader["EquipmentType"].ToString(),
+                            PricePerDay = (decimal)reader["PricePerDay"],
+                            ImagePath = reader["ImagePath"].ToString()
+                        };
                     }
                 }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine($"SQL Error in GetEquipmentById: {ex.Message}");
-            }
-            finally
-            {
                 connection.Close();
             }
-
             return equipment;
         }
 

@@ -18,10 +18,7 @@ namespace ClassLibrary.ObjectClasses
 
         public void CalculateTotalPrice()
         {
-            // Implementation to calculate total price
+           
         }
-
-        // Navigation property to associated equipment
-        //public List<ReservationEquipment> ReservationEquipments { get; set; }
     }
 }
