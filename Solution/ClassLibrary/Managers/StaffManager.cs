@@ -46,7 +46,7 @@ namespace BusinessLogic.Managers
         {
             var staffMember = _staffMemberMediator.GetStaffMemberByEmail(email);
 
-            if (staffMember != null && staffMember.Password == password)
+            if (staffMember != null && BCrypt.Net.BCrypt.Verify(password, staffMember.Password))
             {
                 return staffMember;
             }

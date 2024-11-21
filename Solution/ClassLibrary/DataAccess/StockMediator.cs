@@ -11,20 +11,30 @@ namespace BusinessLogic.DataAccess
     public class StockMediator : DbAccess
     {
         public StockMediator() : base() { }
-        public void UpdateStock(int equipmentId, int quantity)
+        public bool UpdateStock(int equipmentId, int quantity)
         {
-            string query = @"
-                UPDATE Stock
-                SET Quantity = Quantity + @Quantity, LastUpdated = GETDATE()
-                WHERE Equipment_Id = @EquipmentId";
+            string query = "UPDATE Stock SET Quantity = @Quantity, LastUpdated = @LastUpdated WHERE Equipment_Id = @EquipmentId";
 
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+            try
             {
-                cmd.Parameters.AddWithValue("@Quantity", quantity);
-                cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
+                    cmd.Parameters.AddWithValue("@Quantity", quantity);
+                    cmd.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
 
-                connection.Open();
-                cmd.ExecuteNonQuery();
+                    connection.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0; 
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in UpdateStock: {ex.Message}");
+                throw; 
+            }
+            finally
+            {
                 connection.Close();
             }
         }
@@ -99,6 +109,84 @@ namespace BusinessLogic.DataAccess
 
             return stock;
         }
+        public List<Stock> GetAllStock()
+        {
+            List<Stock> stockList = new List<Stock>();
+            string query = "SELECT s.Equipment_Id, s.Quantity, s.LastUpdated FROM Stock s INNER JOIN Equipment e ON s.Equipment_Id = e.Equipment_Id";
 
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            stockList.Add(new Stock
+                            {
+                                EquipmentId = (int)reader["Equipment_Id"],
+                                Quantity = (int)reader["Quantity"],
+                                LastUpdated = (DateTime)reader["LastUpdated"]
+                            });
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in GetAllStock: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return stockList;
+        }
+
+        public List<dynamic> GetAllEquipmentWithStock()
+        {
+            List<dynamic> equipmentWithStock = new List<dynamic>();
+            string query = @"
+        SELECT e.Equipment_Id, e.Name, e.Brand, e.PricePerDay, e.EquipmentType, s.Quantity
+        FROM Equipment e
+        INNER JOIN Stock s ON e.Equipment_Id = s.Equipment_Id";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            equipmentWithStock.Add(new
+                            {
+                                EquipmentId = (int)reader["Equipment_Id"],
+                                Name = reader["Name"].ToString(),
+                                Brand = reader["Brand"].ToString(),
+                                PricePerDay = (decimal)reader["PricePerDay"],
+                                EquipmentType = reader["EquipmentType"].ToString(),
+                                Quantity = (int)reader["Quantity"]
+                            });
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in GetAllEquipmentWithStock: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return equipmentWithStock;
+        }
     }
 }

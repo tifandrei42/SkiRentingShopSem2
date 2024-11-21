@@ -265,5 +265,42 @@ namespace BusinessLogic.DataAccess
 
             return null;
         }
+
+        public List<Stock> GetAllStock()
+        {
+            List<Stock> stockList = new List<Stock>();
+            string query = "SELECT s.Equipment_Id, s.Quantity, s.LastUpdated FROM Stock s INNER JOIN Equipment e ON s.Equipment_Id = e.Equipment_Id";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            stockList.Add(new Stock
+                            {
+                                EquipmentId = (int)reader["Equipment_Id"],
+                                Quantity = (int)reader["Quantity"],
+                                LastUpdated = (DateTime)reader["LastUpdated"]
+                            });
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in GetAllStock: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return stockList;
+        }
     }
 }

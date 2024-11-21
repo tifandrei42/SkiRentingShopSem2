@@ -1,4 +1,4 @@
-using ClassLibrary.DataAccess;
+using BusinessLogic.DataAccess;
 using BusinessLogic.Managers;
 using BusinessLogic.Entities;
 

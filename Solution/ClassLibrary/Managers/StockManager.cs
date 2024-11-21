@@ -17,9 +17,9 @@ namespace BusinessLogic.Managers
             _stockMediator = new StockMediator();
         }
 
-        public void UpdateStock(int equipmentId, int quantity)
+        public bool UpdateStock(int equipmentId, int quantity)
         {
-            _stockMediator.UpdateStock(equipmentId, quantity);
+           return _stockMediator.UpdateStock(equipmentId, quantity);
         }
 
         public Stock GetStockByEquipmentId(int equipmentId)
@@ -30,6 +30,10 @@ namespace BusinessLogic.Managers
         public int GetNumberOfStockByEquipmentId(int equipmentId)
         {
             return _stockMediator.GetNumberOfStockByEquipmentId(equipmentId);
+        }
+        public List<Stock> GetAllStock()
+        {
+            return _stockMediator.GetAllStock();
         }
     }
 }

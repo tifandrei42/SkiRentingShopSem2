@@ -195,7 +195,7 @@ namespace BusinessLogic.DataAccess
         {
             string query = @"
                 SELECT COUNT(*) FROM Reservation
-                WHERE Equipment_Id = @Equipment_Id
+                WHERE Equipment_Id = @EquipmentId
                 AND Status IN ('Pending', 'Confirmed')
                 AND (
                     (StartDate <= @EndDate AND EndDate >= @StartDate)
@@ -205,7 +205,7 @@ namespace BusinessLogic.DataAccess
             {
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@Equipment_Id", equipmentId);
+                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
                     cmd.Parameters.AddWithValue("@StartDate", startDate);
                     cmd.Parameters.AddWithValue("@EndDate", endDate);
 

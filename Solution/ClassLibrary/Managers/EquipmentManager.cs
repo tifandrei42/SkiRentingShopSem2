@@ -12,9 +12,12 @@ namespace BusinessLogic.Managers
     public class EquipmentManager
     {
         private readonly IEquipmentMediator _equipmentMediator;
+        private StockMediator _stockMediator;
+
         public EquipmentManager(IEquipmentMediator equipmentMediator)
         {
             _equipmentMediator = equipmentMediator;
+            _stockMediator = new StockMediator();
         }
 
         public void AddEquipment(Equipment equipment)
@@ -45,6 +48,10 @@ namespace BusinessLogic.Managers
         public void DeleteEquipment(int equipmentId)
         {
             _equipmentMediator.DeleteEquipment(equipmentId);
+        }
+        public List<dynamic> GetAllEquipmentWithStock()
+        {
+            return _stockMediator.GetAllEquipmentWithStock();
         }
 
     }
