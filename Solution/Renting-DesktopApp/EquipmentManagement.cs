@@ -1,7 +1,7 @@
-﻿using BusinessLogic.Interfaces;
+﻿using BusinessLogic.Entities;
+using BusinessLogic.Interfaces;
+using BusinessLogic.Managers;
 using ClassLibrary.DataAccess;
-using ClassLibrary.Managers;
-using ClassLibrary.ObjectClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

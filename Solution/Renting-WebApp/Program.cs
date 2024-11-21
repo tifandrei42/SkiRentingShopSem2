@@ -1,8 +1,8 @@
 using Westwind.AspNetCore.LiveReload;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using ClassLibrary.Managers;
 using BusinessLogic.Interfaces;
-using ClassLibrary.DataAccess;
+using BusinessLogic.Managers;
+using BusinessLogic.DataAccess;
 
 
 var builder = WebApplication.CreateBuilder(args);

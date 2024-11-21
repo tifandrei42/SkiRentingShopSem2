@@ -1,5 +1,5 @@
-﻿using ClassLibrary.DataAccess;
-using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.DataAccess;
+using BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.Managers
+namespace BusinessLogic.Managers
 {
     public class CustomerManager
     {
@@ -23,8 +23,8 @@ namespace ClassLibrary.Managers
 
         public void AddCustomer(Customer customer)
         {
-            _customerMediator.CreateCustomer(customer);  
-           
+            _customerMediator.CreateCustomer(customer);
+
         }
 
         public async Task<Customer> CheckCredentialsAsync(string email, string password)

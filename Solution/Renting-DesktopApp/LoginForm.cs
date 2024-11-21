@@ -1,6 +1,6 @@
-using ClassLibrary.ObjectClasses;
-using ClassLibrary.Managers;
 using ClassLibrary.DataAccess;
+using BusinessLogic.Managers;
+using BusinessLogic.Entities;
 
 namespace Renting_Application
 {

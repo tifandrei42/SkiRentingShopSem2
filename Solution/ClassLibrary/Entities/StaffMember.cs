@@ -6,7 +6,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.ObjectClasses
+namespace BusinessLogic.Entities
 {
     public class StaffMember : User
     {
@@ -21,21 +21,21 @@ namespace ClassLibrary.ObjectClasses
         public StaffMember(int userId, string firstName, string lastName, string username, string email, string password, int staffId, string role)
             : base(userId, firstName, lastName, username, email, password)
         {
-            this.StaffId = staffId;
-            this.Role = role;
+            StaffId = staffId;
+            Role = role;
         }
 
         public StaffMember(string firstName, string lastName, string username, string email, string password, int staffId, string role)
             : base(firstName, lastName, username, email, password)
         {
-            this.StaffId = staffId;
-            this.Role = role;
+            StaffId = staffId;
+            Role = role;
         }
 
         public StaffMember() { }
         public override void Login()
         {
-            
+
         }
 
     }

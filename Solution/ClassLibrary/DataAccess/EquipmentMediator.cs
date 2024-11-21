@@ -1,13 +1,13 @@
-﻿using ClassLibrary.ObjectClasses;
-using BusinessLogic.Interfaces;
+﻿using BusinessLogic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessLogic.Entities;
 
-namespace ClassLibrary.DataAccess
+namespace BusinessLogic.DataAccess
 {
     public class EquipmentMediator : DbAccess, IEquipmentMediator
     {
@@ -33,7 +33,7 @@ namespace ClassLibrary.DataAccess
 
                     connection.Open();
                     int equipmentId = Convert.ToInt32(cmd.ExecuteScalar());
-                    equipment.EquipmentId = equipmentId;  
+                    equipment.EquipmentId = equipmentId;
                 }
             }
             catch (SqlException ex)

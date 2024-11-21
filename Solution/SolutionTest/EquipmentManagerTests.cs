@@ -1,4 +1,4 @@
-using ClassLibrary.Managers;
+using BusinessLogic.Managers;
 using ClassLibrary.ObjectClasses;
 using SolutionTest.Utils;
 

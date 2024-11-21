@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ClassLibrary.ObjectClasses;
 using System.ComponentModel.DataAnnotations;
-using ClassLibrary.Managers;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using BusinessLogic.Managers;
+using BusinessLogic.Entities;
 
 namespace Renting_Website.Pages
 {
@@ -43,7 +43,7 @@ namespace Renting_Website.Pages
 
             var customer = await _customerManager.CheckCredentialsAsync(Email, Password);  // Async check
 
-            if (Password != customer.Password)
+            if (customer == null || !BCrypt.Net.BCrypt.Verify(Password, customer.Password))
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return Page();
@@ -54,7 +54,8 @@ namespace Renting_Website.Pages
                 new Claim(ClaimTypes.Name, customer.Username),
                 new Claim(ClaimTypes.Email, customer.Email),
                 new Claim("FullName", $"{customer.FirstName} {customer.LastName}"),
-                new Claim(ClaimTypes.Role, "Customer")
+                new Claim(ClaimTypes.Role, "Customer"),
+                new Claim("UserId", customer.UserId.ToString())
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

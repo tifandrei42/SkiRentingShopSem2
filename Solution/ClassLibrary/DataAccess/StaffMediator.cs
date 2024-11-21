@@ -1,4 +1,4 @@
-﻿using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.DataAccess
+namespace BusinessLogic.DataAccess
 {
     public class StaffMemberMediator : DbAccess
     {
@@ -235,10 +235,10 @@ namespace ClassLibrary.DataAccess
                                 StaffId = (int)reader["Staff_Id"],
                                 Role = reader["Role"].ToString(),
                                 UserId = (int)reader["User_Id"],
-                                FirstName = reader["FirstName"].ToString(), 
-                                LastName = reader["LastName"].ToString(), 
-                                Email = reader["Email"].ToString(), 
-                                Password = reader["Password"].ToString() 
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                Password = reader["Password"].ToString()
                             };
                         }
                     }
@@ -263,7 +263,7 @@ namespace ClassLibrary.DataAccess
                 connection.Close();
             }
 
-            return null;  
+            return null;
         }
     }
 }

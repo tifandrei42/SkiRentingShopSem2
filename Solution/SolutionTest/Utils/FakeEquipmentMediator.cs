@@ -1,5 +1,5 @@
-﻿using BusinessLogic.Interfaces;
-using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.Entities;
+using BusinessLogic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

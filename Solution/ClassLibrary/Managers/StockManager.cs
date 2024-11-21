@@ -26,5 +26,10 @@ namespace BusinessLogic.Managers
         {
             return _stockMediator.GetStockByEquipmentId(equipmentId);
         }
+
+        public int GetNumberOfStockByEquipmentId(int equipmentId)
+        {
+            return _stockMediator.GetNumberOfStockByEquipmentId(equipmentId);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.DataAccess
+namespace BusinessLogic.DataAccess
 {
     public class CustomerMediator : DbAccess
     {
@@ -25,12 +25,12 @@ namespace ClassLibrary.DataAccess
 
                 using (SqlCommand cmd = new SqlCommand(userSql, connection))
                 {
-                   
+
                     cmd.Parameters.AddWithValue("@FirstName", customer.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", customer.LastName);
                     cmd.Parameters.AddWithValue("@Username", customer.Username);
                     cmd.Parameters.AddWithValue("@Email", customer.Email);
-                    cmd.Parameters.AddWithValue("@Password", customer.Password);  
+                    cmd.Parameters.AddWithValue("@Password", customer.Password);
 
                     connection.Open();
                     userId = (int)cmd.ExecuteScalar();
@@ -70,7 +70,7 @@ namespace ClassLibrary.DataAccess
                              "JOIN Customer c ON u.userId = c.customerId " +
                              "WHERE u.userId = @CustomerId";
 
-                using (var cmd = new SqlCommand(sql, this.connection))
+                using (var cmd = new SqlCommand(sql, connection))
                 {
                     cmd.Parameters.AddWithValue("@CustomerId", customerId);
                     connection.Open();
@@ -82,17 +82,17 @@ namespace ClassLibrary.DataAccess
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
 
-            return reader; 
+            return reader;
         }
 
-       
+
         public void UpdateCustomer(int customerId, string phoneNumber, string address)
         {
             try
             {
                 string sql = "UPDATE Customer SET phoneNumber = @PhoneNumber, address = @Address WHERE customerId = @CustomerId";
 
-                using (var cmd = new SqlCommand(sql, this.connection))
+                using (var cmd = new SqlCommand(sql, connection))
                 {
                     cmd.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
                     cmd.Parameters.AddWithValue("@Address", address);
@@ -112,7 +112,7 @@ namespace ClassLibrary.DataAccess
             }
         }
 
-        
+
         public void DeleteCustomer(int customerId)
         {
             try
@@ -120,7 +120,7 @@ namespace ClassLibrary.DataAccess
                 string sql = "DELETE FROM Customer WHERE customerId = @CustomerId;" +
                              "DELETE FROM User WHERE userId = @CustomerId";
 
-                using (var cmd = new SqlCommand(sql, this.connection))
+                using (var cmd = new SqlCommand(sql, connection))
                 {
                     cmd.Parameters.AddWithValue("@CustomerId", customerId);
 
@@ -149,11 +149,11 @@ namespace ClassLibrary.DataAccess
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    await connection.OpenAsync(); 
+                    await connection.OpenAsync();
 
-                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())  
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        if (await reader.ReadAsync())  
+                        if (await reader.ReadAsync())
                         {
                             customer = new Customer
                             {
@@ -162,7 +162,7 @@ namespace ClassLibrary.DataAccess
                                 FirstName = reader["FirstName"].ToString(),
                                 LastName = reader["LastName"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                Password = reader["Password"].ToString()  
+                                Password = reader["Password"].ToString()
                             };
                         }
                     }
@@ -170,12 +170,12 @@ namespace ClassLibrary.DataAccess
             }
             catch (SqlException ex)
             {
-                
+
                 Console.WriteLine($"SQL Error: {ex.Message}");
             }
             finally
             {
-                await connection.CloseAsync();  
+                await connection.CloseAsync();
             }
 
             return customer;

@@ -1,39 +1,55 @@
-﻿using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.DataAccess;
+using BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Managers
 {
     public class ReservationManager
     {
         private readonly ReservationMediator _reservationMediator;
-        private readonly StockManager _stockManager;
+        private readonly EquipmentMediator _equipmentMediator;
 
         public ReservationManager()
         {
             _reservationMediator = new ReservationMediator();
-            _stockManager = new StockManager();
+            _equipmentMediator = new EquipmentMediator();
         }
 
         public bool CreateReservation(Reservation reservation)
         {
-            var stock = _stockManager.GetStockByEquipmentId(reservation.EquipmentId);
-
-            if (stock.Quantity <= 0)
+            Equipment equipment = _equipmentMediator.GetEquipmentById(reservation.EquipmentId);
+            if (equipment == null)
             {
-                throw new InvalidOperationException("Insufficient stock for this equipment.");
+                throw new Exception("Equipment not found.");
             }
 
-            // Deduct stock
-            _stockManager.UpdateStock(reservation.EquipmentId, -1);
+            bool isAvailable = _reservationMediator.IsEquipmentAvailable(reservation.EquipmentId, reservation.StartDate, reservation.EndDate);
+            if (!isAvailable)
+            {
+                return false;
+            }
 
-            // Save reservation
+            int rentalDays = (reservation.EndDate - reservation.StartDate).Days;
+            reservation.TotalPrice = rentalDays * equipment.PricePerDay;
+
             _reservationMediator.CreateReservation(reservation);
-
             return true;
+        }
+
+        public void CancelReservation(int reservationId)
+        {
+            _reservationMediator.UpdateReservationStatus(reservationId, "Cancelled");
+        }
+
+        public List<Reservation> GetReservationsByCustomerId(int customerId)
+        {
+            return _reservationMediator.GetReservationsByCustomerId(customerId);
+        }
+
+        public Reservation GetReservationById(int reservationId)
+        {
+            return _reservationMediator.GetReservationById(reservationId);
         }
     }
 }

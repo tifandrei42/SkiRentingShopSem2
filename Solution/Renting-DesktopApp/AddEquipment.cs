@@ -1,5 +1,5 @@
-﻿using ClassLibrary.Managers;
-using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.Entities;
+using BusinessLogic.Managers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

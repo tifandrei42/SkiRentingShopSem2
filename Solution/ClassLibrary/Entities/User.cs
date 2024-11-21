@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.ObjectClasses
+namespace BusinessLogic.Entities
 {
     public abstract class User
     {
-        // Keep only properties, no need for private fields if using properties directly
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "First Name is required.")]
@@ -34,34 +33,31 @@ namespace ClassLibrary.ObjectClasses
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        // Constructors - Use properties to keep everything consistent
         public User(int userId, string firstName, string lastName, string username, string email, string password)
         {
-            this.UserId = userId;
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.Username = username;
-            this.Email = email;
-            this.Password = password;
+            UserId = userId;
+            FirstName = firstName;
+            LastName = lastName;
+            Username = username;
+            Email = email;
+            Password = password;
         }
 
         public User(string firstName, string lastName, string username, string email, string password)
         {
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.Username = username;
-            this.Email = email;
-            this.Password = password;
+            FirstName = firstName;
+            LastName = lastName;
+            Username = username;
+            Email = email;
+            Password = password;
         }
 
         public User() { }
 
         public virtual void Register()
         {
-            // Implementation of registration logic
         }
-
-        // Abstract method, to be implemented by subclasses like Customer or StaffMember
+        
         public abstract void Login();
     }
 }

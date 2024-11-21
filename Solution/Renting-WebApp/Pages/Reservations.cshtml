@@ -1,0 +1,47 @@
+﻿@page
+@model Renting_Website.Pages.ReservationsModel
+@{
+    ViewData["Title"] = "My Reservations";
+}
+
+<h2>My Reservations</h2>
+
+@if (Model.Reservations.Count == 0)
+{
+    <p>You have no active reservations.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Equipment</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reservation in Model.Reservations)
+            {
+                <tr>
+                    <td>@reservation.EquipmentId</td>
+                    <td>@reservation.StartDate.ToShortDateString()</td>
+                    <td>@reservation.EndDate.ToShortDateString()</td>
+                    <td>@reservation.TotalPrice.ToString("C")</td>
+                    <td>@reservation.Status</td>
+                    <td>
+                        @if (reservation.Status != "Cancelled")
+                        {
+                            <form method="post" asp-route-id="@reservation.ReservationId">
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

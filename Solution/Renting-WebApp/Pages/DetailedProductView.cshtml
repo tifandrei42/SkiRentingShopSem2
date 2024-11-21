@@ -22,9 +22,10 @@
             <p><strong>Size:</strong> @Model.Equipment.Size</p>
             <p><strong>Type:</strong> @Model.Equipment.EquipmentType</p>
             <p><strong>Price per Day:</strong> @Model.Equipment.PricePerDay.ToString("C")</p>
+            <p><strong>Stock:</strong> @Model.Stock</p>
 
-            <a asp-page="/ReserveEquipment" asp-route-id="@Model.Equipment.EquipmentId" class="btn btn-success mt-3">Reserve Now</a>
-            <a asp-page="/Content" class="btn btn-secondary mt-3">Back to Equipment List</a>
+            <a asp-page="/ReserveEquipment" asp-route-id="@Model.Equipment.EquipmentId" class="btn btn-primary">Make Reservation</a>
+            <a asp-page="/Content" class="btn btn-secondary">Back to Equipment List</a>
         </div>
     </div>
 </div>

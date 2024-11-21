@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.ObjectClasses
+namespace BusinessLogic.Entities
 {
     public class Customer : User
     {
@@ -21,18 +21,18 @@ namespace ClassLibrary.ObjectClasses
         public Customer(int userId, string firstName, string lastName, string username, string email, string password, string phoneNumber, string address)
             : base(userId, firstName, lastName, username, email, password)
         {
-            this.PhoneNumber = phoneNumber;
-            this.Address = address;
+            PhoneNumber = phoneNumber;
+            Address = address;
         }
 
         public Customer(string firstName, string lastName, string username, string email, string password, string phoneNumber, string address)
             : base(firstName, lastName, username, email, password)
         {
-            this.PhoneNumber = phoneNumber;
-            this.Address = address;
+            PhoneNumber = phoneNumber;
+            Address = address;
         }
-        public Customer() 
-        { 
+        public Customer()
+        {
         }
         public override void Login()
         {

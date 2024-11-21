@@ -1,5 +1,5 @@
-using ClassLibrary.Managers;
-using ClassLibrary.ObjectClasses;
+using BusinessLogic.Entities;
+using BusinessLogic.Managers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;

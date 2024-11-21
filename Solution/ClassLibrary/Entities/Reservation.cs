@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.ObjectClasses
+namespace BusinessLogic.Entities
 {
     public class Reservation
     {
@@ -75,11 +75,11 @@ namespace ClassLibrary.ObjectClasses
             this.reservationId = reservationId;
             this.equipmentId = equipmentId;
             this.customerId = customerId;
-            this.reservationDate = DateTime.Now;
+            reservationDate = DateTime.Now;
             this.startDate = startDate;
             this.endDate = endDate;
             this.totalPrice = totalPrice;
-            this.status = "Pending";
+            status = "Pending";
         }
 
         public Reservation(int reservationId, int equipmentId, int customerId, DateTime reservationDate, DateTime startDate, DateTime endDate, decimal totalPrice, string status)

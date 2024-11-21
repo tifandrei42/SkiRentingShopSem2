@@ -1,5 +1,4 @@
 ﻿using BusinessLogic.Entities;
-using ClassLibrary.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -11,6 +10,7 @@ namespace BusinessLogic.DataAccess
 {
     public class StockMediator : DbAccess
     {
+        public StockMediator() : base() { }
         public void UpdateStock(int equipmentId, int quantity)
         {
             string query = @"
@@ -62,5 +62,43 @@ namespace BusinessLogic.DataAccess
 
             return stock;
         }
+
+        public int GetNumberOfStockByEquipmentId(int equipmentId)
+        {
+            if (connection == null)
+            {
+                throw new InvalidOperationException("Database connection is not initialized.");
+            }
+
+            int stock = 0;
+            string query = "SELECT Quantity FROM Stock WHERE Equipment_Id = @EquipmentId";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
+
+                    connection.Open();
+                    var result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        stock = Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return stock;
+        }
+
     }
 }

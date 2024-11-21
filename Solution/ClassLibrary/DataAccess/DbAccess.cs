@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.DataAccess
+namespace BusinessLogic.DataAccess
 {
     public class DbAccess
     {

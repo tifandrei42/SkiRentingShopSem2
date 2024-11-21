@@ -1,12 +1,12 @@
-﻿using ClassLibrary.DataAccess;
-using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.DataAccess;
+using BusinessLogic.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.Managers
+namespace BusinessLogic.Managers
 {
     public class StaffMemberManager
     {
@@ -48,10 +48,10 @@ namespace ClassLibrary.Managers
 
             if (staffMember != null && staffMember.Password == password)
             {
-                return staffMember;  
+                return staffMember;
             }
 
-            return null;  
+            return null;
         }
     }
 }

@@ -1,13 +1,13 @@
-﻿using BusinessLogic.Interfaces;
-using ClassLibrary.DataAccess;
-using ClassLibrary.ObjectClasses;
+﻿using BusinessLogic.Entities;
+using BusinessLogic.Interfaces;
+using BusinessLogic.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.Managers
+namespace BusinessLogic.Managers
 {
     public class EquipmentManager
     {
