@@ -17,7 +17,7 @@ namespace BusinessLogic.DataAccess
                 "Server=mssqlstud.fhict.local;" +
                 "Database=dbi455422;" +
                 "User Id=dbi455422;" +
-                "Password=h0st1;" +
+                "Password=zed_987654321;" +
                 "TrustServerCertificate=True;";
 
             this.connection = new SqlConnection(connection);

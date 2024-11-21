@@ -26,17 +26,26 @@ namespace Renting_Website.Pages
         [BindProperty]
         public DateTime EndDate { get; set; }
 
-        public Equipment Equipment { get; private set; }
+        public Equipment Equipment { get; set; }
 
         public IActionResult OnGet()
         {
             Equipment = _equipmentManager.GetEquipmentById(Id);
+            if (Equipment == null)
+            {
+                return RedirectToPage("/Error", new { errorMessage = "The requested equipment was not found." });
+            }
+
+            StartDate = DateTime.Today;
+            EndDate = DateTime.Today.AddDays(1);
 
             return Page();
         }
 
         public IActionResult OnPost()
         {
+            Equipment = _equipmentManager.GetEquipmentById(Id); 
+
             var userId = User.FindFirst("UserId")?.Value;
 
             if (Equipment == null)
