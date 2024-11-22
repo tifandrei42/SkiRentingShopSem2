@@ -96,7 +96,7 @@ namespace BusinessLogic.DataAccess
         {
             List<Reservation> reservations = new List<Reservation>();
             string query = @"
-                SELECT Reservation_Id, Equipment_Id, Customer_Id, ReservationDate, StartDate, EndDate, TotalPrice, Status
+                SELECT Reservation_Id, Customer_Id, ReservationDate, StartDate, EndDate, TotalPrice, Status
                 FROM Reservation
                 WHERE Customer_Id = @CustomerId";
 

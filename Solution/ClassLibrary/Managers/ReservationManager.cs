@@ -51,5 +51,6 @@ namespace BusinessLogic.Managers
         {
             return _reservationMediator.GetReservationById(reservationId);
         }
+
     }
 }

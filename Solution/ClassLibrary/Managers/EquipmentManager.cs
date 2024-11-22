@@ -54,5 +54,27 @@ namespace BusinessLogic.Managers
             return _stockMediator.GetAllEquipmentWithStock();
         }
 
+        public List<Equipment> GetFilteredEquipment(string brandFilter, decimal? minPrice, decimal? maxPrice)
+        {
+            var allEquipment = _equipmentMediator.GetAllEquipment();
+
+            if (!string.IsNullOrEmpty(brandFilter))
+            {
+                allEquipment = allEquipment.Where(e => e.Brand.Contains(brandFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (minPrice.HasValue)
+            {
+                allEquipment = allEquipment.Where(e => e.PricePerDay >= minPrice.Value).ToList();
+            }
+
+            if (maxPrice.HasValue)
+            {
+                allEquipment = allEquipment.Where(e => e.PricePerDay <= maxPrice.Value).ToList();
+            }
+
+            return allEquipment;
+        }
+
     }
 }

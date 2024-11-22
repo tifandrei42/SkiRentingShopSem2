@@ -69,9 +69,14 @@ namespace Renting_Application
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                _imagePath = openFileDialog.FileName;
-                pictureBoxEquipment.Image = Image.FromFile(_imagePath);
+                string fileName = Path.GetFileName(openFileDialog.FileName);
+
+                _imagePath = Path.Combine("images", fileName);
+
+                pictureBoxEquipment.Image = Image.FromFile(openFileDialog.FileName);
                 pictureBoxEquipment.SizeMode = PictureBoxSizeMode.Zoom;
+
+                MessageBox.Show($"Image uploaded successfully. Path: {_imagePath}");
             }
         }
 

@@ -1,5 +1,5 @@
+using BusinessLogic.Entities;
 using BusinessLogic.Managers;
-using ClassLibrary.ObjectClasses;
 using SolutionTest.Utils;
 
 namespace SolutionTest
