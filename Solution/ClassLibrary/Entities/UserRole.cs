@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.Interfaces
+namespace BusinessLogic.Entities
 {
-    internal interface Interface1
+    public enum UserRole
     {
+        StaffMember = 1,
+        Customer = 2
     }
 }

@@ -16,12 +16,12 @@ namespace Renting_Application
 {
     public partial class Menu : Form
     {
-        private StaffMember _loggedInStaffMember;
+        //private StaffMember _loggedInStaffMember;
         private readonly EquipmentManager _equipmentManager;
-        public Menu(StaffMember staffMember)
+        public Menu( )
         {
             InitializeComponent();
-            _loggedInStaffMember = staffMember;
+            //_loggedInStaffMember = staffMember;
 
             IEquipmentMediator mediator = new EquipmentMediator();
             _equipmentManager = new EquipmentManager(mediator);
@@ -42,6 +42,13 @@ namespace Renting_Application
             this.Hide();
             EquipmentManagement equipmentManagement = new EquipmentManagement(_equipmentManager);
             equipmentManagement.Show();
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            LoginForm loginForm = new LoginForm();
+            loginForm.Show();
         }
     }
 }

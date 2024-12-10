@@ -16,25 +16,22 @@ namespace Renting_Application
 {
     public partial class EquipmentManagement : Form
     {
-        private EquipmentManager _equipmentManager;
+        private readonly EquipmentManager _equipmentManager;
 
         public EquipmentManagement(EquipmentManager equipmentManager)
         {
             InitializeComponent();
             _equipmentManager = equipmentManager;
-        }
-
-        private void EquipmentManagement_Load(object sender, EventArgs e)
-        {
             LoadEquipmentData();
         }
+
 
         private void LoadEquipmentData()
         {
             try
             {
                 var equipmentList = _equipmentManager.GetAllEquipment();
-
+               
                 dgvEquipment.DataSource = new BindingList<Equipment>(equipmentList);
 
                 dgvEquipment.Columns["EquipmentId"].Visible = false;
@@ -51,6 +48,21 @@ namespace Renting_Application
         {
             AddEquipment addForm = new AddEquipment(_equipmentManager);
             if (addForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadEquipmentData();
+            }
+        }
+
+        private void btnUpdateEquipment_Click(object sender, EventArgs e)
+        {
+            if (dgvEquipment.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select an employee to update.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            //Equipment equipment = (Equipment)dgvEquipment.SelectedRows[0];
+                AddEquipment addForm1 = new AddEquipment(_equipmentManager);
+            if (addForm1.ShowDialog() == DialogResult.OK)
             {
                 LoadEquipmentData();
             }

@@ -22,7 +22,6 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
 });
-builder.Services.AddScoped<CustomerManager>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
