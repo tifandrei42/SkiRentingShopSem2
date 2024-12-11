@@ -30,20 +30,25 @@
         {
             dgvEquipment = new DataGridView();
             btnAddEquipment = new Button();
+            btnUpdateEquipment = new Button();
+            btnDeleteEquipment = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvEquipment).BeginInit();
             SuspendLayout();
             // 
             // dgvEquipment
             // 
             dgvEquipment.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvEquipment.GridColor = SystemColors.Info;
             dgvEquipment.Location = new Point(21, 58);
             dgvEquipment.Name = "dgvEquipment";
-            dgvEquipment.Size = new Size(730, 472);
+            dgvEquipment.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dgvEquipment.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvEquipment.Size = new Size(711, 312);
             dgvEquipment.TabIndex = 0;
             // 
             // btnAddEquipment
             // 
-            btnAddEquipment.Location = new Point(824, 93);
+            btnAddEquipment.Location = new Point(848, 95);
             btnAddEquipment.Name = "btnAddEquipment";
             btnAddEquipment.Size = new Size(177, 47);
             btnAddEquipment.TabIndex = 1;
@@ -51,11 +56,32 @@
             btnAddEquipment.UseVisualStyleBackColor = true;
             btnAddEquipment.Click += btnAddEquipment_Click;
             // 
+            // btnUpdateEquipment
+            // 
+            btnUpdateEquipment.Location = new Point(848, 195);
+            btnUpdateEquipment.Name = "btnUpdateEquipment";
+            btnUpdateEquipment.Size = new Size(177, 47);
+            btnUpdateEquipment.TabIndex = 2;
+            btnUpdateEquipment.Text = "Update selected equipment";
+            btnUpdateEquipment.UseVisualStyleBackColor = true;
+            btnUpdateEquipment.Click += btnUpdateEquipment_Click;
+            // 
+            // btnDeleteEquipment
+            // 
+            btnDeleteEquipment.Location = new Point(848, 299);
+            btnDeleteEquipment.Name = "btnDeleteEquipment";
+            btnDeleteEquipment.Size = new Size(177, 47);
+            btnDeleteEquipment.TabIndex = 3;
+            btnDeleteEquipment.Text = "Delete selected equipment";
+            btnDeleteEquipment.UseVisualStyleBackColor = true;
+            // 
             // EquipmentManagement
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1129, 572);
+            Controls.Add(btnDeleteEquipment);
+            Controls.Add(btnUpdateEquipment);
             Controls.Add(btnAddEquipment);
             Controls.Add(dgvEquipment);
             Name = "EquipmentManagement";
@@ -68,5 +94,7 @@
 
         private DataGridView dgvEquipment;
         private Button btnAddEquipment;
+        private Button btnUpdateEquipment;
+        private Button btnDeleteEquipment;
     }
 }

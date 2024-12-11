@@ -6,6 +6,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using BusinessLogic.Managers;
 using BusinessLogic.Entities;
+using BusinessLogic.Interfaces;
+using BusinessLogic.Strategies;
+using BusinessLogic.DataAccess;
 
 namespace Renting_Website.Pages
 {
@@ -21,11 +24,15 @@ namespace Renting_Website.Pages
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
 
-        private readonly CustomerManager _customerManager;
+        private readonly IAuthenticationStrategy authenticationService;
         public string PageTitle { get; private set; } = "Login";
-        public LoginModel(CustomerManager customerManager)
+        public LoginModel()
         {
-            _customerManager = customerManager;
+            IUserMediator userMediator = new UserMediator();
+            UserManager userManager = new UserManager(userMediator);
+            EncriptionManager encriptionManager = new EncriptionManager();
+
+            authenticationService = new CustomerStrategy(userManager, encriptionManager);
         }
 
         public IActionResult OnGet(string returnUrl = null)
@@ -41,9 +48,9 @@ namespace Renting_Website.Pages
                 return Page();
             }
 
-            var customer = await _customerManager.CheckCredentialsAsync(Email, Password);  // Async check
+            User customer = authenticationService.Login(Email, Password);
 
-            if (customer == null || !BCrypt.Net.BCrypt.Verify(Password, customer.Password))
+            if (customer == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return Page();
@@ -51,7 +58,7 @@ namespace Renting_Website.Pages
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, customer.Username),
+                new Claim(ClaimTypes.Name, customer.UserName),
                 new Claim(ClaimTypes.Email, customer.Email),
                 new Claim("FullName", $"{customer.FirstName} {customer.LastName}"),
                 new Claim(ClaimTypes.Role, "Customer"),
