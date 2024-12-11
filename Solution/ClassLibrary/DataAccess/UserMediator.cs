@@ -214,7 +214,7 @@ namespace BusinessLogic.DataAccess
 
         public User GetUserByEmail(string email)
         {
-            User user = null;
+            User? user = null;
             string query = @"
                 SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId, Address, PhoneNumber
                 FROM [dbo].[User] 
@@ -257,11 +257,6 @@ namespace BusinessLogic.DataAccess
             {
                 if (connection.State == System.Data.ConnectionState.Open)
                     connection.Close();
-            }
-
-            if (user == null)
-            {
-                throw new InvalidOperationException($"No user found for the email: {email}");
             }
 
             return user;

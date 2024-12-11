@@ -6,12 +6,12 @@ namespace Renting_Application
 {
     public partial class LoginForm : Form
     {
-        private StaffMemberManager _staffMemberManager;
+        //private StaffMemberManager _staffMemberManager;
         public LoginForm()
         {
             InitializeComponent();
             tbPassword.PasswordChar = '*';
-            _staffMemberManager = new StaffMemberManager();
+            //_staffMemberManager = new StaffMemberManager();
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -20,20 +20,20 @@ namespace Renting_Application
             string password = tbPassword.Text;
 
 
-            StaffMember staffMember = _staffMemberManager.CheckCredentials(email, password);
+            //StaffMember staffMember = _staffMemberManager.CheckCredentials(email, password);
 
-            if (staffMember != null)
-            {
+            //if ()
+            //{
 
-                this.Hide();
-                Menu menu = new Menu(staffMember);
-                menu.Show();
+            //    this.Hide();
+            //    Menu menu = new Menu();
+            //    menu.Show();
 
-            }
-            else
-            {
-                MessageBox.Show("Invalid email or password. Please try again.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Invalid email or password. Please try again.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

@@ -16,8 +16,8 @@ namespace BusinessLogic.Strategies
 
         public CustomerStrategy(UserManager userManager, EncriptionManager encriptionManager)
         {
-            this.userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            this.encriptionManager = encriptionManager ?? throw new ArgumentNullException(nameof(encriptionManager));
+            this.userManager = userManager;
+            this.encriptionManager = encriptionManager;
         }
 
         public User? Login(string email, string password)
