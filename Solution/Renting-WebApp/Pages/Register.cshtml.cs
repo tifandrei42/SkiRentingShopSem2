@@ -1,5 +1,8 @@
+using BusinessLogic.DataAccess;
 using BusinessLogic.Entities;
+using BusinessLogic.Interfaces;
 using BusinessLogic.Managers;
+using BusinessLogic.Strategies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
@@ -9,15 +12,20 @@ namespace Renting_Website.Pages
     public class RegisterModel : PageModel
     {
         [BindProperty]
-        public Customer Customer { get; set; } 
+        public User User { get; set; }
 
-        public CustomerManager CustomerManager { get; set; }
+
+        private readonly LoginService loginService;
 
         public string PageTitle { get; private set; } = "Register";
 
         public RegisterModel()
         {
-            CustomerManager = new CustomerManager();  
+            IUserMediator userMediator = new UserMediator();
+            UserManager userManager = new UserManager(userMediator);
+            EncriptionManager encriptionManager = new EncriptionManager();
+
+            loginService = new LoginService(userManager, encriptionManager);
         }
 
         public void OnGet()
@@ -29,15 +37,8 @@ namespace Renting_Website.Pages
         {
             if (ModelState.IsValid)
             {
-                if (CustomerManager.CheckEmail(Customer))
-                {
-                    ModelState.AddModelError("Customer.Email", "The email address is already taken.");
-                    return Page();
-                }
-
-                Customer.Password = CustomerManager.HashPassword(Customer.Password);
-
-                CustomerManager.AddCustomer(Customer);
+                User.Role = UserRole.Customer;
+                loginService.Register(User, User.Password);
                 return RedirectToPage("Index");
             }
 

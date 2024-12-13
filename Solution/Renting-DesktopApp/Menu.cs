@@ -11,17 +11,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BusinessLogic.Strategies;
 
 namespace Renting_Application
 {
     public partial class Menu : Form
     {
-        private StaffMember _loggedInStaffMember;
+        //private StaffMember _loggedInStaffMember;
         private readonly EquipmentManager _equipmentManager;
-        public Menu(StaffMember staffMember)
+        private LoginService loginService;
+
+        public Menu(User user)
         {
             InitializeComponent();
-            _loggedInStaffMember = staffMember;
+            //_loggedInStaffMember = staffMember;
 
             IEquipmentMediator mediator = new EquipmentMediator();
             _equipmentManager = new EquipmentManager(mediator);
@@ -42,6 +45,13 @@ namespace Renting_Application
             this.Hide();
             EquipmentManagement equipmentManagement = new EquipmentManagement(_equipmentManager);
             equipmentManagement.Show();
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            LoginForm loginForm = new();
+            loginForm.Show();
         }
     }
 }

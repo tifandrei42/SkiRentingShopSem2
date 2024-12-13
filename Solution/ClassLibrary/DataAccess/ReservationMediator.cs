@@ -45,7 +45,7 @@ namespace BusinessLogic.DataAccess
             }
         }
 
-        public Reservation GetReservationById(int reservationId)
+        public Reservation? GetReservationById(int reservationId)
         {
             Reservation reservation = null;
             string query = @"
@@ -191,6 +191,78 @@ namespace BusinessLogic.DataAccess
             }
         }
 
+        public Stock GetStockByEquipmentId(int equipmentId)
+        {
+            Stock? stock = null;
+            string query = "SELECT * FROM Stock WHERE Equipment_Id = @EquipmentId";
+
+            using (SqlCommand cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
+
+                connection.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        stock = new Stock
+                        {
+                            StockId = (int)reader["Stock_Id"],
+                            EquipmentId = (int)reader["Equipment_Id"],
+                            Quantity = (int)reader["Quantity"],
+                            LastUpdated = (DateTime)reader["LastUpdated"]
+                        };
+                    }
+                }
+                connection.Close();
+            }
+
+            if (stock == null)
+            {
+                throw new InvalidOperationException($"No stock found for Equipment ID {equipmentId}");
+            }
+
+            return stock;
+        }
+
+        public int GetReservedQuantity(int equipmentId, DateTime startDate, DateTime endDate)
+        {
+            string query = @"
+        SELECT SUM(re.Quantity) 
+        FROM ReservationEquipment re
+        INNER JOIN Reservation r ON re.Reservation_Id = r.Reservation_Id
+        WHERE re.Equipment_Id = @EquipmentId
+        AND r.Status IN ('Pending', 'Confirmed')
+        AND (
+            (r.StartDate <= @EndDate AND r.EndDate >= @StartDate)
+        )";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
+                    cmd.Parameters.AddWithValue("@StartDate", startDate);
+                    cmd.Parameters.AddWithValue("@EndDate", endDate);
+
+                    connection.Open();
+                    object result = cmd.ExecuteScalar();
+                    connection.Close();
+
+                    return result == DBNull.Value ? 0 : Convert.ToInt32(result);
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in GetReservedQuantity: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
         public bool IsEquipmentAvailable(int equipmentId, DateTime startDate, DateTime endDate)
         {
             string query = @"
@@ -225,5 +297,23 @@ namespace BusinessLogic.DataAccess
                 connection.Close();
             }
         }
+
+        public bool IsEquipmentAvailable(int equipmentId, DateTime startDate, DateTime endDate, int requestedQuantity)
+        {
+            try
+            {
+                Stock stock = GetStockByEquipmentId(equipmentId);
+
+                int reservedQuantity = GetReservedQuantity(equipmentId, startDate, endDate);
+
+                return (stock.Quantity - reservedQuantity) >= requestedQuantity;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in IsEquipmentAvailable: {ex.Message}");
+                throw;
+            }
+        }
+
     }
 }

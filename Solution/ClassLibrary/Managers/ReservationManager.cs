@@ -52,5 +52,11 @@ namespace BusinessLogic.Managers
             return _reservationMediator.GetReservationById(reservationId);
         }
 
+        public bool CheckEquipmentAvailability(int equipmentId, DateTime startDate, DateTime endDate, int requestedQuantity)
+        {
+            return _reservationMediator.IsEquipmentAvailable(equipmentId, startDate, endDate, requestedQuantity);
+        }
+
+
     }
 }

@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            TextBox tbBrand;
             tbName = new TextBox();
             tbPrice = new TextBox();
             tbSize = new TextBox();
-            tbBrand = new TextBox();
-            label1 = new Label();
+            lbTitle = new Label();
             label2 = new Label();
             label4 = new Label();
             label5 = new Label();
@@ -42,15 +42,9 @@
             btnSave = new Button();
             pictureBoxEquipment = new PictureBox();
             tbType = new TextBox();
+            tbBrand = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBoxEquipment).BeginInit();
             SuspendLayout();
-            // 
-            // tbBrand
-            // 
-            tbBrand.Location = new Point(53, 132);
-            tbBrand.Name = "tbBrand";
-            tbBrand.Size = new Size(162, 23);
-            tbBrand.TabIndex = 4;
             // 
             // tbName
             // 
@@ -73,15 +67,22 @@
             tbSize.Size = new Size(162, 23);
             tbSize.TabIndex = 3;
             // 
-            // label1
+            // tbBrand
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(185, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(145, 25);
-            label1.TabIndex = 5;
-            label1.Text = "Add equipment";
+            tbBrand.Location = new Point(53, 132);
+            tbBrand.Name = "tbBrand";
+            tbBrand.Size = new Size(162, 23);
+            tbBrand.TabIndex = 4;
+            // 
+            // lbTitle
+            // 
+            lbTitle.AutoSize = true;
+            lbTitle.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbTitle.Location = new Point(185, 9);
+            lbTitle.Name = "lbTitle";
+            lbTitle.Size = new Size(145, 25);
+            lbTitle.TabIndex = 5;
+            lbTitle.Text = "Add equipment";
             // 
             // label2
             // 
@@ -97,7 +98,7 @@
             label4.AutoSize = true;
             label4.Location = new Point(299, 114);
             label4.Name = "label4";
-            label4.Size = new Size(31, 15);
+            label4.Size = new Size(32, 15);
             label4.TabIndex = 8;
             label4.Text = "Type";
             // 
@@ -146,7 +147,7 @@
             btnSave.TabIndex = 14;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += btnSave_Click_1;
+            btnSave.Click += BtnSave_Click;
             // 
             // pictureBoxEquipment
             // 
@@ -177,7 +178,7 @@
             Controls.Add(label5);
             Controls.Add(label4);
             Controls.Add(label2);
-            Controls.Add(label1);
+            Controls.Add(lbTitle);
             Controls.Add(tbBrand);
             Controls.Add(tbSize);
             Controls.Add(tbPrice);
@@ -195,7 +196,7 @@
         private TextBox tbPrice;
         private TextBox tbSize;
         private TextBox tbBrand;
-        private Label label1;
+        private Label lbTitle;
         private Label label2;
         private Label label4;
         private Label label5;

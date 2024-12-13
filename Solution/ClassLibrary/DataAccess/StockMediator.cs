@@ -38,7 +38,6 @@ namespace BusinessLogic.DataAccess
                 connection.Close();
             }
         }
-
         public Stock GetStockByEquipmentId(int equipmentId)
         {
             Stock? stock = null;
@@ -72,7 +71,6 @@ namespace BusinessLogic.DataAccess
 
             return stock;
         }
-
         public int GetNumberOfStockByEquipmentId(int equipmentId)
         {
             if (connection == null)
@@ -109,6 +107,10 @@ namespace BusinessLogic.DataAccess
 
             return stock;
         }
+
+        
+
+
         public List<Stock> GetAllStock()
         {
             List<Stock> stockList = new List<Stock>();
