@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Managers;
 using BusinessLogic.DataAccess;
+using BusinessLogic.Strategies;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IEquipmentMediator, EquipmentMediator>();
 builder.Services.AddScoped<EquipmentManager>();
 builder.Services.AddRazorPages();
@@ -22,6 +24,10 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
 });
+builder.Services.AddScoped<IUserMediator, UserMediator>();
+builder.Services.AddScoped<UserManager>();
+builder.Services.AddScoped<EncriptionManager>();
+builder.Services.AddScoped<LoginService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

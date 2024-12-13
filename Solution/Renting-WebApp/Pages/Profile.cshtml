@@ -1,15 +1,33 @@
-﻿@page
+﻿@page "{id:int}"
 @model Renting_Website.Pages.CustomerProfileModel
 @{
     ViewData["Title"] = "Customer Profile";
 }
 @using System.Security.Claims
+<div class="container profile-container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card profile-card p-4 text-light">
+        <div class="card-body text-center">
+            <div class="mb-3 profile-icon">
+                <img src="/path-to-snowboard-icon.png" alt="Snowboard Icon">
+            </div>
 
+            <h3 class="card-title text-center mb-4">Your Profile</h3>
 
-<h2>Customer Profile</h2>
+            <!-- Profile Information -->
+            <div class="profile-info text-start">
+                <p><strong>First Name:</strong> @Model.User.FirstName</p>
+                <p><strong>Last Name:</strong> @Model.User.LastName</p>
+                <p><strong>Username:</strong> @Model.User.UserName</p>
+                <p><strong>Email:</strong> @Model.User.Email</p>
+                <p><strong>Date of Birth:</strong> @Model.User.DateOfBirth.ToShortDateString()</p>
+                <p><strong>Phone Number:</strong> @Model.User.PhoneNumber</p>
+                <p><strong>Address:</strong> @Model.User.Address</p>
+            </div>
 
-<p>Welcome, @User.FindFirst("FullName")?.Value!</p>
-<p>Email: @User.FindFirst(ClaimTypes.Email)?.Value</p>
-<p>Username: @User.Identity.Name</p>
-D
-<a asp-page="/Logout" class="btn btn-danger">Logout</a>
+            <!-- Edit Button -->
+            <div class="mt-4">
+                <a href="/Profile/Edit" class="btn btn-light profile-edit-btn">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>

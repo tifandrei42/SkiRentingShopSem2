@@ -23,16 +23,14 @@ namespace Renting_Website.Pages
         [Required(ErrorMessage = "Password is required.")]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
-
-        private readonly IAuthenticationStrategy authenticationService;
+        private readonly LoginService loginService;
         public string PageTitle { get; private set; } = "Login";
         public LoginModel()
         {
             IUserMediator userMediator = new UserMediator();
             UserManager userManager = new UserManager(userMediator);
             EncriptionManager encriptionManager = new EncriptionManager();
-
-            authenticationService = new CustomerStrategy(userManager, encriptionManager);
+            loginService = new LoginService(userManager, encriptionManager);
         }
 
         public IActionResult OnGet(string returnUrl = null)
@@ -48,7 +46,7 @@ namespace Renting_Website.Pages
                 return Page();
             }
 
-            User customer = authenticationService.Login(Email, Password);
+            User customer = loginService.Login(Email, Password);
 
             if (customer == null)
             {
@@ -77,7 +75,7 @@ namespace Renting_Website.Pages
                     ExpiresUtc = DateTime.UtcNow.AddHours(1)
                 });
 
-            returnUrl = returnUrl ?? Url.Page("/Profile");
+            returnUrl = returnUrl ?? Url.Page("/Index");
             return LocalRedirect(returnUrl);
         }
 

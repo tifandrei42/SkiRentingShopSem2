@@ -15,7 +15,7 @@ namespace Renting_Website.Pages
         public User User { get; set; }
 
 
-        private readonly IAuthenticationStrategy authenticationService;
+        private readonly LoginService loginService;
 
         public string PageTitle { get; private set; } = "Register";
 
@@ -25,7 +25,7 @@ namespace Renting_Website.Pages
             UserManager userManager = new UserManager(userMediator);
             EncriptionManager encriptionManager = new EncriptionManager();
 
-            authenticationService = new CustomerStrategy(userManager, encriptionManager);
+            loginService = new LoginService(userManager, encriptionManager);
         }
 
         public void OnGet()
@@ -38,7 +38,7 @@ namespace Renting_Website.Pages
             if (ModelState.IsValid)
             {
                 User.Role = UserRole.Customer;
-                authenticationService.Register(User, User.Password);
+                loginService.Register(User, User.Password);
                 return RedirectToPage("Index");
             }
 

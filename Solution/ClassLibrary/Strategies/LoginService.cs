@@ -9,22 +9,23 @@ using BusinessLogic.Managers;
 
 namespace BusinessLogic.Strategies
 {
-    public class CustomerStrategy : IAuthenticationStrategy
+    public class LoginService
     {
         public UserManager userManager { get; set; }
         public EncriptionManager encriptionManager { get; set; }
 
-        public CustomerStrategy(UserManager userManager, EncriptionManager encriptionManager)
+        public LoginService(UserManager userManager, EncriptionManager encriptionManager)
         {
             this.userManager = userManager;
             this.encriptionManager = encriptionManager;
         }
 
+
         public User? Login(string email, string password)
         {
             var user = userManager.GetUserByEmail(email);
 
-            if (user == null || user.Role != UserRole.Customer)
+            if (user == null)
             {
                 return null;
             }
@@ -38,9 +39,6 @@ namespace BusinessLogic.Strategies
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
-
-            if (user.Role != UserRole.Customer)
-                throw new InvalidOperationException("This login is only for customers.");
 
             user.Password = encriptionManager.HashPassword(password);
 

@@ -51,31 +51,16 @@ namespace BusinessLogic.Managers
             }
         }
 
-        /// <summary>
-        /// Retrieves a user by their ID via the mediator.
-        /// </summary>
-        /// <param name="userId">The ID of the user to retrieve.</param>
-        /// <returns>The User object if found; otherwise, null.</returns>
         public User GetUserById(int userId)
         {
             return _userMediator.GetUserById(userId);
         }
 
-        /// <summary>
-        /// Retrieves a user by their email address via the mediator.
-        /// </summary>
-        /// <param name="email">The email address of the user to retrieve.</param>
-        /// <returns>The User object if found; otherwise, null.</returns>
         public User GetUserByEmail(string email)
         {
             return _userMediator.GetUserByEmail(email);
         }
 
-        /// <summary>
-        /// Retrieves a list of users by their role via the mediator.
-        /// </summary>
-        /// <param name="role">The UserRole to filter by.</param>
-        /// <returns>A list of User objects with the specified role.</returns>
         public List<User> GetUsersByRole(UserRole role)
         {
             return _userMediator.GetUsersByRole(role);

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BusinessLogic.Strategies;
 
 namespace Renting_Application
 {
@@ -18,7 +19,9 @@ namespace Renting_Application
     {
         //private StaffMember _loggedInStaffMember;
         private readonly EquipmentManager _equipmentManager;
-        public Menu( )
+        private LoginService loginService;
+
+        public Menu(User user)
         {
             InitializeComponent();
             //_loggedInStaffMember = staffMember;
@@ -47,7 +50,7 @@ namespace Renting_Application
         private void btnLogout_Click(object sender, EventArgs e)
         {
             this.Close();
-            LoginForm loginForm = new LoginForm();
+            LoginForm loginForm = new();
             loginForm.Show();
         }
     }

@@ -3,15 +3,30 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using BusinessLogic.Managers;
+using BusinessLogic.DataAccess;
+using BusinessLogic.Interfaces;
+using BusinessLogic.Entities;
 
 namespace Renting_Website.Pages
 {
     [Authorize(Roles = "Customer")]  
     public class CustomerProfileModel : PageModel
     {
-        public void OnGet()
+        private readonly UserManager _userManager;
+        [BindProperty(SupportsGet = true)]
+        public int Id { get; set; } 
+
+        public User User { get; private set; }
+
+        public CustomerProfileModel(IUserMediator userMediator)
         {
-            
+            _userManager = new(userMediator);
+        }
+
+        public void OnGet()
+        { 
+           User = _userManager.GetUserById(Id);
         }
     }
 }

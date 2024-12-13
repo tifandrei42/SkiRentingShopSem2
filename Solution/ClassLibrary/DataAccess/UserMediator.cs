@@ -126,7 +126,7 @@ namespace BusinessLogic.DataAccess
 
             try
             {
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                using (SqlCommand cmd = new(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@UserId", userId);
                     connection.Open();
@@ -160,8 +160,6 @@ namespace BusinessLogic.DataAccess
                     connection.Close();
             }
 
-            // If no user found, you can choose to return null or throw an exception.
-            // The previous code threw an exception if user was null. We'll keep that behavior.
             if (user == null)
             {
                 throw new InvalidOperationException($"No user found for User ID {userId}");
@@ -186,7 +184,7 @@ namespace BusinessLogic.DataAccess
 
             try
             {
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                using (SqlCommand cmd = new(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@UserId", user.UserId);
                     cmd.Parameters.AddWithValue("@UserName", user.UserName);
@@ -212,14 +210,14 @@ namespace BusinessLogic.DataAccess
             }
         }
 
-        public User GetUserByEmail(string email)
+        public User? GetUserByEmail(string email)
         {
             User? user = null;
             string query = @"
-                SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId, Address, PhoneNumber
-                FROM [dbo].[User] 
-                WHERE Email = @Email;
-            ";
+        SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId, Address, PhoneNumber
+        FROM [dbo].[User] 
+        WHERE Email = @Email;
+    ";
 
             try
             {
@@ -235,15 +233,15 @@ namespace BusinessLogic.DataAccess
                             user = new User
                             {
                                 UserId = reader.GetInt32(reader.GetOrdinal("User_Id")),
-                                UserName = reader.GetString(reader.GetOrdinal("UserName")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Address = reader.GetString(reader.GetOrdinal("Address")),
-                                PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                                Password = reader.GetString(reader.GetOrdinal("Password")),
-                                DateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
-                                Role = (UserRole)reader.GetInt32(reader.GetOrdinal("RoleId"))
+                                UserName = reader.IsDBNull(reader.GetOrdinal("UserName")) ? string.Empty : reader.GetString(reader.GetOrdinal("UserName")),
+                                FirstName = reader.IsDBNull(reader.GetOrdinal("FirstName")) ? string.Empty : reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.IsDBNull(reader.GetOrdinal("LastName")) ? string.Empty : reader.GetString(reader.GetOrdinal("LastName")),
+                                Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString(reader.GetOrdinal("Email")),
+                                Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? string.Empty : reader.GetString(reader.GetOrdinal("Address")),
+                                PhoneNumber = reader.IsDBNull(reader.GetOrdinal("PhoneNumber")) ? string.Empty : reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                                Password = reader.IsDBNull(reader.GetOrdinal("Password")) ? string.Empty : reader.GetString(reader.GetOrdinal("Password")),
+                                DateOfBirth = (DateTime)(reader.IsDBNull(reader.GetOrdinal("DateOfBirth")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("DateOfBirth"))),
+                                Role = reader.IsDBNull(reader.GetOrdinal("RoleId")) ? UserRole.None : (UserRole)reader.GetInt32(reader.GetOrdinal("RoleId"))
                             };
                         }
                     }
@@ -262,9 +260,10 @@ namespace BusinessLogic.DataAccess
             return user;
         }
 
+
         public List<User> GetUsersByRole(UserRole role)
         {
-            List<User> users = new List<User>();
+            List<User> users = new();
             string query = @"
                 SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId 
                 FROM [dbo].[User]

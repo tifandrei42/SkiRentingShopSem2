@@ -45,7 +45,7 @@ namespace BusinessLogic.DataAccess
             }
         }
 
-        public Reservation GetReservationById(int reservationId)
+        public Reservation? GetReservationById(int reservationId)
         {
             Reservation reservation = null;
             string query = @"

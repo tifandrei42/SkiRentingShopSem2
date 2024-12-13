@@ -9,6 +9,7 @@ namespace BusinessLogic.Entities
     public enum UserRole
     {
         StaffMember = 1,
-        Customer = 2
+        Customer = 2,
+        None = 3
     }
 }
