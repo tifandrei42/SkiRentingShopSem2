@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLogic.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,29 +14,29 @@ namespace BusinessLogic.Entities
         public required string? Brand { get; set; }
         public string? Size { get; set; }
         public decimal PricePerDay { get; set; }
-        public required string? EquipmentType { get; set; }
+        public required EquipmentCategory Category { get; set; }
         public string? ImagePath { get; set; }
 
         public Equipment() { }
 
-        public Equipment(int equipmentId, string name, string brand, string size, decimal pricePerDay, string equipmentType, string imagePath)
+        public Equipment(int equipmentId, string name, string brand, string size, decimal pricePerDay, EquipmentCategory equipmentCategory, string imagePath)
         {
             EquipmentId = equipmentId;
             Name = name;
             Brand = brand;
             Size = size;
             PricePerDay = pricePerDay;
-            EquipmentType = equipmentType;
+            Category = equipmentCategory;
             ImagePath = imagePath;
         }
 
-        public Equipment(string name, string brand, string size, decimal pricePerDay, string equipmentType, string imagePath)
+        public Equipment(string name, string brand, string size, decimal pricePerDay, EquipmentCategory equipmentCategory, string imagePath)
         {
             Name = name;
             Brand = brand;
             Size = size;
             PricePerDay = pricePerDay;
-            EquipmentType = equipmentType;
+            Category = equipmentCategory;
             ImagePath = imagePath;
         }
     }

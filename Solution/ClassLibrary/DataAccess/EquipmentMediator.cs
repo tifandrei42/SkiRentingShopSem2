@@ -1,11 +1,9 @@
-﻿using BusinessLogic.Interfaces;
+﻿using BusinessLogic.Entities;
+using BusinessLogic.Enums;
+using BusinessLogic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BusinessLogic.Entities;
 
 namespace BusinessLogic.DataAccess
 {
@@ -18,8 +16,8 @@ namespace BusinessLogic.DataAccess
             try
             {
                 string sql = @"
-                INSERT INTO Equipment (Name, Brand, Size, PricePerDay, EquipmentType, ImagePath)
-                VALUES (@Name, @Brand, @Size, @PricePerDay, @EquipmentType, @ImagePath);
+                INSERT INTO Equipment (Name, Brand, Size, PricePerDay, Category_Id, ImagePath)
+                VALUES (@Name, @Brand, @Size, @PricePerDay, @CategoryId, @ImagePath);
                 SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand cmd = new SqlCommand(sql, connection))
@@ -28,7 +26,7 @@ namespace BusinessLogic.DataAccess
                     cmd.Parameters.AddWithValue("@Brand", equipment.Brand ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Size", equipment.Size ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@PricePerDay", equipment.PricePerDay);
-                    cmd.Parameters.AddWithValue("@EquipmentType", equipment.EquipmentType ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@CategoryId", (int)equipment.Category); // Store enum as an integer referencing Category_Id
                     cmd.Parameters.AddWithValue("@ImagePath", equipment.ImagePath ?? (object)DBNull.Value);
 
                     connection.Open();
@@ -46,10 +44,14 @@ namespace BusinessLogic.DataAccess
             }
         }
 
-        public Equipment GetEquipmentById(int id)
+        public Equipment? GetEquipmentById(int id)
         {
             Equipment equipment = null;
-            string query = "SELECT * FROM Equipment WHERE Equipment_Id = @Id";
+            string query = @"
+            SELECT e.Equipment_Id, e.Name, e.Brand, e.Size, e.PricePerDay, e.Category_Id, c.CategoryName, e.ImagePath
+            FROM Equipment e
+            INNER JOIN Category c ON e.Category_Id = c.Category_Id
+            WHERE e.Equipment_Id = @Id";
 
             using (var cmd = new SqlCommand(query, connection))
             {
@@ -65,8 +67,8 @@ namespace BusinessLogic.DataAccess
                             Name = reader["Name"].ToString(),
                             Brand = reader["Brand"].ToString(),
                             Size = reader["Size"].ToString(),
-                            EquipmentType = reader["EquipmentType"].ToString(),
                             PricePerDay = (decimal)reader["PricePerDay"],
+                            Category = (EquipmentCategory)(int)reader["Category_Id"], // Map Category_Id to the enum
                             ImagePath = reader["ImagePath"].ToString()
                         };
                     }
@@ -80,8 +82,9 @@ namespace BusinessLogic.DataAccess
         {
             List<Equipment> equipmentList = new List<Equipment>();
             string sql = @"
-        SELECT Equipment_Id, Name, Brand, Size, PricePerDay, EquipmentType, ImagePath
-        FROM Equipment";
+            SELECT e.Equipment_Id, e.Name, e.Brand, e.Size, e.PricePerDay, e.Category_Id, c.CategoryName, e.ImagePath
+            FROM Equipment e
+            INNER JOIN Category c ON e.Category_Id = c.Category_Id";
 
             try
             {
@@ -95,13 +98,13 @@ namespace BusinessLogic.DataAccess
                         {
                             Equipment equipment = new Equipment
                             {
-                                EquipmentId = reader["Equipment_Id"] != DBNull.Value ? (int)reader["Equipment_Id"] : 0,
-                                Name = reader["Name"] as string,
-                                Brand = reader["Brand"] as string,
-                                Size = reader["Size"] as string,
-                                PricePerDay = reader["PricePerDay"] != DBNull.Value ? (decimal)reader["PricePerDay"] : 0m,
-                                EquipmentType = reader["EquipmentType"] as string,
-                                ImagePath = reader["ImagePath"] as string
+                                EquipmentId = (int)reader["Equipment_Id"],
+                                Name = reader["Name"].ToString(),
+                                Brand = reader["Brand"].ToString(),
+                                Size = reader["Size"].ToString(),
+                                PricePerDay = (decimal)reader["PricePerDay"],
+                                Category = (EquipmentCategory)(int)reader["Category_Id"], // Map Category_Id to the enum
+                                ImagePath = reader["ImagePath"].ToString()
                             };
                             equipmentList.Add(equipment);
                         }
@@ -115,6 +118,10 @@ namespace BusinessLogic.DataAccess
             catch (Exception ex)
             {
                 Console.WriteLine($"General Error in GetAllEquipment: {ex.Message}");
+            }
+            finally
+            {
+                connection.Close();
             }
 
             return equipmentList;
@@ -130,9 +137,9 @@ namespace BusinessLogic.DataAccess
                     Brand = @Brand,
                     Size = @Size,
                     PricePerDay = @PricePerDay,
-                    EquipmentType = @EquipmentType,
+                    Category_Id = @CategoryId,
                     ImagePath = @ImagePath
-                WHERE EquipmentId = @EquipmentId";
+                WHERE Equipment_Id = @EquipmentId";
 
                 using (SqlCommand cmd = new SqlCommand(sql, connection))
                 {
@@ -140,7 +147,7 @@ namespace BusinessLogic.DataAccess
                     cmd.Parameters.AddWithValue("@Brand", equipment.Brand ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Size", equipment.Size ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@PricePerDay", equipment.PricePerDay);
-                    cmd.Parameters.AddWithValue("@EquipmentType", equipment.EquipmentType ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@CategoryId", (int)equipment.Category); // Store enum as integer
                     cmd.Parameters.AddWithValue("@ImagePath", equipment.ImagePath ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@EquipmentId", equipment.EquipmentId);
 
@@ -162,9 +169,7 @@ namespace BusinessLogic.DataAccess
         {
             try
             {
-                string sql = @"
-                DELETE FROM Equipment
-                WHERE EquipmentId = @EquipmentId";
+                string sql = "DELETE FROM Equipment WHERE Equipment_Id = @EquipmentId";
 
                 using (SqlCommand cmd = new SqlCommand(sql, connection))
                 {

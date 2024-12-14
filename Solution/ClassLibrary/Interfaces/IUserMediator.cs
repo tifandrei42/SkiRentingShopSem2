@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Entities;
+using BusinessLogic.Enums;
 
 namespace BusinessLogic.Interfaces
 {
