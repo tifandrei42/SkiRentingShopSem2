@@ -32,13 +32,14 @@
             btnStaff = new Button();
             btnEquipment = new Button();
             btnLogout = new Button();
+            label2 = new Label();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 20.25F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label1.Location = new Point(100, 9);
+            label1.Location = new Point(35, 9);
             label1.Name = "label1";
             label1.Size = new Size(199, 74);
             label1.TabIndex = 0;
@@ -48,7 +49,7 @@
             // btnStaff
             // 
             btnStaff.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnStaff.Location = new Point(76, 161);
+            btnStaff.Location = new Point(12, 258);
             btnStaff.Name = "btnStaff";
             btnStaff.Size = new Size(250, 56);
             btnStaff.TabIndex = 1;
@@ -59,7 +60,7 @@
             // btnEquipment
             // 
             btnEquipment.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnEquipment.Location = new Point(76, 223);
+            btnEquipment.Location = new Point(12, 155);
             btnEquipment.Name = "btnEquipment";
             btnEquipment.Size = new Size(250, 56);
             btnEquipment.TabIndex = 2;
@@ -70,19 +71,30 @@
             // btnLogout
             // 
             btnLogout.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnLogout.Location = new Point(76, 285);
+            btnLogout.Location = new Point(12, 438);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(250, 56);
+            btnLogout.Size = new Size(158, 39);
             btnLogout.TabIndex = 3;
             btnLogout.Text = "Logout";
             btnLogout.UseVisualStyleBackColor = true;
             btnLogout.Click += btnLogout_Click;
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI Semibold", 15.25F, FontStyle.Bold | FontStyle.Italic);
+            label2.Location = new Point(634, 27);
+            label2.Name = "label2";
+            label2.Size = new Size(103, 30);
+            label2.TabIndex = 4;
+            label2.Text = "Overview";
+            // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(415, 459);
+            ClientSize = new Size(1089, 489);
+            Controls.Add(label2);
             Controls.Add(btnLogout);
             Controls.Add(btnEquipment);
             Controls.Add(btnStaff);
@@ -99,5 +111,6 @@
         private Button btnStaff;
         private Button btnEquipment;
         private Button btnLogout;
+        private Label label2;
     }
 }

@@ -1,4 +1,7 @@
-﻿using BusinessLogic.Entities;
+﻿using BusinessLogic.DataAccess;
+using BusinessLogic.Entities;
+using BusinessLogic.Enums;
+using BusinessLogic.Interfaces;
 using BusinessLogic.Managers;
 using System;
 using System.Collections.Generic;
@@ -16,43 +19,75 @@ namespace Renting_Application
     public partial class AddEquipment : Form
     {
         private Equipment currentEquipment;
-        private EquipmentManager _equipmentManager;
+        private CategoryManager categoryManager;
+        private EquipmentManager equipmentManager;
         private string _imagePath;
 
-        public AddEquipment(EquipmentManager equipmentManager)
+        public AddEquipment()
         {
             InitializeComponent();
-            _equipmentManager = equipmentManager;
+            ICategoryMediator categoryMediator = new CategoryMediator();
+            categoryManager = new CategoryManager(categoryMediator);
+
+            IEquipmentMediator equipmentMediator = new EquipmentMediator();
+            equipmentManager = new EquipmentManager(equipmentMediator);
             lbTitle.Text = "Add equipment";
+
+            LoadCategories();
         }
 
-        public AddEquipment(EquipmentManager equipmentManager, Equipment equipment)
+        public AddEquipment(Equipment equipment)
         {
             InitializeComponent();
-            _equipmentManager = equipmentManager;
+
+            IEquipmentMediator equipmentMediator = new EquipmentMediator();
+            equipmentManager = new EquipmentManager(equipmentMediator);
+
+            ICategoryMediator categoryMediator = new CategoryMediator();
+            categoryManager = new CategoryManager(categoryMediator);
+
             currentEquipment = equipment;
             lbTitle.Text = "Update equipment";
+
+            LoadCategories();
             PopulateFormFields();
+        }
+
+        private void LoadCategories()
+        {
+            try
+            {
+                List<Category> categories = categoryManager.GetAllCategories();
+
+                cbCategory.DataSource = categories;
+                cbCategory.DisplayMember = "CategoryName";
+                cbCategory.ValueMember = "CategoryId";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading categories: {ex.Message}");
+            }
         }
 
         private void PopulateFormFields()
         {
             if (currentEquipment != null)
             {
-                tbName.Text = currentEquipment.Name;
-                tbBrand.Text = currentEquipment.Brand;
-                tbType.Text = currentEquipment.EquipmentType;
+                tbName.Text = currentEquipment.Name ?? ""; // Handle null values
+                tbBrand.Text = currentEquipment.Brand.ToString() ?? ""; // Handle null values
+                tbSize.Text = currentEquipment.Size ?? ""; // Handle null values
                 tbPrice.Text = currentEquipment.PricePerDay.ToString();
-                tbSize.Text = currentEquipment.Size;
+                cbCategory.SelectedValue = currentEquipment.CategoryId; // Handle CategoryId
+                _imagePath = currentEquipment.ImagePath; // Handle image path
             }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbName.Text) ||
-                        string.IsNullOrWhiteSpace(tbBrand.Text) ||
-                        string.IsNullOrWhiteSpace(tbType.Text) ||
-                        !decimal.TryParse(tbPrice.Text, out decimal pricePerDay))
+                string.IsNullOrWhiteSpace(tbBrand.Text) ||
+                cbCategory.SelectedValue == null || 
+                !decimal.TryParse(tbPrice.Text, out decimal pricePerDay))
             {
                 MessageBox.Show("Please fill in all required fields correctly.");
                 return;
@@ -60,9 +95,15 @@ namespace Renting_Application
 
             try
             {
-                if (currentEquipment == null)
+                int selectedCategoryId = (int)cbCategory.SelectedValue;
+
+                if (currentEquipment == null) 
                 {
-                    
+                    if (equipmentManager.IsDuplicateEquipment(tbName.Text.Trim(), _imagePath))
+                    {
+                        MessageBox.Show("Equipment with the same Name and Image already exists.");
+                        return;
+                    }
 
                     Equipment newEquipment = new()
                     {
@@ -70,11 +111,12 @@ namespace Renting_Application
                         Brand = tbBrand.Text.Trim(),
                         Size = tbSize.Text.Trim(),
                         PricePerDay = pricePerDay,
-                        EquipmentType = tbType.Text.Trim(),
-                        ImagePath = _imagePath
+                        CategoryId = selectedCategoryId,
+                        ImagePath = _imagePath,
+                        Quantity = Convert.ToInt32(nudQuantity.Value)
                     };
 
-                    _equipmentManager.AddEquipment(newEquipment);
+                    equipmentManager.AddEquipment(newEquipment);
 
                     MessageBox.Show("Equipment added successfully.");
                     this.DialogResult = DialogResult.OK;
@@ -86,15 +128,22 @@ namespace Renting_Application
                     currentEquipment.Brand = tbBrand.Text.Trim();
                     currentEquipment.Size = tbSize.Text.Trim();
                     currentEquipment.PricePerDay = pricePerDay;
-                    currentEquipment.EquipmentType = tbType.Text.Trim();
-                    currentEquipment.ImagePath = _imagePath;
+                    currentEquipment.CategoryId = selectedCategoryId;
+                    currentEquipment.ImagePath = _imagePath; 
+                    currentEquipment.Quantity = Convert.ToInt32(nudQuantity.Value);
+                    equipmentManager.UpdateEquipment(currentEquipment);
+
+                    MessageBox.Show("Equipment updated successfully.");
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error adding equipment: {ex.Message}");
+                MessageBox.Show($"Error saving equipment: {ex.Message}");
             }
         }
+
 
         private void btnUploadImage_Click_1(object sender, EventArgs e)
         {

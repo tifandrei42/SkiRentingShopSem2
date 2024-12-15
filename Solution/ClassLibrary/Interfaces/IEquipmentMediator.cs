@@ -14,5 +14,6 @@ namespace BusinessLogic.Interfaces
         List<Equipment> GetAllEquipment();
         void UpdateEquipment(Equipment equipment);
         void DeleteEquipment(int equipmentId);
+        bool IsDuplicateEquipment(string name, string imagePath);
     }
 }

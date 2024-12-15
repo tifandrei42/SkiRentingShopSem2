@@ -1,4 +1,5 @@
 using BusinessLogic.Entities;
+using BusinessLogic.Enums;
 using BusinessLogic.Managers;
 using SolutionTest.Utils;
 
@@ -24,7 +25,7 @@ namespace SolutionTest
             {
                 Name = "Test Equipment",
                 Brand = "Test Brand",
-                EquipmentType = "Test Type",
+                Category = EquipmentCategory.Helmet,
                 ImagePath = "test_image.jpg", 
                 PricePerDay = 15.99m,
                 Size = "Medium"
@@ -46,7 +47,7 @@ namespace SolutionTest
             {
                 Name = "Equipment 1",
                 Brand = "Brand A",
-                EquipmentType = "Type A",
+                Category = EquipmentCategory.Helmet,
                 ImagePath = "image1.jpg",
                 PricePerDay = 10.0m
             });
@@ -55,7 +56,7 @@ namespace SolutionTest
             {
                 Name = "Equipment 2",
                 Brand = "Brand B",
-                EquipmentType = "Type B",
+                Category = EquipmentCategory.Helmet,
                 ImagePath = "image2.jpg",
                 PricePerDay = 20.0m
             });
@@ -70,7 +71,7 @@ namespace SolutionTest
         [TestMethod]
         public void UpdateEquipment_ShouldModifyEquipment()
         {
-            var equipment = new Equipment { Name = "Old Name", PricePerDay = 10.0m, Brand= "Old Brand", EquipmentType = "Type" };
+            var equipment = new Equipment { Name = "Old Name", PricePerDay = 10.0m, Brand= "Old Brand", Category = EquipmentCategory.Helmet};
             _equipmentManager.AddEquipment(equipment);
 
             equipment.Name = "New Name";
@@ -84,7 +85,7 @@ namespace SolutionTest
         [TestMethod]
         public void DeleteEquipment_ShouldRemoveEquipment()
         {
-            var equipment = new Equipment { Name = "EquipmenttoDelete", PricePerDay = 10.0m, Brand = "Something", EquipmentType = "TypeTo delete" };
+            var equipment = new Equipment { Name = "EquipmenttoDelete", PricePerDay = 10.0m, Brand = "Something", Category = EquipmentCategory.Helmet};
             _equipmentManager.AddEquipment(equipment);
 
             _equipmentManager.DeleteEquipment(equipment.EquipmentId);

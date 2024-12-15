@@ -12,12 +12,10 @@ namespace BusinessLogic.Managers
     public class EquipmentManager
     {
         private readonly IEquipmentMediator _equipmentMediator;
-        private StockMediator _stockMediator;
 
         public EquipmentManager(IEquipmentMediator equipmentMediator)
         {
             _equipmentMediator = equipmentMediator;
-            _stockMediator = new StockMediator();
         }
 
         public void AddEquipment(Equipment equipment)
@@ -25,6 +23,11 @@ namespace BusinessLogic.Managers
             if (string.IsNullOrWhiteSpace(equipment.Name))
             {
                 throw new ArgumentException("Equipment name cannot be empty.");
+            }
+
+            if (equipment.CategoryId <= 0)
+            {
+                throw new ArgumentException("Invalid category selected.");
             }
 
             _equipmentMediator.CreateEquipment(equipment);
@@ -42,16 +45,27 @@ namespace BusinessLogic.Managers
 
         public void UpdateEquipment(Equipment equipment)
         {
+            if (equipment.EquipmentId <= 0)
+            {
+                throw new ArgumentException("Invalid Equipment ID.");
+            }
+
+            if (string.IsNullOrWhiteSpace(equipment.Name))
+            {
+                throw new ArgumentException("Equipment name cannot be empty.");
+            }
+
+            if (equipment.CategoryId <= 0)
+            {
+                throw new ArgumentException("Invalid category selected.");
+            }
+
             _equipmentMediator.UpdateEquipment(equipment);
         }
 
         public void DeleteEquipment(int equipmentId)
         {
             _equipmentMediator.DeleteEquipment(equipmentId);
-        }
-        public List<dynamic> GetAllEquipmentWithStock()
-        {
-            return _stockMediator.GetAllEquipmentWithStock();
         }
 
         public List<Equipment> GetFilteredEquipment(string brandFilter, decimal? minPrice, decimal? maxPrice)
@@ -74,6 +88,11 @@ namespace BusinessLogic.Managers
             }
 
             return allEquipment;
+        }
+
+        public bool IsDuplicateEquipment(string name, string imagePath)
+        {
+            return _equipmentMediator.IsDuplicateEquipment(name, imagePath);
         }
 
     }

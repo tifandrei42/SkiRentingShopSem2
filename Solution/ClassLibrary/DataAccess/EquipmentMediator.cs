@@ -16,8 +16,8 @@ namespace BusinessLogic.DataAccess
             try
             {
                 string sql = @"
-                INSERT INTO Equipment (Name, Brand, Size, PricePerDay, Category_Id, ImagePath)
-                VALUES (@Name, @Brand, @Size, @PricePerDay, @CategoryId, @ImagePath);
+                INSERT INTO Equipment (Name, Brand, Size, PricePerDay, Category_Id, ImagePath, Quantity)
+                VALUES (@Name, @Brand, @Size, @PricePerDay, @CategoryId, @ImagePath, @Quantity);
                 SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand cmd = new SqlCommand(sql, connection))
@@ -26,8 +26,9 @@ namespace BusinessLogic.DataAccess
                     cmd.Parameters.AddWithValue("@Brand", equipment.Brand ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Size", equipment.Size ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@PricePerDay", equipment.PricePerDay);
-                    cmd.Parameters.AddWithValue("@CategoryId", (int)equipment.Category); // Store enum as an integer referencing Category_Id
+                    cmd.Parameters.AddWithValue("@CategoryId", equipment.CategoryId);
                     cmd.Parameters.AddWithValue("@ImagePath", equipment.ImagePath ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Quantity", equipment.Quantity);
 
                     connection.Open();
                     int equipmentId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -48,10 +49,22 @@ namespace BusinessLogic.DataAccess
         {
             Equipment equipment = null;
             string query = @"
-            SELECT e.Equipment_Id, e.Name, e.Brand, e.Size, e.PricePerDay, e.Category_Id, c.CategoryName, e.ImagePath
-            FROM Equipment e
-            INNER JOIN Category c ON e.Category_Id = c.Category_Id
-            WHERE e.Equipment_Id = @Id";
+                SELECT 
+                    e.Equipment_Id,
+                    e.Name,
+                    e.Brand,
+                    e.Size,
+                    e.PricePerDay,
+                    e.Category_Id,
+                    c.CategoryName,
+                    e.ImagePath,
+                    e.Quantity
+                FROM 
+                    Equipment e
+                INNER JOIN 
+                    Category c ON e.Category_Id = c.Category_Id
+                WHERE 
+                    e.Equipment_Id = @Id";
 
             using (var cmd = new SqlCommand(query, connection))
             {
@@ -64,12 +77,14 @@ namespace BusinessLogic.DataAccess
                         equipment = new Equipment
                         {
                             EquipmentId = (int)reader["Equipment_Id"],
-                            Name = reader["Name"].ToString(),
-                            Brand = reader["Brand"].ToString(),
-                            Size = reader["Size"].ToString(),
+                            Name = reader["Name"]?.ToString(),
+                            Brand = reader["Brand"]?.ToString(),
+                            Size = reader["Size"]?.ToString(),
                             PricePerDay = (decimal)reader["PricePerDay"],
-                            Category = (EquipmentCategory)(int)reader["Category_Id"], // Map Category_Id to the enum
-                            ImagePath = reader["ImagePath"].ToString()
+                            CategoryId = (int)reader["Category_Id"],
+                            Category = (EquipmentCategory)(int)reader["Category_Id"],
+                            ImagePath = reader["ImagePath"]?.ToString(),
+                            Quantity = (int)reader["Quantity"]
                         };
                     }
                 }
@@ -82,9 +97,12 @@ namespace BusinessLogic.DataAccess
         {
             List<Equipment> equipmentList = new List<Equipment>();
             string sql = @"
-            SELECT e.Equipment_Id, e.Name, e.Brand, e.Size, e.PricePerDay, e.Category_Id, c.CategoryName, e.ImagePath
-            FROM Equipment e
-            INNER JOIN Category c ON e.Category_Id = c.Category_Id";
+            SELECT 
+                e.Equipment_Id, e.Name, e.Brand, e.Size, e.PricePerDay, e.Category_Id, c.CategoryName, e.ImagePath, e.Quantity
+            FROM 
+                Equipment e
+            INNER JOIN 
+                Category c ON e.Category_Id = c.Category_Id";
 
             try
             {
@@ -96,15 +114,16 @@ namespace BusinessLogic.DataAccess
                     {
                         while (reader.Read())
                         {
-                            Equipment equipment = new Equipment
+                            Equipment equipment = new()
                             {
                                 EquipmentId = (int)reader["Equipment_Id"],
                                 Name = reader["Name"].ToString(),
                                 Brand = reader["Brand"].ToString(),
                                 Size = reader["Size"].ToString(),
                                 PricePerDay = (decimal)reader["PricePerDay"],
-                                Category = (EquipmentCategory)(int)reader["Category_Id"], // Map Category_Id to the enum
-                                ImagePath = reader["ImagePath"].ToString()
+                                Category = (EquipmentCategory)(int)reader["Category_Id"],
+                                ImagePath = reader["ImagePath"].ToString(),
+                                Quantity = (int)reader["Quantity"]
                             };
                             equipmentList.Add(equipment);
                         }
@@ -114,10 +133,6 @@ namespace BusinessLogic.DataAccess
             catch (SqlException ex)
             {
                 Console.WriteLine($"SQL Error in GetAllEquipment: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"General Error in GetAllEquipment: {ex.Message}");
             }
             finally
             {
@@ -138,7 +153,8 @@ namespace BusinessLogic.DataAccess
                     Size = @Size,
                     PricePerDay = @PricePerDay,
                     Category_Id = @CategoryId,
-                    ImagePath = @ImagePath
+                    ImagePath = @ImagePath,
+                    Quantity = @Quantity
                 WHERE Equipment_Id = @EquipmentId";
 
                 using (SqlCommand cmd = new SqlCommand(sql, connection))
@@ -147,8 +163,9 @@ namespace BusinessLogic.DataAccess
                     cmd.Parameters.AddWithValue("@Brand", equipment.Brand ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Size", equipment.Size ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@PricePerDay", equipment.PricePerDay);
-                    cmd.Parameters.AddWithValue("@CategoryId", (int)equipment.Category); // Store enum as integer
+                    cmd.Parameters.AddWithValue("@CategoryId", equipment.CategoryId);
                     cmd.Parameters.AddWithValue("@ImagePath", equipment.ImagePath ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Quantity", equipment.Quantity);
                     cmd.Parameters.AddWithValue("@EquipmentId", equipment.EquipmentId);
 
                     connection.Open();
@@ -187,6 +204,37 @@ namespace BusinessLogic.DataAccess
             {
                 connection.Close();
             }
+        }
+
+        public bool IsDuplicateEquipment(string name, string imagePath)
+        {
+            bool isDuplicate = false;
+            string sql = @"
+                SELECT COUNT(1) 
+                FROM Equipment 
+                WHERE Name = @Name AND ImagePath = @ImagePath";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(sql, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@ImagePath", imagePath);
+
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar();
+                    isDuplicate = count > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in IsDuplicateEquipment: {ex.Message}");
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return isDuplicate;
         }
     }
 }

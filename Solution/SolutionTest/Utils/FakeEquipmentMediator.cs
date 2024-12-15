@@ -25,9 +25,9 @@ namespace SolutionTest.Utils
             _equipmentData.Add(equipment.EquipmentId, equipment);
         }
 
-        public Equipment GetEquipmentById(int equipmentId)
+        public Equipment? GetEquipmentById(int equipmentId)
         {
-            _equipmentData.TryGetValue(equipmentId, out Equipment equipment);
+           _equipmentData.TryGetValue(equipmentId, out Equipment equipment);
             return equipment;
         }
 

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            TextBox tbBrand;
             tbName = new TextBox();
             tbPrice = new TextBox();
             tbSize = new TextBox();
@@ -41,10 +40,20 @@
             btnUploadImage = new Button();
             btnSave = new Button();
             pictureBoxEquipment = new PictureBox();
-            tbType = new TextBox();
+            cbCategory = new ComboBox();
+            nudQuantity = new NumericUpDown();
+            label1 = new Label();
             tbBrand = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBoxEquipment).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudQuantity).BeginInit();
             SuspendLayout();
+            // 
+            // tbBrand
+            // 
+            tbBrand.Location = new Point(53, 132);
+            tbBrand.Name = "tbBrand";
+            tbBrand.Size = new Size(162, 23);
+            tbBrand.TabIndex = 4;
             // 
             // tbName
             // 
@@ -66,13 +75,6 @@
             tbSize.Name = "tbSize";
             tbSize.Size = new Size(162, 23);
             tbSize.TabIndex = 3;
-            // 
-            // tbBrand
-            // 
-            tbBrand.Location = new Point(53, 132);
-            tbBrand.Name = "tbBrand";
-            tbBrand.Size = new Size(162, 23);
-            tbBrand.TabIndex = 4;
             // 
             // lbTitle
             // 
@@ -141,7 +143,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(185, 372);
+            btnSave.Location = new Point(185, 403);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(156, 40);
             btnSave.TabIndex = 14;
@@ -151,25 +153,44 @@
             // 
             // pictureBoxEquipment
             // 
-            pictureBoxEquipment.Location = new Point(185, 236);
+            pictureBoxEquipment.Location = new Point(185, 308);
             pictureBoxEquipment.Name = "pictureBoxEquipment";
             pictureBoxEquipment.Size = new Size(162, 89);
             pictureBoxEquipment.TabIndex = 15;
             pictureBoxEquipment.TabStop = false;
             // 
-            // tbType
+            // cbCategory
             // 
-            tbType.Location = new Point(299, 132);
-            tbType.Name = "tbType";
-            tbType.Size = new Size(162, 23);
-            tbType.TabIndex = 16;
+            cbCategory.FormattingEnabled = true;
+            cbCategory.Location = new Point(299, 132);
+            cbCategory.Name = "cbCategory";
+            cbCategory.Size = new Size(162, 23);
+            cbCategory.TabIndex = 16;
+            // 
+            // nudQuantity
+            // 
+            nudQuantity.Location = new Point(53, 236);
+            nudQuantity.Name = "nudQuantity";
+            nudQuantity.Size = new Size(120, 23);
+            nudQuantity.TabIndex = 17;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(53, 218);
+            label1.Name = "label1";
+            label1.Size = new Size(53, 15);
+            label1.TabIndex = 18;
+            label1.Text = "Quantity";
             // 
             // AddEquipment
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(549, 455);
-            Controls.Add(tbType);
+            Controls.Add(label1);
+            Controls.Add(nudQuantity);
+            Controls.Add(cbCategory);
             Controls.Add(pictureBoxEquipment);
             Controls.Add(btnSave);
             Controls.Add(btnUploadImage);
@@ -186,6 +207,7 @@
             Name = "AddEquipment";
             Text = "AddEquipment";
             ((System.ComponentModel.ISupportInitialize)pictureBoxEquipment).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudQuantity).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -205,6 +227,8 @@
         private Button btnUploadImage;
         private Button btnSave;
         private PictureBox pictureBoxEquipment;
-        private TextBox tbType;
+        private ComboBox cbCategory;
+        private NumericUpDown nudQuantity;
+        private Label label1;
     }
 }

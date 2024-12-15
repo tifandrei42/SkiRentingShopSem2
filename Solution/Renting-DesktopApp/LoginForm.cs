@@ -3,6 +3,7 @@ using BusinessLogic.Managers;
 using BusinessLogic.Entities;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Strategies;
+using BusinessLogic.Enums;
 
 namespace Renting_Application
 {

@@ -74,6 +74,7 @@
             btnDeleteEquipment.TabIndex = 3;
             btnDeleteEquipment.Text = "Delete selected equipment";
             btnDeleteEquipment.UseVisualStyleBackColor = true;
+            btnDeleteEquipment.Click += btnDeleteEquipment_Click;
             // 
             // EquipmentManagement
             // 

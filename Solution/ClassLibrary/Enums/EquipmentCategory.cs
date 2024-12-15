@@ -8,12 +8,11 @@ namespace BusinessLogic.Enums
 {
     public enum EquipmentCategory
     {
-        Helmet = 0,
-        Skis = 1,
-        Snowboard = 2,
-        SkiBoots = 3,
-        Goggles = 4,
-        
-
+        Default = 1,
+        Helmet = 2,
+        Skis = 3,
+        Snowboard = 4,
+        SkiBoots = 5,
+        Goggles = 6
     }
 }
