@@ -16,26 +16,26 @@ namespace BusinessLogic.Managers
             _equipmentMediator = new EquipmentMediator();
         }
 
-        public bool CreateReservation(Reservation reservation)
-        {
-            Equipment equipment = _equipmentMediator.GetEquipmentById(reservation.EquipmentId);
-            if (equipment == null)
-            {
-                throw new Exception("Equipment not found.");
-            }
+        //public bool CreateReservation(Reservation reservation)
+        //{
+        //    Equipment equipment = _equipmentMediator.GetEquipmentById(reservation.EquipmentId);
+        //    if (equipment == null)
+        //    {
+        //        throw new Exception("Equipment not found.");
+        //    }
 
-            bool isAvailable = _reservationMediator.IsEquipmentAvailable(reservation.EquipmentId, reservation.StartDate, reservation.EndDate);
-            if (!isAvailable)
-            {
-                return false;
-            }
+        //    bool isAvailable = _reservationMediator.IsEquipmentAvailable(reservation.EquipmentId, reservation.StartDate, reservation.EndDate);
+        //    if (!isAvailable)
+        //    {
+        //        return false;
+        //    }
 
-            int rentalDays = (reservation.EndDate - reservation.StartDate).Days;
-            reservation.TotalPrice = rentalDays * equipment.PricePerDay;
+        //    int rentalDays = (reservation.EndDate - reservation.StartDate).Days;
+        //    reservation.TotalPrice = rentalDays * equipment.PricePerDay;
 
-            _reservationMediator.CreateReservation(reservation);
-            return true;
-        }
+        //    _reservationMediator.CreateReservation(reservation);
+        //    return true;
+        //}
 
         public void CancelReservation(int reservationId)
         {
@@ -45,6 +45,20 @@ namespace BusinessLogic.Managers
         public List<Reservation> GetReservationsByCustomerId(int customerId)
         {
             return _reservationMediator.GetReservationsByCustomerId(customerId);
+        }
+        public Reservation? GetReservationById(int reservationId)
+        {
+            return _reservationMediator.GetReservationById(reservationId);
+        }
+
+        public List<Reservation> GetReservations()
+        {
+            return _reservationMediator.GetReservations();
+        }
+
+        public List<Tuple<int,int,int>> GetReservationEquipmentByReservationId(int reservationId)
+        {
+            return _reservationMediator.GetReservationEquipmentByReservationId(reservationId);
         }
     }
 }

@@ -15,8 +15,8 @@ namespace BusinessLogic.DataAccess
         public void CreateReservation(Reservation reservation)
         {
             string query = @"
-                INSERT INTO Reservation (Equipment_Id, Customer_Id, ReservationDate, StartDate, EndDate, TotalPrice, Status)
-                VALUES (@EquipmentId, @CustomerId, @ReservationDate, @StartDate, @EndDate, @TotalPrice, @Status)";
+                INSERT INTO Reservation (Equipment_Id, Customer_Id, ReservationDate, CreationDate, TotalPrice, Status)
+                VALUES (@EquipmentId, @CustomerId, @ReservationDate, @CreationDate, @TotalPrice, @Status)";
 
             try
             {
@@ -25,8 +25,7 @@ namespace BusinessLogic.DataAccess
                     cmd.Parameters.AddWithValue("@EquipmentId", reservation.EquipmentId);
                     cmd.Parameters.AddWithValue("@CustomerId", reservation.CustomerId);
                     cmd.Parameters.AddWithValue("@ReservationDate", reservation.ReservationDate);
-                    cmd.Parameters.AddWithValue("@StartDate", reservation.StartDate);
-                    cmd.Parameters.AddWithValue("@EndDate", reservation.EndDate);
+                    cmd.Parameters.AddWithValue("@StartDate", reservation.CreationDate);
                     cmd.Parameters.AddWithValue("@TotalPrice", reservation.TotalPrice);
                     cmd.Parameters.AddWithValue("@Status", reservation.Status);
 
@@ -49,7 +48,7 @@ namespace BusinessLogic.DataAccess
         {
             Reservation reservation = null;
             string query = @"
-                SELECT Reservation_Id, Equipment_Id, Customer_Id, ReservationDate, StartDate, EndDate, TotalPrice, Status
+                SELECT Reservation_Id, Equipment_Id, Customer_Id, ReservationDate, CreationDate, TotalPrice, Status
                 FROM Reservation
                 WHERE Reservation_Id = @ReservationId";
 
@@ -70,8 +69,7 @@ namespace BusinessLogic.DataAccess
                                 EquipmentId = (int)reader["Equipment_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
-                                StartDate = (DateTime)reader["StartDate"],
-                                EndDate = (DateTime)reader["EndDate"],
+                                CreationDate = (DateTime)reader["CreationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
                                 Status = reader["Status"].ToString()
                             };
@@ -96,7 +94,7 @@ namespace BusinessLogic.DataAccess
         {
             List<Reservation> reservations = new List<Reservation>();
             string query = @"
-                SELECT Reservation_Id, Customer_Id, ReservationDate, StartDate, EndDate, TotalPrice, Status
+                SELECT Reservation_Id, Customer_Id, ReservationDate, CreationDate, TotalPrice, Status
                 FROM Reservation
                 WHERE Customer_Id = @CustomerId";
 
@@ -117,8 +115,7 @@ namespace BusinessLogic.DataAccess
                                 EquipmentId = (int)reader["Equipment_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
-                                StartDate = (DateTime)reader["StartDate"],
-                                EndDate = (DateTime)reader["EndDate"],
+                                CreationDate = (DateTime)reader["CreationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
                                 Status = reader["Status"].ToString()
                             });
@@ -191,77 +188,92 @@ namespace BusinessLogic.DataAccess
             }
         }
 
-        public int GetReservedQuantity(int equipmentId, DateTime startDate, DateTime endDate)
+        public List<Reservation> GetReservations()
         {
+            List<Reservation> reservations = new List<Reservation>();
+
             string query = @"
-        SELECT SUM(re.Quantity) 
-        FROM ReservationEquipment re
-        INNER JOIN Reservation r ON re.Reservation_Id = r.Reservation_Id
-        WHERE re.Equipment_Id = @EquipmentId
-        AND r.Status IN ('Pending', 'Confirmed')
-        AND (
-            (r.StartDate <= @EndDate AND r.EndDate >= @StartDate)
-        )";
+                SELECT *
+                FROM Reservation";
 
             try
             {
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
-                    cmd.Parameters.AddWithValue("@StartDate", startDate);
-                    cmd.Parameters.AddWithValue("@EndDate", endDate);
-
                     connection.Open();
-                    object result = cmd.ExecuteScalar();
-                    connection.Close();
 
-                    return result == DBNull.Value ? 0 : Convert.ToInt32(result);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            reservations.Add(new Reservation
+                            {
+                                ReservationId = (int)reader["Reservation_Id"],
+                                EquipmentId = (int)reader["Equipment_Id"],
+                                CustomerId = (int)reader["Customer_Id"],
+                                ReservationDate = (DateTime)reader["ReservationDate"],
+                                CreationDate = (DateTime)reader["CreationDate"],
+                                TotalPrice = (decimal)reader["TotalPrice"],
+                                Status = reader["Status"].ToString()
+                            });
+                        }
+                    }
                 }
             }
             catch (SqlException ex)
             {
-                Console.WriteLine($"SQL Error in GetReservedQuantity: {ex.Message}");
+                Console.WriteLine($"SQL Error in GetReservationsByCustomerId: {ex.Message}");
                 throw;
             }
             finally
             {
                 connection.Close();
             }
+
+            return reservations;
         }
 
-        public bool IsEquipmentAvailable(int equipmentId, DateTime startDate, DateTime endDate)
+        public List<Tuple<int, int, int>> GetReservationEquipmentByReservationId(int reservationId)
         {
+            List<Tuple<int, int, int>> output = new List<Tuple<int, int, int>>();
+
             string query = @"
-                SELECT COUNT(*) FROM Reservation
-                WHERE Equipment_Id = @EquipmentId
-                AND Status IN ('Pending', 'Confirmed')
-                AND (
-                    (StartDate <= @EndDate AND EndDate >= @StartDate)
-                )";
+                SELECT Reservation_Id, Equipment_Id, Quantity
+                FROM ReservationEquipment
+                WHERE Reservation_Id = @ReservationId";
 
             try
             {
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
-                    cmd.Parameters.AddWithValue("@StartDate", startDate);
-                    cmd.Parameters.AddWithValue("@EndDate", endDate);
-
+                    cmd.Parameters.AddWithValue("@ReservationId", reservationId);
                     connection.Open();
-                    int count = (int)cmd.ExecuteScalar();
 
-                    return count == 0;
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int resId = (int)reader["Reservation_Id"];
+                            int equipmentId = (int)reader["Equipment_Id"];
+                            int quantity = (int)reader["Quantity"];
+                            Tuple<int, int, int> tuple = Tuple.Create(resId, equipmentId, quantity);
+
+                            output.Add(tuple);
+                        }
+                    }
                 }
             }
             catch (SqlException ex)
             {
-                Console.WriteLine($"SQL Error in IsEquipmentAvailable: {ex.Message}");
+                Console.WriteLine($"SQL Error in GetReservationsByCustomerId: {ex.Message}");
                 throw;
             }
             finally
             {
                 connection.Close();
             }
+
+            return output;
         }
     }
 }

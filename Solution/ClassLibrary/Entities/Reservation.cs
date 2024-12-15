@@ -12,8 +12,7 @@ namespace BusinessLogic.Entities
         private int equipmentId;
         private int customerId;
         private DateTime reservationDate;
-        private DateTime startDate;
-        private DateTime endDate;
+        private DateTime creationDate;
         private decimal totalPrice;
         private string status;
 
@@ -41,16 +40,10 @@ namespace BusinessLogic.Entities
             set => reservationDate = value;
         }
 
-        public DateTime StartDate
+        public DateTime CreationDate
         {
-            get => startDate;
-            set => startDate = value;
-        }
-
-        public DateTime EndDate
-        {
-            get => endDate;
-            set => endDate = value;
+            get => creationDate;
+            set => creationDate = value;
         }
 
         public decimal TotalPrice
@@ -70,26 +63,24 @@ namespace BusinessLogic.Entities
             status = "Pending";
         }
 
-        public Reservation(int reservationId, int equipmentId, int customerId, DateTime startDate, DateTime endDate, decimal totalPrice)
+        public Reservation(int reservationId, int equipmentId, int customerId, DateTime reservationDate, decimal totalPrice)
         {
             this.reservationId = reservationId;
             this.equipmentId = equipmentId;
             this.customerId = customerId;
-            reservationDate = DateTime.Now;
-            this.startDate = startDate;
-            this.endDate = endDate;
+            creationDate = DateTime.Now;
+            this.reservationDate = reservationDate;
             this.totalPrice = totalPrice;
             status = "Pending";
         }
 
-        public Reservation(int reservationId, int equipmentId, int customerId, DateTime reservationDate, DateTime startDate, DateTime endDate, decimal totalPrice, string status)
+        public Reservation(int reservationId, int equipmentId, int customerId, DateTime reservationDate, DateTime creationDate, decimal totalPrice, string status)
         {
             this.reservationId = reservationId;
             this.equipmentId = equipmentId;
             this.customerId = customerId;
             this.reservationDate = reservationDate;
-            this.startDate = startDate;
-            this.endDate = endDate;
+            this.creationDate = creationDate;
             this.totalPrice = totalPrice;
             this.status = status;
         }

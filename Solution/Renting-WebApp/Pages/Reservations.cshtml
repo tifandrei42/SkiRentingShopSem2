@@ -28,8 +28,7 @@ else
             {
                 <tr>
                     <td>@reservation.EquipmentId</td>
-                    <td>@reservation.StartDate.ToShortDateString()</td>
-                    <td>@reservation.EndDate.ToShortDateString()</td>
+                    <td>@reservation.CreationDate.ToShortDateString()</td>
                     <td>@reservation.TotalPrice.ToString("C")</td>
                     <td>@reservation.Status</td>
                     <td>
