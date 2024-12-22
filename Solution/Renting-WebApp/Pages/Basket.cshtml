@@ -1,0 +1,45 @@
+﻿@page
+@model Renting_Website.Pages.BasketModel
+@{
+    ViewData["Title"] = "Basket";
+}
+
+<h2>Basket</h2>
+
+@if (Model.Basket.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Equipment</th>
+                <th>Date</th>
+                <th>Price/Day</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Basket)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.PricePerDay.ToString("C")</td>
+                    <td>
+                        <form method="post" asp-page-handler="Remove" asp-route-id="@item.EquipmentId">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <form method="post" asp-page-handler="Clear">
+        <button type="submit" class="btn btn-warning">Clear Basket</button>
+    </form>
+}
+
+else
+{
+    <p>Your basket is empty.</p>
+}

@@ -15,17 +15,15 @@ namespace BusinessLogic.DataAccess
         public void CreateReservation(Reservation reservation)
         {
             string query = @"
-                INSERT INTO Reservation (Equipment_Id, Customer_Id, ReservationDate, CreationDate, TotalPrice, Status)
-                VALUES (@EquipmentId, @CustomerId, @ReservationDate, @CreationDate, @TotalPrice, @Status)";
+                INSERT INTO Reservation (Customer_Id, ReservationDate, TotalPrice, Status)
+                VALUES (@CustomerId, @ReservationDate, @TotalPrice, @Status)";
 
             try
             {
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@EquipmentId", reservation.EquipmentId);
                     cmd.Parameters.AddWithValue("@CustomerId", reservation.CustomerId);
                     cmd.Parameters.AddWithValue("@ReservationDate", reservation.ReservationDate);
-                    cmd.Parameters.AddWithValue("@StartDate", reservation.CreationDate);
                     cmd.Parameters.AddWithValue("@TotalPrice", reservation.TotalPrice);
                     cmd.Parameters.AddWithValue("@Status", reservation.Status);
 
@@ -43,6 +41,7 @@ namespace BusinessLogic.DataAccess
                 connection.Close();
             }
         }
+
 
         public Reservation? GetReservationById(int reservationId)
         {
@@ -274,6 +273,67 @@ namespace BusinessLogic.DataAccess
             }
 
             return output;
+        }
+
+        public void AddReservationEquipment(int reservationId, int equipmentId, int quantity)
+        {
+            string query = @"
+                INSERT INTO ReservationEquipment (Reservation_Id, Equipment_Id, Quantity)
+                VALUES (@ReservationId, @EquipmentId, @Quantity)";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@ReservationId", reservationId);
+                    cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
+                    cmd.Parameters.AddWithValue("@Quantity", quantity);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in AddReservationEquipment: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public int GetLastInsertedReservationId()
+        {
+            int lastId = 0; 
+
+            string query = "SELECT IDENT_CURRENT('Reservation') AS LastId";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open(); 
+
+                    object result = cmd.ExecuteScalar();
+                    if (result != DBNull.Value && result != null)
+                    {
+                        lastId = Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Error in GetLastInsertedReservationId: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                connection.Close(); // Ensure the connection is closed
+            }
+
+            return lastId; // Return the last inserted ID
         }
     }
 }

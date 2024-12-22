@@ -20,7 +20,7 @@ namespace BusinessLogic.Managers
 
         public bool CheckAvailability(DateTime reservationDate, Equipment equipment)
         {
-            var currentCount = GetCurrentReservationCount(reservationDate, equipment);
+            var currentCount = GetCurrentReservationCount(reservationDate, equipment) + GetBasketCount(reservationDate, equipment);
             var maximumCount = equipment.Quantity;
 
             if (currentCount >= maximumCount) 

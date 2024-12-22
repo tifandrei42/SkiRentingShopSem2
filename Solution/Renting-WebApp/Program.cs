@@ -28,6 +28,8 @@ builder.Services.AddScoped<IUserMediator, UserMediator>();
 builder.Services.AddScoped<UserManager>();
 builder.Services.AddScoped<EncriptionManager>();
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddSession();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,6 +61,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapRazorPages();
 

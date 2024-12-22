@@ -14,7 +14,7 @@ namespace BusinessLogic.Entities
         private DateTime reservationDate;
         private DateTime creationDate;
         private decimal totalPrice;
-        private string status;
+        private enum status;
 
         public int ReservationId
         {

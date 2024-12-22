@@ -16,26 +16,45 @@ namespace BusinessLogic.Managers
             _equipmentMediator = new EquipmentMediator();
         }
 
-        //public bool CreateReservation(Reservation reservation)
-        //{
-        //    Equipment equipment = _equipmentMediator.GetEquipmentById(reservation.EquipmentId);
-        //    if (equipment == null)
-        //    {
-        //        throw new Exception("Equipment not found.");
-        //    }
+        public bool CreateReservation(Reservation reservation, List<Tuple<int, int>> equipmentList)
+        {
+            decimal totalPrice = 0;
 
-        //    bool isAvailable = _reservationMediator.IsEquipmentAvailable(reservation.EquipmentId, reservation.StartDate, reservation.EndDate);
-        //    if (!isAvailable)
-        //    {
-        //        return false;
-        //    }
+            foreach (var item in equipmentList)
+            {
+                int equipmentId = item.Item1;
+                int quantity = item.Item2;
 
-        //    int rentalDays = (reservation.EndDate - reservation.StartDate).Days;
-        //    reservation.TotalPrice = rentalDays * equipment.PricePerDay;
+                Equipment equipment = _equipmentMediator.GetEquipmentById(equipmentId);
 
-        //    _reservationMediator.CreateReservation(reservation);
-        //    return true;
-        //}
+                if (equipment == null)
+                {
+                    throw new Exception($"Equipment with ID {equipmentId} not found.");
+                }
+
+                // Calculate price (for a single day)
+                totalPrice += equipment.PricePerDay * quantity;
+            }
+
+            reservation.TotalPrice = totalPrice;
+
+            _reservationMediator.CreateReservation(reservation);
+
+            // Get the reservation ID
+            int reservationId = _reservationMediator.GetLastInsertedReservationId();
+
+            // Link equipment to reservation
+            foreach (var item in equipmentList)
+            {
+                int equipmentId = item.Item1;
+                int quantity = item.Item2;
+
+                _reservationMediator.AddReservationEquipment(reservationId, equipmentId, quantity);
+            }
+
+            return true; // Reservation created
+        }
+
 
         public void CancelReservation(int reservationId)
         {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using BusinessLogic.Managers;
 using BusinessLogic.Entities;
+using System.Text.Json;
 
 namespace Renting_Website.Pages
 {
@@ -10,11 +11,13 @@ namespace Renting_Website.Pages
     {
         private readonly ReservationManager _reservationManager;
         private readonly EquipmentManager _equipmentManager;
+        private readonly AvailabilityManager _availabilityManager;
 
         public ReserveEquipmentModel(EquipmentManager equipmentManager)
         {
             _reservationManager = new ReservationManager();
             _equipmentManager = equipmentManager;
+            _availabilityManager = new AvailabilityManager();
         }
 
         [BindProperty(SupportsGet = true)]
@@ -23,10 +26,12 @@ namespace Renting_Website.Pages
         [BindProperty]
         public DateTime ReservationDate { get; set; }
         public Equipment Equipment { get; set; }
+        public List<BasketEquipment> Basket { get; set; } = new();
 
         public IActionResult OnGet()
         {
             Equipment = _equipmentManager.GetEquipmentById(Id);
+
             if (Equipment == null)
             {
                 return RedirectToPage("/Error", new { errorMessage = "The requested equipment was not found." });
@@ -34,52 +39,46 @@ namespace Renting_Website.Pages
 
             ReservationDate = DateTime.Today;
 
+            var basketJson = HttpContext.Session.GetString("Basket");
+            if (!string.IsNullOrEmpty(basketJson))
+            {
+                Basket = JsonSerializer.Deserialize<List<BasketEquipment>>(basketJson);
+            }
+
             return Page();
         }
 
-        public IActionResult OnPost()
+        public IActionResult OnPostAddToBasket()
         {
-            Equipment = _equipmentManager.GetEquipmentById(Id); 
-
-            var userId = User.FindFirst("UserId")?.Value;
+            Equipment = _equipmentManager.GetEquipmentById(Id);
 
             if (Equipment == null)
             {
-                return RedirectToPage("/Error", new { errorMessage = "The requested equipment was not found." });
+                return RedirectToPage("/Error", new { errorMessage = "Equipment not found." });
             }
 
-            if (userId == null)
+            if (!_availabilityManager.CheckAvailability(ReservationDate, Equipment))
             {
-                return Unauthorized();
+                ModelState.AddModelError(string.Empty, "The equipment is not available on the selected date.");
+                return Page();
             }
-            int customerId = int.Parse(userId);
 
-            return Page();
-            //try
-            //{
-            //    //var reservation = new Reservation
-            //    //{
-            //    //    EquipmentId = Id,
-            //    //    CustomerId = customerId,
-            //    //    CreationDate = c,
-            //    //    Status = "Pending"
-            //    //};
+            var basketJson = HttpContext.Session.GetString("Basket");
+            List<BasketEquipment> basket = string.IsNullOrEmpty(basketJson)
+                ? new List<BasketEquipment>()
+                : JsonSerializer.Deserialize<List<BasketEquipment>>(basketJson);
 
-            //    //bool success = _reservationManager.CreateReservation(reservation);
+            basket.Add(new BasketEquipment
+            {
+                EquipmentId = Equipment.EquipmentId,
+                Name = Equipment.Name,
+                Date = ReservationDate,
+                PricePerDay = Equipment.PricePerDay
+            });
 
-            //    //if (!success)
-            //    //{
-            //    //    ModelState.AddModelError(string.Empty, "The equipment is not available for the selected dates.");
-            //    //    return Page();
-            //    //}
+            HttpContext.Session.SetString("Basket", JsonSerializer.Serialize(basket));
 
-            //    return RedirectToPage("/Reservations", new { reservationId = reservation.ReservationId });
-            //}
-            //catch (Exception ex)
-            //{
-            //    ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
-            //    return Page();
-            //}
+            return RedirectToPage("/Basket");
         }
     }
 }
