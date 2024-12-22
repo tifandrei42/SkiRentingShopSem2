@@ -58,7 +58,7 @@ namespace Renting_Website.Pages
                 {
                     reservationManager.CreateReservation(new Reservation
                     {
-                        EquipmentId = item.EquipmentId,
+                        Equipment = item.EquipmentId,
                         CustomerId = 1, // Replace with actual customer ID
                         ReservationDate = item.Date,
                         Status = "Pending"

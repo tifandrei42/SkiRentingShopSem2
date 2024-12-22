@@ -9,7 +9,7 @@ namespace BusinessLogic.Entities
     public class Reservation
     {
         private int reservationId;
-        private int equipmentId;
+        private Equipment equipment;
         private int customerId;
         private DateTime reservationDate;
         private DateTime creationDate;
@@ -22,10 +22,10 @@ namespace BusinessLogic.Entities
             set => reservationId = value;
         }
 
-        public int EquipmentId
+        public Equipment Equipment
         {
-            get => equipmentId;
-            set => equipmentId = value;
+            get => equipment;
+            set => equipment = value;
         }
 
         public int CustomerId
@@ -59,14 +59,12 @@ namespace BusinessLogic.Entities
         }
         public Reservation()
         {
-            reservationDate = DateTime.Now;
-            status = "Pending";
         }
 
-        public Reservation(int reservationId, int equipmentId, int customerId, DateTime reservationDate, decimal totalPrice)
+        public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, decimal totalPrice)
         {
             this.reservationId = reservationId;
-            this.equipmentId = equipmentId;
+            this.equipment = equipment;
             this.customerId = customerId;
             creationDate = DateTime.Now;
             this.reservationDate = reservationDate;
@@ -74,10 +72,10 @@ namespace BusinessLogic.Entities
             status = "Pending";
         }
 
-        public Reservation(int reservationId, int equipmentId, int customerId, DateTime reservationDate, DateTime creationDate, decimal totalPrice, string status)
+        public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, DateTime creationDate, decimal totalPrice, string status)
         {
             this.reservationId = reservationId;
-            this.equipmentId = equipmentId;
+            this.equipment = equipment;
             this.customerId = customerId;
             this.reservationDate = reservationDate;
             this.creationDate = creationDate;

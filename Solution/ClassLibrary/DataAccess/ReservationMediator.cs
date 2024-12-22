@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Entities;
+using BusinessLogic.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -16,7 +17,8 @@ namespace BusinessLogic.DataAccess
         {
             string query = @"
                 INSERT INTO Reservation (Customer_Id, ReservationDate, TotalPrice, Status)
-                VALUES (@CustomerId, @ReservationDate, @TotalPrice, @Status)";
+                VALUES (@CustomerId, @ReservationDate, @TotalPrice, @Status);
+                SELECT SCOPE_IDENTITY();";
 
             try
             {
@@ -28,7 +30,10 @@ namespace BusinessLogic.DataAccess
                     cmd.Parameters.AddWithValue("@Status", reservation.Status);
 
                     connection.Open();
-                    cmd.ExecuteNonQuery();
+                    int reservationId = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    // Insert Equipment data
+                    AddReservationEquipment(reservationId, reservation.Equipment.EquipmentId, 1);
                 }
             }
             catch (SqlException ex)
@@ -43,13 +48,29 @@ namespace BusinessLogic.DataAccess
         }
 
 
+
         public Reservation? GetReservationById(int reservationId)
         {
-            Reservation reservation = null;
+            Reservation? reservation = null;
             string query = @"
-                SELECT Reservation_Id, Equipment_Id, Customer_Id, ReservationDate, CreationDate, TotalPrice, Status
-                FROM Reservation
-                WHERE Reservation_Id = @ReservationId";
+                SELECT 
+                    r.Reservation_Id,
+                    r.Customer_Id,
+                    r.ReservationDate,
+                    r.TotalPrice,
+                    r.Status,
+                    e.Equipment_Id,
+                    e.Name AS EquipmentName,
+                    e.Brand,
+                    e.Size,
+                    e.PricePerDay,
+                    e.EquipmentType,
+                    e.ImagePath,
+                    e.Category
+                FROM Reservation r
+                INNER JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
+                INNER JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id
+                WHERE r.Reservation_Id = @ReservationId";
 
             try
             {
@@ -65,12 +86,21 @@ namespace BusinessLogic.DataAccess
                             reservation = new Reservation
                             {
                                 ReservationId = (int)reader["Reservation_Id"],
-                                EquipmentId = (int)reader["Equipment_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
-                                CreationDate = (DateTime)reader["CreationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
-                                Status = reader["Status"].ToString()
+                                Status = reader["Status"].ToString(),
+
+                                Equipment = new Equipment
+                                {
+                                    EquipmentId = (int)reader["Equipment_Id"],
+                                    Name = reader["EquipmentName"].ToString(),
+                                    Brand = reader["Brand"].ToString(),
+                                    Size = reader["Size"].ToString(),
+                                    PricePerDay = (decimal)reader["PricePerDay"],
+                                    Category = (EquipmentCategory)Enum.Parse(typeof(EquipmentCategory), reader["Category"].ToString()),
+                                    ImagePath = reader["ImagePath"].ToString()
+                                }
                             };
                         }
                     }
@@ -92,10 +122,26 @@ namespace BusinessLogic.DataAccess
         public List<Reservation> GetReservationsByCustomerId(int customerId)
         {
             List<Reservation> reservations = new List<Reservation>();
+
             string query = @"
-                SELECT Reservation_Id, Customer_Id, ReservationDate, CreationDate, TotalPrice, Status
-                FROM Reservation
-                WHERE Customer_Id = @CustomerId";
+                SELECT 
+                    r.Reservation_Id,
+                    r.Customer_Id,
+                    r.ReservationDate,
+                    r.TotalPrice,
+                    r.Status,
+                    e.Equipment_Id,
+                    e.Name AS EquipmentName,
+                    e.Brand,
+                    e.Size,
+                    e.PricePerDay,
+                    e.EquipmentType,
+                    e.ImagePath,
+                    e.Category
+                FROM Reservation r
+                INNER JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
+                INNER JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id
+                WHERE r.Customer_Id = @CustomerId";
 
             try
             {
@@ -111,12 +157,21 @@ namespace BusinessLogic.DataAccess
                             reservations.Add(new Reservation
                             {
                                 ReservationId = (int)reader["Reservation_Id"],
-                                EquipmentId = (int)reader["Equipment_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
-                                CreationDate = (DateTime)reader["CreationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
-                                Status = reader["Status"].ToString()
+                                Status = reader["Status"].ToString(),
+
+                                Equipment = new Equipment
+                                {
+                                    EquipmentId = (int)reader["Equipment_Id"],
+                                    Name = reader["EquipmentName"].ToString(),
+                                    Brand = reader["Brand"].ToString(),
+                                    Size = reader["Size"].ToString(),
+                                    PricePerDay = (decimal)reader["PricePerDay"],
+                                    Category = (EquipmentCategory)Enum.Parse(typeof(EquipmentCategory), reader["Category"].ToString()),
+                                    ImagePath = reader["ImagePath"].ToString()
+                                }
                             });
                         }
                     }
@@ -192,8 +247,22 @@ namespace BusinessLogic.DataAccess
             List<Reservation> reservations = new List<Reservation>();
 
             string query = @"
-                SELECT *
-                FROM Reservation";
+                SELECT 
+                    r.Reservation_Id,
+                    r.Customer_Id,
+                    r.ReservationDate,
+                    r.TotalPrice,
+                    r.Status,
+                    e.Equipment_Id,
+                    e.Name AS EquipmentName,
+                    e.Brand,
+                    e.Size,
+                    e.PricePerDay,
+                    e.EquipmentType,
+                    e.ImagePath
+                FROM Reservation r
+                LEFT JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
+                LEFT JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id";
 
             try
             {
@@ -205,23 +274,34 @@ namespace BusinessLogic.DataAccess
                     {
                         while (reader.Read())
                         {
-                            reservations.Add(new Reservation
+                            Reservation reservation = new Reservation
                             {
                                 ReservationId = (int)reader["Reservation_Id"],
-                                EquipmentId = (int)reader["Equipment_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
-                                CreationDate = (DateTime)reader["CreationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
-                                Status = reader["Status"].ToString()
-                            });
+                                Status = reader["Status"].ToString(),
+
+                                Equipment = new Equipment
+                                {
+                                    EquipmentId = (int)reader["Equipment_Id"],
+                                    Name = reader["EquipmentName"].ToString(),
+                                    Brand = reader["Brand"].ToString(),
+                                    Size = reader["Size"].ToString(),
+                                    PricePerDay = (decimal)reader["PricePerDay"],
+                                    Category = (EquipmentCategory)(int)reader["Category_Id"],
+                                    ImagePath = reader["ImagePath"].ToString()
+                                }
+                            };
+
+                            reservations.Add(reservation);
                         }
                     }
                 }
             }
             catch (SqlException ex)
             {
-                Console.WriteLine($"SQL Error in GetReservationsByCustomerId: {ex.Message}");
+                Console.WriteLine($"SQL Error in GetReservations: {ex.Message}");
                 throw;
             }
             finally
@@ -231,6 +311,7 @@ namespace BusinessLogic.DataAccess
 
             return reservations;
         }
+
 
         public List<Tuple<int, int, int>> GetReservationEquipmentByReservationId(int reservationId)
         {

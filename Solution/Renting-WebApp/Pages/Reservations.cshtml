@@ -27,7 +27,7 @@ else
             @foreach (var reservation in Model.Reservations)
             {
                 <tr>
-                    <td>@reservation.EquipmentId</td>
+                    <td>@reservation.Equipment</td>
                     <td>@reservation.CreationDate.ToShortDateString()</td>
                     <td>@reservation.TotalPrice.ToString("C")</td>
                     <td>@reservation.Status</td>
