@@ -20,9 +20,11 @@ namespace BusinessLogic.Managers
             reservationManager = new ReservationManager();
         }
 
-        public bool CheckAvailability(DateTime reservationDate, Equipment equipment, Basket basket, int qt)
+        public bool CheckAvailability(DateTime reservationDate, Equipment equipment, List<Reservation> basket, int qt)
         {
-            var currentCount = GetCurrentReservationCount(reservationDate, equipment) + GetBasketCount(reservationDate, equipment, basket);
+            var currentCount = GetCurrentReservationCount(reservationDate, equipment)
+                             + GetBasketCount(reservationDate, equipment, basket);
+
             var maximumCount = equipment.Quantity;
 
             if (currentCount + qt > maximumCount) 
@@ -32,15 +34,16 @@ namespace BusinessLogic.Managers
             return true;
         }
 
-        private int GetBasketCount(DateTime reservationDate, Equipment equipment, Basket basket)
+        private int GetBasketCount(DateTime reservationDate, Equipment equipment, List<Reservation> basket)
         {
-            if (basket == null || !basket.GetReservations().Any())
+            if (basket == null || !basket.Any())
                 return 0;
 
-            return basket.GetReservations().Count(r =>
+            return basket.Count(r =>
                 r.Equipment.EquipmentId == equipment.EquipmentId &&
                 r.ReservationDate.Date == reservationDate.Date);
         }
+
         private int GetCurrentReservationCount(DateTime reservationDate, Equipment equipment)
         {
             // Get only reservations for this date 

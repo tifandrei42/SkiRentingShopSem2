@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using BusinessLogic.Managers;
 using BusinessLogic.Entities;
-using System.Text.Json;
+using Newtonsoft.Json; // Use Newtonsoft for better JSON handling
 using BusinessLogic.Enums;
+using System.Collections.Generic;
 
 namespace Renting_Website.Pages
 {
@@ -14,6 +15,16 @@ namespace Renting_Website.Pages
         private readonly EquipmentManager _equipmentManager;
         private readonly AvailabilityManager _availabilityManager;
 
+        [BindProperty(SupportsGet = true)]
+        public int Id { get; set; }
+
+        [BindProperty]
+        public DateTime ReservationDate { get; set; }
+
+        public Equipment Equipment { get; set; }
+        public List<Reservation> Basket { get; set; } = new(); // Always treat basket as a List
+        public List<DateTime> UnavailableDates { get; set; } = new();
+
         public ReserveEquipmentModel(EquipmentManager equipmentManager)
         {
             _reservationManager = new ReservationManager();
@@ -21,18 +32,11 @@ namespace Renting_Website.Pages
             _availabilityManager = new AvailabilityManager();
         }
 
-        [BindProperty(SupportsGet = true)]
-        public int Id { get; set; }
-
-        [BindProperty]
-        public DateTime ReservationDate { get; set; }
-        public Equipment Equipment { get; set; }
-        public Basket? Basket { get; set; } = new();
-
         public IActionResult OnGet()
         {
-            // Retrieve equipment details
+            // Retrieve Equipment
             Equipment = _equipmentManager.GetEquipmentById(Id);
+            UnavailableDates = GetUnavailableDates(Id);
 
             if (Equipment == null)
             {
@@ -41,11 +45,20 @@ namespace Renting_Website.Pages
 
             ReservationDate = DateTime.Today;
 
-            // Load basket from session
+            // Load the basket
             var basketJson = HttpContext.Session.GetString("Basket");
             if (!string.IsNullOrEmpty(basketJson))
             {
-                Basket = JsonSerializer.Deserialize<Basket>(basketJson);
+                try
+                {
+                    // Deserialize basket as a List
+                    Basket = JsonConvert.DeserializeObject<List<Reservation>>(basketJson) ?? new List<Reservation>();
+                }
+                catch (JsonSerializationException ex)
+                {
+                    Console.WriteLine($"JSON Deserialization Error: {ex.Message}");
+                    Basket = new List<Reservation>(); // Reset basket if corrupted
+                }
             }
 
             return Page();
@@ -53,7 +66,7 @@ namespace Renting_Website.Pages
 
         public IActionResult OnPostAddToBasket()
         {
-            // Retrieve the selected equipment
+            // Retrieve Equipment
             Equipment = _equipmentManager.GetEquipmentById(Id);
 
             if (Equipment == null)
@@ -61,22 +74,23 @@ namespace Renting_Website.Pages
                 return RedirectToPage("/Error", new { errorMessage = "Equipment not found." });
             }
 
-            // Check availability
             if (!_availabilityManager.CheckAvailability(ReservationDate, Equipment, Basket, 1))
             {
                 ModelState.AddModelError(string.Empty, "The equipment is not available on the selected date.");
                 return Page();
             }
 
+            // Load basket from session
             var basketJson = HttpContext.Session.GetString("Basket");
-            Basket? basket = string.IsNullOrEmpty(basketJson)
-                ? new Basket()
-                : JsonSerializer.Deserialize<Basket>(basketJson);
+            List<Reservation>? basket = string.IsNullOrEmpty(basketJson)
+                ? new List<Reservation>()
+                : JsonConvert.DeserializeObject<List<Reservation>>(basketJson);
 
-            var customerIdClaim = User.FindFirst("UserId"); 
+            var customerIdClaim = User.FindFirst("UserId");
             int customerId = customerIdClaim != null ? int.Parse(customerIdClaim.Value) : 0;
 
-            basket.AddReservation(new Reservation
+            // Add reservation to basket
+            basket.Add(new Reservation
             {
                 ReservationId = -1,
                 Equipment = Equipment,
@@ -87,7 +101,8 @@ namespace Renting_Website.Pages
                 Status = Status.Pending
             });
 
-            HttpContext.Session.SetString("Basket", JsonSerializer.Serialize(basket));
+            // Save updated basket as JSON
+            HttpContext.Session.SetString("Basket", JsonConvert.SerializeObject(basket));
 
             return RedirectToPage("/Basket");
         }
@@ -102,7 +117,7 @@ namespace Renting_Website.Pages
             {
                 if (reservation.Equipment.EquipmentId == equipmentId)
                 {
-                    unavailableDates.Add(reservation.ReservationDate.Date); 
+                    unavailableDates.Add(reservation.ReservationDate.Date);
                 }
             }
 

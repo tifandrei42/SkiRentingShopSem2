@@ -1,4 +1,5 @@
 ﻿@page "{id:int}"
+@using Newtonsoft.Json
 @model Renting_Website.Pages.ReserveEquipmentModel
 @{
     ViewData["Title"] = "Reserve Equipment";
@@ -13,7 +14,9 @@
     }
     else
     {
-        <form method="post">
+        <form method="post" asp-page-handler="AddToBasket">
+            <input type="hidden" asp-for="Id" />
+
             <div class="form-group">
                 <label asp-for="ReservationDate">Reservation Date:</label>
                 <input asp-for="ReservationDate" id="reservationDate" type="date" class="form-control" />
@@ -21,7 +24,7 @@
             </div>
 
             <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Reserve</button>
+                <button type="submit" class="btn btn-primary">Add to Basket</button>
                 <a asp-page="/Content" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
@@ -31,14 +34,14 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        const unavailableDates = @Html.Raw(JsonSerializer.Serialize(Model.UnavailableDates));
+        const unavailableDates = @Html.Raw(JsonConvert.SerializeObject(Model.UnavailableDates));
 
         document.getElementById("reservationDate").addEventListener("input", function () {
             const selectedDate = new Date(this.value).toISOString().split('T')[0];
 
             if (unavailableDates.includes(selectedDate)) {
                 alert("This date is already reserved. Please choose another date.");
-                this.value = ""; 
+                this.value = "";
             }
         });
     </script>

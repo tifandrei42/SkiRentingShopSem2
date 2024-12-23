@@ -49,22 +49,19 @@ namespace BusinessLogic.DataAccess
         {
             Equipment equipment = null;
             string query = @"
-                SELECT 
-                    e.Equipment_Id,
-                    e.Name,
-                    e.Brand,
-                    e.Size,
-                    e.PricePerDay,
-                    e.Category_Id,
-                    c.CategoryName,
-                    e.ImagePath,
-                    e.Quantity
-                FROM 
-                    Equipment e
-                INNER JOIN 
-                    Category c ON e.Category_Id = c.Category_Id
-                WHERE 
-                    e.Equipment_Id = @Id";
+                            SELECT 
+                e.Equipment_Id,
+                e.Name,
+                e.Brand,
+                e.Size,
+                e.PricePerDay,
+                e.Category_Id,
+                e.ImagePath,
+                e.Quantity
+            FROM 
+                Equipment e
+            WHERE 
+                e.Equipment_Id = @Id";
 
             using (var cmd = new SqlCommand(query, connection))
             {
@@ -81,7 +78,6 @@ namespace BusinessLogic.DataAccess
                             Brand = reader["Brand"]?.ToString(),
                             Size = reader["Size"]?.ToString(),
                             PricePerDay = (decimal)reader["PricePerDay"],
-                            CategoryId = (int)reader["Category_Id"],
                             Category = (EquipmentCategory)(int)reader["Category_Id"],
                             ImagePath = reader["ImagePath"]?.ToString(),
                             Quantity = (int)reader["Quantity"]

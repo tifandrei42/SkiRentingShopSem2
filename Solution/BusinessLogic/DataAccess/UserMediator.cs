@@ -89,7 +89,7 @@ namespace BusinessLogic.DataAccess
                         {
                             User user = new User
                             {
-                                UserId = reader.GetInt32(reader.GetOrdinal("User_Id")),
+                                User_Id = reader.GetInt32(reader.GetOrdinal("User_Id")),
                                 UserName = reader.GetString(reader.GetOrdinal("UserName")),
                                 FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
@@ -138,7 +138,7 @@ namespace BusinessLogic.DataAccess
                         {
                             user = new User
                             {
-                                UserId = reader.GetInt32(reader.GetOrdinal("User_Id")),
+                                User_Id = reader.GetInt32(reader.GetOrdinal("User_Id")),
                                 UserName = reader.GetString(reader.GetOrdinal("UserName")),
                                 FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
@@ -187,7 +187,7 @@ namespace BusinessLogic.DataAccess
             {
                 using (SqlCommand cmd = new(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@UserId", user.UserId);
+                    cmd.Parameters.AddWithValue("@UserId", user.User_Id);
                     cmd.Parameters.AddWithValue("@UserName", user.UserName);
                     cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", user.LastName);
@@ -214,35 +214,54 @@ namespace BusinessLogic.DataAccess
         public User? GetUserByEmail(string email)
         {
             User? user = null;
+
+            // SQL query with correct column names
             string query = @"
-        SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId, Address, PhoneNumber
+        SELECT 
+            User_Id, 
+            UserName, 
+            FirstName, 
+            LastName, 
+            Email, 
+            Password, 
+            DateOfBirth, 
+            RoleId, 
+            Address, 
+            PhoneNumber
         FROM [dbo].[User] 
         WHERE Email = @Email;
     ";
 
             try
             {
-                using (SqlCommand cmd = new(query, connection))
+                using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@Email", email);
+
                     connection.Open();
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
+
                             user = new User
                             {
-                                UserId = reader.GetInt32(reader.GetOrdinal("User_Id")),
-                                UserName = reader.IsDBNull(reader.GetOrdinal("UserName")) ? string.Empty : reader.GetString(reader.GetOrdinal("UserName")),
-                                FirstName = reader.IsDBNull(reader.GetOrdinal("FirstName")) ? string.Empty : reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.IsDBNull(reader.GetOrdinal("LastName")) ? string.Empty : reader.GetString(reader.GetOrdinal("LastName")),
-                                Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString(reader.GetOrdinal("Email")),
-                                Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? string.Empty : reader.GetString(reader.GetOrdinal("Address")),
-                                PhoneNumber = reader.IsDBNull(reader.GetOrdinal("PhoneNumber")) ? string.Empty : reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                                Password = reader.IsDBNull(reader.GetOrdinal("Password")) ? string.Empty : reader.GetString(reader.GetOrdinal("Password")),
-                                DateOfBirth = (DateTime)(reader.IsDBNull(reader.GetOrdinal("DateOfBirth")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("DateOfBirth"))),
-                                Role = reader.IsDBNull(reader.GetOrdinal("RoleId")) ? UserRole.None : (UserRole)reader.GetInt32(reader.GetOrdinal("RoleId"))
+                                // Map database fields to the User object
+                                User_Id = reader.GetInt32(reader.GetOrdinal("User_Id")),
+                                UserName = reader["UserName"] as string ?? string.Empty,
+                                FirstName = reader["FirstName"] as string ?? string.Empty,
+                                LastName = reader["LastName"] as string ?? string.Empty,
+                                Email = reader["Email"] as string ?? string.Empty,
+                                Address = reader["Address"] as string ?? string.Empty,
+                                PhoneNumber = reader["PhoneNumber"] as string ?? string.Empty,
+                                Password = reader["Password"] as string ?? string.Empty,
+                                DateOfBirth = reader.IsDBNull(reader.GetOrdinal("DateOfBirth"))
+                                    ? DateTime.MinValue // Default value if null
+                                    : reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
+                                Role = reader.IsDBNull(reader.GetOrdinal("RoleId"))
+                                    ? UserRole.None
+                                    : (UserRole)reader.GetInt32(reader.GetOrdinal("RoleId"))
                             };
                         }
                     }
@@ -250,7 +269,7 @@ namespace BusinessLogic.DataAccess
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Error retrieving user by email: " + ex.Message);
+                Console.Error.WriteLine($"Error retrieving user by email: {ex.Message}");
             }
             finally
             {
@@ -260,6 +279,7 @@ namespace BusinessLogic.DataAccess
 
             return user;
         }
+
 
 
         public List<User> GetUsersByRole(UserRole role)
@@ -284,7 +304,7 @@ namespace BusinessLogic.DataAccess
                         {
                             User user = new User
                             {
-                                UserId = reader.GetInt32(reader.GetOrdinal("User_Id")),
+                                User_Id = reader.GetInt32(reader.GetOrdinal("User_Id")),
                                 UserName = reader.GetString(reader.GetOrdinal("UserName")),
                                 FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),

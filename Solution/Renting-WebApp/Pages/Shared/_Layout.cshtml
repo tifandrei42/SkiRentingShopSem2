@@ -29,8 +29,10 @@
 
                         @if (User.Identity.IsAuthenticated)
                         {
+                            var userId = User.FindFirst("UserId")?.Value;
+
                             <li class="nav-item">
-                                <a class="nav-link text-accent" asp-page="/Profile">Profile</a>
+                                <a class="nav-link text-accent" asp-page="/Profile" asp-route-id="@userId">Profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-accent" asp-page="/Logout">Logout</a>

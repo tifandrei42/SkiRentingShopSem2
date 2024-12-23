@@ -16,6 +16,8 @@ namespace Renting_Website.Pages
             var basketJson = HttpContext.Session.GetString("Basket"); // Get JSON string
             if (!string.IsNullOrEmpty(basketJson))
             {
+                Console.WriteLine($"Basket JSON: {basketJson}");
+
                 Basket = JsonConvert.DeserializeObject<List<Reservation>>(basketJson); // Deserialize it
             }
         }

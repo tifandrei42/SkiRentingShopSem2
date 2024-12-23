@@ -22,10 +22,10 @@ namespace BusinessLogic.Entities
         private DateTime dateOfBirth;
         private UserRole role;
 
-        public int UserId
+        public int User_Id
         {
             get { return userId; }
-            set { ; }
+            set { userId = value;  }
         }
 
         [Required(ErrorMessage = "First Name is required.")]
@@ -98,7 +98,7 @@ namespace BusinessLogic.Entities
 
         public User(int userId, string userName, string firstName, string lastName, string email, string password, DateTime dateOfBirth, UserRole role, string phonenumber, string address)
         {
-            this.UserId = userId;
+            this.User_Id = userId;
             this.UserName = userName;
             this.FirstName = firstName;
             this.LastName = lastName;

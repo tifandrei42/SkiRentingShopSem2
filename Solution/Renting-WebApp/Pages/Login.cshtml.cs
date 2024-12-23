@@ -70,7 +70,7 @@ namespace Renting_Website.Pages
                 new Claim(ClaimTypes.Email, customer.Email),
                 new Claim("FullName", $"{customer.FirstName} {customer.LastName}"),
                 new Claim(ClaimTypes.Role, "Customer"),
-                new Claim("UserId", customer.UserId.ToString()),
+                new Claim("UserId", customer.User_Id.ToString()),
                 new Claim("Basket", basketJson) // Store the basket in claims
             };
 

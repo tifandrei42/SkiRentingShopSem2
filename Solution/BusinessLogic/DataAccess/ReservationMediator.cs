@@ -62,12 +62,12 @@ namespace BusinessLogic.DataAccess
                     e.PricePerDay,
                     e.EquipmentType,
                     e.ImagePath,
-                    e.Category,
+                    e.Category_Id AS Category,
                     re.Quantity
                 FROM Reservation r
                 INNER JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
                 INNER JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id
-                WHERE r.Reservation_Id = @ReservationId";
+                WHERE r.Reservation_Id = @ReservationId;";
 
             try
             {
@@ -134,14 +134,13 @@ namespace BusinessLogic.DataAccess
                     e.Brand,
                     e.Size,
                     e.PricePerDay,
-                    e.EquipmentType,
                     e.ImagePath,
-                    e.Category,
+                    e.Category_Id AS Category,
                     re.Quantity
                 FROM Reservation r
                 INNER JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
                 INNER JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id
-                WHERE r.Customer_Id = @CustomerId";
+                WHERE r.Customer_Id = @CustomerId;";
 
             try
             {
@@ -197,7 +196,7 @@ namespace BusinessLogic.DataAccess
             string query = @"
                 UPDATE Reservation
                 SET Status = @Status
-                WHERE Reservation_Id = @ReservationId";
+                WHERE Reservation_Id = @ReservationId;";
 
             try
             {
@@ -280,25 +279,23 @@ namespace BusinessLogic.DataAccess
             List<Reservation> reservations = new List<Reservation>();
 
             string query = @"
-        SELECT 
-            r.Reservation_Id,
-            r.Customer_Id,
-            r.ReservationDate,
-            r.TotalPrice,
-            r.Status,
-            e.Equipment_Id,
-            e.Name AS EquipmentName,
-            e.Brand,
-            e.Size,
-            e.PricePerDay,
-            e.EquipmentType,
-            e.ImagePath,
-            e.Category,
-            re.Quantity
-        FROM Reservation r
-        LEFT JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
-        LEFT JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id";
-
+                SELECT 
+                    r.Reservation_Id,
+                    r.Customer_Id,
+                    r.ReservationDate,
+                    r.TotalPrice,
+                    r.Status,
+                    e.Equipment_Id,
+                    e.Name AS EquipmentName,
+                    e.Brand,
+                    e.Size,
+                    e.PricePerDay,
+                    e.Category_Id AS Category, -- Fixed column name
+                    e.ImagePath,
+                    re.Quantity
+                FROM Reservation r
+                LEFT JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
+                LEFT JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id";
             try
             {
                 using (SqlCommand cmd = new SqlCommand(query, connection))

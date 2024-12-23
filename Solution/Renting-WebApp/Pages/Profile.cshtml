@@ -3,30 +3,31 @@
 @{
     ViewData["Title"] = "Customer Profile";
 }
+
 @using System.Security.Claims
-<div class="container profile-container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card profile-card p-4 text-light">
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow-lg p-4 mb-5 bg-white rounded" style="width: 400px;">
         <div class="card-body text-center">
-            <div class="mb-3 profile-icon">
-                <img src="/path-to-snowboard-icon.png" alt="Snowboard Icon">
+            <div class="mb-3">
+                <img src="/path-to-snowboard-icon.png" alt="Snowboard Icon" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
             </div>
 
-            <h3 class="card-title text-center mb-4">Your Profile</h3>
+            <h3 class="card-title text-primary mb-4">Your Profile</h3>
 
             <!-- Profile Information -->
-            <div class="profile-info text-start">
-                <p><strong>First Name:</strong> @Model.User.FirstName</p>
-                <p><strong>Last Name:</strong> @Model.User.LastName</p>
-                <p><strong>Username:</strong> @Model.User.UserName</p>
-                <p><strong>Email:</strong> @Model.User.Email</p>
-                <p><strong>Date of Birth:</strong> @Model.User.DateOfBirth.ToShortDateString()</p>
-                <p><strong>Phone Number:</strong> @Model.User.PhoneNumber</p>
-                <p><strong>Address:</strong> @Model.User.Address</p>
-            </div>
+            <ul class="list-group list-group-flush text-start">
+                <li class="list-group-item"><strong>First Name:</strong> @Model.Customer.FirstName</li>
+                <li class="list-group-item"><strong>Last Name:</strong> @Model.Customer.LastName</li>
+                <li class="list-group-item"><strong>Username:</strong> @Model.Customer.UserName</li>
+                <li class="list-group-item"><strong>Email:</strong> @Model.Customer.Email</li>
+                <li class="list-group-item"><strong>Date of Birth:</strong> @Model.Customer.DateOfBirth.ToShortDateString()</li>
+                <li class="list-group-item"><strong>Phone Number:</strong> @Model.Customer.PhoneNumber</li>
+                <li class="list-group-item"><strong>Address:</strong> @Model.Customer.Address</li>
+            </ul>
 
             <!-- Edit Button -->
             <div class="mt-4">
-                <a href="/Profile/Edit" class="btn btn-light profile-edit-btn">Edit Profile</a>
+                <a href="/Profile/Edit" class="btn btn-primary">Edit Profile</a>
             </div>
         </div>
     </div>
