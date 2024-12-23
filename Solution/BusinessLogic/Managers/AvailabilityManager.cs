@@ -4,7 +4,9 @@ using BusinessLogic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Managers
@@ -18,44 +20,35 @@ namespace BusinessLogic.Managers
             reservationManager = new ReservationManager();
         }
 
-        public bool CheckAvailability(DateTime reservationDate, Equipment equipment)
+        public bool CheckAvailability(DateTime reservationDate, Equipment equipment, Basket basket, int qt)
         {
-            var currentCount = GetCurrentReservationCount(reservationDate, equipment) + GetBasketCount(reservationDate, equipment);
+            var currentCount = GetCurrentReservationCount(reservationDate, equipment) + GetBasketCount(reservationDate, equipment, basket);
             var maximumCount = equipment.Quantity;
 
-            if (currentCount >= maximumCount) 
+            if (currentCount + qt > maximumCount) 
             {
                 return false;
             }
             return true;
         }
 
+        private int GetBasketCount(DateTime reservationDate, Equipment equipment, Basket basket)
+        {
+            if (basket == null || !basket.GetReservations().Any())
+                return 0;
+
+            return basket.GetReservations().Count(r =>
+                r.Equipment.EquipmentId == equipment.EquipmentId &&
+                r.ReservationDate.Date == reservationDate.Date);
+        }
         private int GetCurrentReservationCount(DateTime reservationDate, Equipment equipment)
         {
             // Get only reservations for this date 
             List<Reservation> reservations = GetReservationsByDate(reservationDate);
 
-            int count = 0;
-
-            foreach (Reservation reservation in reservations)
-            {
-                //Filter by reservationId
-                List<Tuple<int,int,int>> reservationEquipment = reservationManager.GetReservationEquipmentByReservationId(reservation.ReservationId);
-
-                foreach (Tuple<int, int, int> element in reservationEquipment) 
-                {
-                    int rId = element.Item1;
-                    int eId = element.Item2;
-                    int qt = element.Item3;
-
-                    //Filter by equipment
-                    if (eId == equipment.EquipmentId) 
-                    {
-                        count += qt;
-                    }
-                }
-            }
-            return count;
+            return reservations.Count(r =>
+                r.Equipment.EquipmentId == equipment.EquipmentId &&
+                r.ReservationDate.Date == reservationDate.Date);
         }
 
         private List<Reservation> GetReservationsByDate(DateTime reservationDate)

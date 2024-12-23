@@ -9,6 +9,7 @@ using BusinessLogic.Entities;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Strategies;
 using BusinessLogic.DataAccess;
+using Newtonsoft.Json; // For serialization
 
 namespace Renting_Website.Pages
 {
@@ -23,8 +24,11 @@ namespace Renting_Website.Pages
         [Required(ErrorMessage = "Password is required.")]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
+
         private readonly LoginService loginService;
+
         public string PageTitle { get; private set; } = "Login";
+
         public LoginModel()
         {
             IUserMediator userMediator = new UserMediator();
@@ -54,13 +58,20 @@ namespace Renting_Website.Pages
                 return Page();
             }
 
+            // Initialize an empty basket
+            Basket basket = new Basket();
+
+            // Serialize the basket into JSON for storage in claims
+            string basketJson = JsonConvert.SerializeObject(basket);
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, customer.UserName),
                 new Claim(ClaimTypes.Email, customer.Email),
                 new Claim("FullName", $"{customer.FirstName} {customer.LastName}"),
                 new Claim(ClaimTypes.Role, "Customer"),
-                new Claim("UserId", customer.UserId.ToString())
+                new Claim("UserId", customer.UserId.ToString()),
+                new Claim("Basket", basketJson) // Store the basket in claims
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -78,6 +89,5 @@ namespace Renting_Website.Pages
             returnUrl = returnUrl ?? Url.Page("/Index");
             return LocalRedirect(returnUrl);
         }
-
     }
 }

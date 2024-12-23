@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessLogic.Enums;
+using System;
 
 namespace BusinessLogic.Entities
 {
@@ -14,8 +11,10 @@ namespace BusinessLogic.Entities
         private DateTime reservationDate;
         private DateTime creationDate;
         private decimal totalPrice;
-        private enum status;
+        private Status status;
+        private int quantity; // Added quantity field
 
+        // Properties
         public int ReservationId
         {
             get => reservationId;
@@ -52,27 +51,38 @@ namespace BusinessLogic.Entities
             set => totalPrice = value;
         }
 
-        public string Status
+        public Status Status
         {
             get => status;
             set => status = value;
         }
+
+        public int Quantity // New Quantity Property
+        {
+            get => quantity;
+            set => quantity = value;
+        }
+
+        // Default Constructor
         public Reservation()
         {
         }
 
-        public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, decimal totalPrice)
+        // Constructor without creation date and status
+        public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, decimal totalPrice, int quantity)
         {
             this.reservationId = reservationId;
             this.equipment = equipment;
             this.customerId = customerId;
-            creationDate = DateTime.Now;
+            this.creationDate = DateTime.Now;
             this.reservationDate = reservationDate;
             this.totalPrice = totalPrice;
-            status = "Pending";
+            this.quantity = quantity; // Initialize quantity
+            this.status = Status.Pending;
         }
 
-        public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, DateTime creationDate, decimal totalPrice, string status)
+        // Constructor with all fields
+        public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, DateTime creationDate, decimal totalPrice, Status status, int quantity)
         {
             this.reservationId = reservationId;
             this.equipment = equipment;
@@ -81,6 +91,7 @@ namespace BusinessLogic.Entities
             this.creationDate = creationDate;
             this.totalPrice = totalPrice;
             this.status = status;
+            this.quantity = quantity; // Initialize quantity
         }
     }
 }

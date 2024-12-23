@@ -20,8 +20,9 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.5.0" />
-	 <ProjectReference Include="..\ClassLibrary\BusinessLogic.csproj" />
+	  <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,8 +15,8 @@
     {
         <form method="post">
             <div class="form-group">
-                <label asp-for="ReservationDate">Start Date:</label>
-                <input asp-for="ReservationDate" type="date" class="form-control" />
+                <label asp-for="ReservationDate">Reservation Date:</label>
+                <input asp-for="ReservationDate" id="reservationDate" type="date" class="form-control" />
                 <span asp-validation-for="ReservationDate" class="text-danger"></span>
             </div>
 
@@ -30,4 +30,16 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const unavailableDates = @Html.Raw(JsonSerializer.Serialize(Model.UnavailableDates));
+
+        document.getElementById("reservationDate").addEventListener("input", function () {
+            const selectedDate = new Date(this.value).toISOString().split('T')[0];
+
+            if (unavailableDates.includes(selectedDate)) {
+                alert("This date is already reserved. Please choose another date.");
+                this.value = ""; 
+            }
+        });
+    </script>
 }

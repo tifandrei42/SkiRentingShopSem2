@@ -32,7 +32,7 @@ else
                     <td>@reservation.TotalPrice.ToString("C")</td>
                     <td>@reservation.Status</td>
                     <td>
-                        @if (reservation.Status != "Cancelled")
+                        @if (reservation.Status != BusinessLogic.Enums.Status.Canceled)
                         {
                             <form method="post" asp-route-id="@reservation.ReservationId">
                                 <button type="submit" class="btn btn-danger btn-sm">Cancel</button>

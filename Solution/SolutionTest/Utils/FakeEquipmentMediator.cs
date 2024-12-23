@@ -48,5 +48,9 @@ namespace SolutionTest.Utils
         {
             _equipmentData.Remove(equipmentId);
         }
+        public bool IsDuplicateEquipment(string name, string imagePath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

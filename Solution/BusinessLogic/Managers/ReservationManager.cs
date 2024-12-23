@@ -41,10 +41,5 @@ namespace BusinessLogic.Managers
         {
             return _reservationMediator.GetReservations();
         }
-
-        public List<Tuple<int,int,int>> GetReservationEquipmentByReservationId(int reservationId)
-        {
-            return _reservationMediator.GetReservationEquipmentByReservationId(reservationId);
-        }
     }
 }

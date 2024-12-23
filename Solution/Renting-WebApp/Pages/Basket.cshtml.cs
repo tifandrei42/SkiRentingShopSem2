@@ -1,75 +1,44 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using BusinessLogic.Entities;
-using BusinessLogic.Managers;
+using Newtonsoft.Json; // For JSON serialization
+using System.Collections.Generic;
 
 namespace Renting_Website.Pages
 {
     public class BasketModel : PageModel
     {
-        public List<BasketEquipment> Basket { get; set; } = new();
-        public ReservationManager reservationManager;
+        public List<Reservation>? Basket { get; set; } = new();
 
-        public BasketModel() 
-        {
-            reservationManager = new ReservationManager();
-        }
-        
+        // Load the basket when the page loads
         public void OnGet()
         {
-            var basketJson = HttpContext.Session.GetString("Basket");
+            var basketJson = HttpContext.Session.GetString("Basket"); // Get JSON string
             if (!string.IsNullOrEmpty(basketJson))
             {
-                Basket = JsonSerializer.Deserialize<List<BasketEquipment>>(basketJson);
+                Basket = JsonConvert.DeserializeObject<List<Reservation>>(basketJson); // Deserialize it
             }
         }
 
+        // Remove an item by ID
         public IActionResult OnPostRemove(int id)
         {
             var basketJson = HttpContext.Session.GetString("Basket");
             if (!string.IsNullOrEmpty(basketJson))
             {
-                var basket = JsonSerializer.Deserialize<List<BasketEquipment>>(basketJson);
-                basket.RemoveAll(item => item.EquipmentId == id);
-                HttpContext.Session.SetString("Basket", JsonSerializer.Serialize(basket));
+                var basket = JsonConvert.DeserializeObject<List<Reservation>>(basketJson);
+                basket.RemoveAll(r => r.Equipment.EquipmentId == id); // Remove item
+                HttpContext.Session.SetString("Basket", JsonConvert.SerializeObject(basket)); // Save updated basket
             }
-
             return RedirectToPage();
         }
 
+        // Clear all items in the basket
         public IActionResult OnPostClear()
         {
             HttpContext.Session.Remove("Basket");
             return RedirectToPage();
         }
 
-        public IActionResult OnPostConfirm()
-        {
-            var basketJson = HttpContext.Session.GetString("Basket");
-            if (!string.IsNullOrEmpty(basketJson))
-            {
-                var basket = JsonSerializer.Deserialize<List<BasketEquipment>>(basketJson);
-                
-
-                foreach (var item in basket)
-                {
-                    reservationManager.CreateReservation(new Reservation
-                    {
-                        Equipment = item.EquipmentId,
-                        CustomerId = 1, // Replace with actual customer ID
-                        ReservationDate = item.Date,
-                        Status = "Pending"
-                    });
-                }
-
-                HttpContext.Session.Remove("Basket");
-            }
-
-            return RedirectToPage("/Reservations");
-        }
     }
 }
-

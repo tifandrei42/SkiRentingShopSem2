@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Renting-DesktopApp", "Renti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Renting-WebApp", "Renting-WebApp\Renting-WebApp.csproj", "{B6DE4B04-5369-4861-941C-EC1B7E403413}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "ClassLibrary\BusinessLogic.csproj", "{B8DABACC-5C45-4DC0-8BC4-05C6F7328588}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{B8DABACC-5C45-4DC0-8BC4-05C6F7328588}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolutionTest", "SolutionTest\SolutionTest.csproj", "{B9104FE1-1692-492A-A45F-A90C43233869}"
 EndProject

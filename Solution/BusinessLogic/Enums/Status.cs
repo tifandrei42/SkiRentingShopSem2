@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Enums
 {
-    internal class Status
+    public enum Status
     {
+        Pending,
+        Ongoing,
+        Finished,
+        Canceled
     }
 }
