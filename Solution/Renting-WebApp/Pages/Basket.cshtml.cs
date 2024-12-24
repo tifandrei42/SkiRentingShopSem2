@@ -129,7 +129,6 @@ namespace Renting_Website.Pages
                 }
             }
 
-            // Clear the basket after successful reservation
             HttpContext.Session.Remove("Basket");
             return RedirectToPage("/Reservations");
         }

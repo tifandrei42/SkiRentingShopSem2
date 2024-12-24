@@ -68,13 +68,18 @@ namespace BusinessLogic.Managers
             _equipmentMediator.DeleteEquipment(equipmentId);
         }
 
-        public List<Equipment> GetFilteredEquipment(string brandFilter, decimal? minPrice, decimal? maxPrice)
+        public List<Equipment> GetFilteredEquipment(string brandFilter, string nameFilter, decimal? minPrice, decimal? maxPrice)
         {
             var allEquipment = _equipmentMediator.GetAllEquipment();
 
             if (!string.IsNullOrEmpty(brandFilter))
             {
                 allEquipment = allEquipment.Where(e => e.Brand.Contains(brandFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(nameFilter))
+            {
+                allEquipment = allEquipment.Where(e => e.Name.Contains(nameFilter, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             if (minPrice.HasValue)
