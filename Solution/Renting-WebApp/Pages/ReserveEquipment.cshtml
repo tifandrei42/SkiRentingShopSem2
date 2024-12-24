@@ -1,4 +1,4 @@
-﻿@page "{id:int}"
+﻿@page
 @using Newtonsoft.Json
 @model Renting_Website.Pages.ReserveEquipmentModel
 @{
@@ -8,6 +8,9 @@
 <h2 class="text-center">Reserve Equipment: @Model.Equipment?.Name</h2>
 
 <div class="container mt-4">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
     @if (Model.Equipment == null)
     {
         <p class="text-danger">Equipment not found. Please try again later.</p>
@@ -16,6 +19,7 @@
     {
         <form method="post" asp-page-handler="AddToBasket">
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Quantity" />
 
             <div class="form-group">
                 <label asp-for="ReservationDate">Reservation Date:</label>

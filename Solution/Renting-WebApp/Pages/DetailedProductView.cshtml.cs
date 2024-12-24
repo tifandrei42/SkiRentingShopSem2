@@ -16,7 +16,7 @@ namespace Renting_Website.Pages
         }
 
         [BindProperty(SupportsGet = true)]
-        public int Id { get; set; } // Equipment ID from route
+        public int Id { get; set; }
 
         public Equipment Equipment { get; private set; }
 

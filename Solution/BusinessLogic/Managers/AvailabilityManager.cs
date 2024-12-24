@@ -39,19 +39,25 @@ namespace BusinessLogic.Managers
             if (basket == null || !basket.Any())
                 return 0;
 
-            return basket.Count(r =>
-                r.Equipment.EquipmentId == equipment.EquipmentId &&
-                r.ReservationDate.Date == reservationDate.Date);
+            return basket
+                .Where(r =>
+                    r.Equipment.EquipmentId == equipment.EquipmentId &&
+                    r.ReservationDate.Date == reservationDate.Date &&
+                    r.Status != Enums.Status.Canceled)
+                .Sum(r => r.Quantity);
         }
 
         private int GetCurrentReservationCount(DateTime reservationDate, Equipment equipment)
         {
             // Get only reservations for this date 
-            List<Reservation> reservations = GetReservationsByDate(reservationDate);
+            List<Reservation> reservations = reservationManager.GetReservations();
 
-            return reservations.Count(r =>
-                r.Equipment.EquipmentId == equipment.EquipmentId &&
-                r.ReservationDate.Date == reservationDate.Date);
+            return reservations
+                .Where(r =>
+                    r.Equipment.EquipmentId == equipment.EquipmentId &&
+                    r.ReservationDate.Date == reservationDate.Date &&
+                    r.Status != Enums.Status.Canceled)
+                .Sum(r => r.Quantity);
         }
 
         private List<Reservation> GetReservationsByDate(DateTime reservationDate)

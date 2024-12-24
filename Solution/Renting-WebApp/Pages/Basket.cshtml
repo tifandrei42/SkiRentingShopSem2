@@ -3,8 +3,11 @@
 @{
     ViewData["Title"] = "Basket";
 }
+
 <div class="container mt-5">
-    <h2 class="mb-4 text-center">Basket</h2>
+    <h2 class="mb-4 text-center">My Basket</h2>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
 
     @if (Model.Basket.Any())
     {
@@ -13,9 +16,9 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Equipment</th>
-                        <th>Category</th>
                         <th>Date</th>
                         <th>Price/Day</th>
+                        <th>Quantity</th>
                         <th>Total Price</th>
                         <th>Actions</th>
                     </tr>
@@ -25,10 +28,10 @@
                     {
                         <tr>
                             <td>@item.Equipment.Name</td>
-                            <td>@item.Equipment.Category.ToString()</td>
                             <td>@item.ReservationDate.ToShortDateString()</td>
                             <td>@item.Equipment.PricePerDay.ToString("C")</td>
-                            <td>@item.TotalPrice.ToString("C")</td>
+                            <td>@item.Quantity</td>
+                            <td>@(item.Equipment.PricePerDay * item.Quantity)</td>
                             <td>
                                 <form method="post" asp-page-handler="Remove" asp-route-id="@item.Equipment.EquipmentId">
                                     <button type="submit" class="btn btn-danger btn-sm">Remove</button>
@@ -40,9 +43,17 @@
             </table>
         </div>
 
-        <form method="post" asp-page-handler="Clear" class="text-center mt-4">
-            <button type="submit" class="btn btn-warning">Clear Basket</button>
-        </form>
+        <div class="text-center mt-4">
+            <form method="post" asp-page-handler="CompleteReservation">
+                <button type="submit" class="btn btn-success btn-lg">Complete Reservation</button>
+            </form>
+        </div>
+
+        <div class="text-center mt-4">
+            <form method="post" asp-page-handler="Clear">
+                <button type="submit" class="btn btn-warning">Clear Basket</button>
+            </form>
+        </div>
     }
     else
     {

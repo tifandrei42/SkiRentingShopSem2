@@ -57,7 +57,7 @@ namespace BusinessLogic.Entities
             set => status = value;
         }
 
-        public int Quantity // New Quantity Property
+        public int Quantity 
         {
             get => quantity;
             set => quantity = value;
@@ -77,7 +77,7 @@ namespace BusinessLogic.Entities
             this.creationDate = DateTime.Now;
             this.reservationDate = reservationDate;
             this.totalPrice = totalPrice;
-            this.quantity = quantity; // Initialize quantity
+            this.quantity = quantity; 
             this.status = Status.Pending;
         }
 

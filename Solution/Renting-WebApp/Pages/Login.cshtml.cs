@@ -31,6 +31,7 @@ namespace Renting_Website.Pages
 
         public LoginModel()
         {
+
             IUserMediator userMediator = new UserMediator();
             UserManager userManager = new UserManager(userMediator);
             EncriptionManager encriptionManager = new EncriptionManager();
@@ -58,10 +59,8 @@ namespace Renting_Website.Pages
                 return Page();
             }
 
-            // Initialize an empty basket
             Basket basket = new Basket();
 
-            // Serialize the basket into JSON for storage in claims
             string basketJson = JsonConvert.SerializeObject(basket);
 
             var claims = new List<Claim>
@@ -71,7 +70,7 @@ namespace Renting_Website.Pages
                 new Claim("FullName", $"{customer.FirstName} {customer.LastName}"),
                 new Claim(ClaimTypes.Role, "Customer"),
                 new Claim("UserId", customer.User_Id.ToString()),
-                new Claim("Basket", basketJson) // Store the basket in claims
+                new Claim("Basket", basketJson)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

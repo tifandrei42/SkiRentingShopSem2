@@ -3,46 +3,81 @@ using BusinessLogic.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace BusinessLogic.DataAccess
 {
     public class ReservationMediator : DbAccess
     {
-        public ReservationMediator() : base() { }
+        private bool connectionOpen;
 
-        // Create Reservation with Quantity
+        public ReservationMediator() : base() { connectionOpen = false; }
+
+        private void OpenConnection() 
+        {
+            if (!connectionOpen)
+            {
+                connection.Open();
+                connectionOpen = true;
+            } 
+        }
+        private void CloseConnection()
+        {
+            if (connectionOpen)
+            {
+                connection.Close();
+                connectionOpen = false;
+            }
+        }
+
+
         public void CreateReservation(Reservation reservation)
         {
             string query = @"
-                INSERT INTO Reservation (Customer_Id, ReservationDate, TotalPrice, Status)
-                VALUES (@CustomerId, @ReservationDate, @TotalPrice, @Status);
-                SELECT SCOPE_IDENTITY();";
+        INSERT INTO Reservation (Customer_Id, ReservationDate, CreationDate, TotalPrice, Status)
+        VALUES (@CustomerId, @ReservationDate, @CreationDate, @TotalPrice, @Status);
+        SELECT SCOPE_IDENTITY();";
+
+            // Open connection and start a transaction
+            OpenConnection();
+            SqlTransaction transaction = connection.BeginTransaction();
 
             try
             {
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                // Execute the reservation insert within the transaction
+                using (SqlCommand cmd = new SqlCommand(query, connection, transaction))
                 {
                     cmd.Parameters.AddWithValue("@CustomerId", reservation.CustomerId);
-                    cmd.Parameters.AddWithValue("@ReservationDate", reservation.ReservationDate);
+                    cmd.Parameters.AddWithValue("@ReservationDate", reservation.ReservationDate.Date);
+                    cmd.Parameters.AddWithValue("@CreationDate", reservation.CreationDate.Date);
                     cmd.Parameters.AddWithValue("@TotalPrice", reservation.TotalPrice);
                     cmd.Parameters.AddWithValue("@Status", reservation.Status.ToString());
 
-                    connection.Open();
+                    // Get the new reservation ID
                     int reservationId = Convert.ToInt32(cmd.ExecuteScalar());
 
-                    AddReservationEquipment(reservationId, reservation.Equipment.EquipmentId, reservation.Quantity);
+                    // Pass the transaction to AddReservationEquipment
+                    AddReservationEquipment(reservationId, reservation.Equipment.EquipmentId, reservation.Quantity, transaction);
                 }
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
             }
             catch (SqlException ex)
             {
                 Console.WriteLine($"SQL Error in CreateReservation: {ex.Message}");
+
+                // Rollback the transaction in case of failure
+                transaction.Rollback();
                 throw;
             }
             finally
             {
-                connection.Close();
+                CloseConnection(); // Always close the connection
             }
         }
+
+
 
         // Get Reservation by ID
         public Reservation? GetReservationById(int reservationId)
@@ -53,6 +88,7 @@ namespace BusinessLogic.DataAccess
                     r.Reservation_Id,
                     r.Customer_Id,
                     r.ReservationDate,
+                    r.CreationDate,
                     r.TotalPrice,
                     r.Status,
                     e.Equipment_Id,
@@ -60,7 +96,6 @@ namespace BusinessLogic.DataAccess
                     e.Brand,
                     e.Size,
                     e.PricePerDay,
-                    e.EquipmentType,
                     e.ImagePath,
                     e.Category_Id AS Category,
                     re.Quantity
@@ -74,7 +109,7 @@ namespace BusinessLogic.DataAccess
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@ReservationId", reservationId);
-                    connection.Open();
+                    OpenConnection();
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -85,6 +120,7 @@ namespace BusinessLogic.DataAccess
                                 ReservationId = (int)reader["Reservation_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
+                                CreationDate = (DateTime)reader["CreationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
                                 Status = (Status)Enum.Parse(typeof(Status), reader["Status"].ToString()),
                                 Quantity = (int)reader["Quantity"],
@@ -111,7 +147,7 @@ namespace BusinessLogic.DataAccess
             }
             finally
             {
-                connection.Close();
+                CloseConnection();
             }
 
             return reservation;
@@ -127,6 +163,7 @@ namespace BusinessLogic.DataAccess
                     r.Reservation_Id,
                     r.Customer_Id,
                     r.ReservationDate,
+                    r.CreationDate,
                     r.TotalPrice,
                     r.Status,
                     e.Equipment_Id,
@@ -147,7 +184,7 @@ namespace BusinessLogic.DataAccess
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@CustomerId", customerId);
-                    connection.Open();
+                    OpenConnection();
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -158,6 +195,7 @@ namespace BusinessLogic.DataAccess
                                 ReservationId = (int)reader["Reservation_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
+                                CreationDate = (DateTime)reader["CreationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
                                 Status = (Status)Enum.Parse(typeof(Status), reader["Status"].ToString()),
                                 Quantity = (int)reader["Quantity"],
@@ -184,7 +222,7 @@ namespace BusinessLogic.DataAccess
             }
             finally
             {
-                connection.Close();
+                CloseConnection();
             }
 
             return reservations;
@@ -204,7 +242,7 @@ namespace BusinessLogic.DataAccess
                 {
                     cmd.Parameters.AddWithValue("@Status", newStatus);
                     cmd.Parameters.AddWithValue("@ReservationId", reservationId);
-                    connection.Open();
+                    OpenConnection();
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -215,7 +253,7 @@ namespace BusinessLogic.DataAccess
             }
             finally
             {
-                connection.Close();
+                CloseConnection();
             }
         }
 
@@ -229,7 +267,7 @@ namespace BusinessLogic.DataAccess
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@ReservationId", reservationId);
-                    connection.Open();
+                    OpenConnection();
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -240,26 +278,25 @@ namespace BusinessLogic.DataAccess
             }
             finally
             {
-                connection.Close();
+                CloseConnection();
             }
         }
 
-        // Add Reservation Equipment
-        public void AddReservationEquipment(int reservationId, int equipmentId, int quantity)
+        public void AddReservationEquipment(int reservationId, int equipmentId, int quantity, SqlTransaction transaction = null)
         {
             string query = @"
-                INSERT INTO ReservationEquipment (Reservation_Id, Equipment_Id, Quantity)
-                VALUES (@ReservationId, @EquipmentId, @Quantity)";
+        INSERT INTO ReservationEquipment (Reservation_Id, Equipment_Id, Quantity)
+        VALUES (@ReservationId, @EquipmentId, @Quantity)";
 
             try
             {
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                // Execute the equipment insert within the provided transaction
+                using (SqlCommand cmd = new SqlCommand(query, connection, transaction))
                 {
                     cmd.Parameters.AddWithValue("@ReservationId", reservationId);
                     cmd.Parameters.AddWithValue("@EquipmentId", equipmentId);
                     cmd.Parameters.AddWithValue("@Quantity", quantity);
 
-                    connection.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -268,11 +305,9 @@ namespace BusinessLogic.DataAccess
                 Console.WriteLine($"SQL Error in AddReservationEquipment: {ex.Message}");
                 throw;
             }
-            finally
-            {
-                connection.Close();
-            }
         }
+
+
 
         public List<Reservation> GetReservations()
         {
@@ -283,6 +318,7 @@ namespace BusinessLogic.DataAccess
                     r.Reservation_Id,
                     r.Customer_Id,
                     r.ReservationDate,
+                    r.CreationDate,
                     r.TotalPrice,
                     r.Status,
                     e.Equipment_Id,
@@ -300,7 +336,7 @@ namespace BusinessLogic.DataAccess
             {
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    connection.Open();
+                    OpenConnection();
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -310,6 +346,7 @@ namespace BusinessLogic.DataAccess
                             {
                                 ReservationId = (int)reader["Reservation_Id"],
                                 CustomerId = (int)reader["Customer_Id"],
+                                CreationDate = (DateTime)reader["CreationDate"],
                                 ReservationDate = (DateTime)reader["ReservationDate"],
                                 TotalPrice = (decimal)reader["TotalPrice"],
                                 Status = (Status)Enum.Parse(typeof(Status), reader["Status"].ToString()),
@@ -337,7 +374,7 @@ namespace BusinessLogic.DataAccess
             }
             finally
             {
-                connection.Close();
+                CloseConnection();
             }
 
             return reservations;

@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.DataAccess;
 using BusinessLogic.Entities;
+using BusinessLogic.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -25,7 +26,7 @@ namespace BusinessLogic.Managers
 
         public void CancelReservation(int reservationId)
         {
-            _reservationMediator.UpdateReservationStatus(reservationId, "Cancelled");
+            _reservationMediator.UpdateReservationStatus(reservationId, Status.Canceled.ToString());
         }
 
         public List<Reservation> GetReservationsByCustomerId(int customerId)

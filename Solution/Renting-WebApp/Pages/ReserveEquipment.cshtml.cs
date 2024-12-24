@@ -17,12 +17,14 @@ namespace Renting_Website.Pages
 
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int Quantity { get; set; }
 
         [BindProperty]
         public DateTime ReservationDate { get; set; }
 
         public Equipment Equipment { get; set; }
-        public List<Reservation> Basket { get; set; } = new(); // Always treat basket as a List
+        public List<Reservation> Basket { get; set; } = new();
         public List<DateTime> UnavailableDates { get; set; } = new();
 
         public ReserveEquipmentModel(EquipmentManager equipmentManager)
@@ -43,6 +45,10 @@ namespace Renting_Website.Pages
                 return RedirectToPage("/Error", new { errorMessage = "The requested equipment was not found." });
             }
 
+            if (Quantity <= 0 || Quantity > Equipment.Quantity)
+            {
+                return RedirectToPage("/Error", new { errorMessage = "Invalid quantity selected." });
+            }
             ReservationDate = DateTime.Today;
 
             // Load the basket
@@ -74,7 +80,7 @@ namespace Renting_Website.Pages
                 return RedirectToPage("/Error", new { errorMessage = "Equipment not found." });
             }
 
-            if (!_availabilityManager.CheckAvailability(ReservationDate, Equipment, Basket, 1))
+            if (!_availabilityManager.CheckAvailability(ReservationDate, Equipment, Basket, Quantity))
             {
                 ModelState.AddModelError(string.Empty, "The equipment is not available on the selected date.");
                 return Page();
@@ -89,22 +95,24 @@ namespace Renting_Website.Pages
             var customerIdClaim = User.FindFirst("UserId");
             int customerId = customerIdClaim != null ? int.Parse(customerIdClaim.Value) : 0;
 
-            // Add reservation to basket
+
             basket.Add(new Reservation
             {
                 ReservationId = -1,
                 Equipment = Equipment,
                 CustomerId = customerId,
                 ReservationDate = ReservationDate,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.Today.Date,
                 TotalPrice = Equipment.PricePerDay,
-                Status = Status.Pending
+                Status = Status.Pending,
+                Quantity = Quantity
             });
 
             // Save updated basket as JSON
             HttpContext.Session.SetString("Basket", JsonConvert.SerializeObject(basket));
 
-            return RedirectToPage("/Basket");
+
+            return RedirectToPage("/Content");
         }
 
         private List<DateTime> GetUnavailableDates(int equipmentId)

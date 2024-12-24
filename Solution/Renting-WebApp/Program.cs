@@ -24,11 +24,20 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
 });
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 builder.Services.AddScoped<IUserMediator, UserMediator>();
 builder.Services.AddScoped<UserManager>();
 builder.Services.AddScoped<EncriptionManager>();
 builder.Services.AddScoped<LoginService>();
-builder.Services.AddSession();
+builder.Services.AddScoped<ReservationManager>();
+builder.Services.AddScoped<AvailabilityManager>();
 
 var app = builder.Build();
 

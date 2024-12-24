@@ -4,43 +4,59 @@
     ViewData["Title"] = "My Reservations";
 }
 
-<h2>My Reservations</h2>
-
-@if (Model.Reservations.Count == 0)
+<h2 class="text-center mb-4">My Reservations</h2>
+<div asp-validation-summary="All" class="text-danger"></div>
+@if (Model.Reservations?.Any() != true)
 {
-    <p>You have no active reservations.</p>
+    <p class="text-center">You have no active reservations.</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Equipment</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var reservation in Model.Reservations)
-            {
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>@reservation.Equipment</td>
-                    <td>@reservation.CreationDate.ToShortDateString()</td>
-                    <td>@reservation.TotalPrice.ToString("C")</td>
-                    <td>@reservation.Status</td>
-                    <td>
-                        @if (reservation.Status != BusinessLogic.Enums.Status.Canceled)
-                        {
-                            <form method="post" asp-route-id="@reservation.ReservationId">
-                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                            </form>
-                        }
-                    </td>
+                    <th>Equipment</th>
+                    <th>Quantity</th>
+                    <th>Reservation Date</th>
+                    <th>Creation Date</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var reservation in Model.Reservations)
+                {
+                    <tr>
+                        <td>@reservation.Equipment.Name</td>
+                        <td>@reservation.Quantity</td>
+                        <td>@reservation.ReservationDate.ToShortDateString()</td>
+                        <td>@reservation.CreationDate.ToShortDateString()</td>
+                        <td>@reservation.TotalPrice.ToString("C")</td>
+                        <td>@reservation.Status</td>
+                        
+                        <td>
+                            @if (reservation.Status != BusinessLogic.Enums.Status.Canceled &&
+                                 (reservation.ReservationDate - DateTime.Today).Days >= 3)
+                            {
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@reservation.ReservationId">
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                </form>
+                            }
+                            else if (reservation.Status == BusinessLogic.Enums.Status.Canceled)
+                            {
+                                <span class="text-muted">Canceled</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Cannot Cancel</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
+
