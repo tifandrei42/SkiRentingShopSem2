@@ -4,9 +4,11 @@ using BusinessLogic.Entities;
 using BusinessLogic.Managers;
 using BusinessLogic.Enums;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Renting_Website.Pages
 {
+    [Authorize(Roles = "Customer")]
     public class BasketModel : PageModel
     {
         private readonly ReservationManager _reservationManager;

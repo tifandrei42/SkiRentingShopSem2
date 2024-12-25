@@ -34,8 +34,15 @@
                             <option value="@i">@i</option>
                         }
                     </select>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <button type="submit" class="btn btn-primary mt-3">Make Reservation</button>
+                    }
+                    else
+                    {
+                        <a asp-page="/Login" asp-route-returnUrl="@Url.Page("/DetailedProductView", new { id = Model.Equipment.EquipmentId })" class="btn btn-primary mt-3">Login to Reserve</a>
+                    }
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Make Reservation</button>
             </form>
 
             <a asp-page="/Content" class="btn btn-secondary mt-3">Back to Equipment List</a>
