@@ -27,6 +27,7 @@ namespace Renting_Website.Pages
         public List<Reservation> Basket { get; set; } = new();
         public List<DateTime> UnavailableDates { get; set; } = new();
 
+
         public ReserveEquipmentModel(EquipmentManager equipmentManager)
         {
             _reservationManager = new ReservationManager();
@@ -38,7 +39,7 @@ namespace Renting_Website.Pages
         {
             // Retrieve Equipment
             Equipment = _equipmentManager.GetEquipmentById(Id);
-            UnavailableDates = GetUnavailableDates(Id);
+           
 
             if (Equipment == null)
             {
@@ -66,6 +67,7 @@ namespace Renting_Website.Pages
                     Basket = new List<Reservation>(); // Reset basket if corrupted
                 }
             }
+            UnavailableDates = GetUnavailableDates(Equipment);
 
             return Page();
         }
@@ -115,21 +117,10 @@ namespace Renting_Website.Pages
             return RedirectToPage("/Content");
         }
 
-        private List<DateTime> GetUnavailableDates(int equipmentId)
+        private List<DateTime> GetUnavailableDates(Equipment equipment)
         {
-            var unavailableDates = new List<DateTime>();
-
-            // Get all reservations for this equipment
-            var reservations = _reservationManager.GetReservations();
-            foreach (var reservation in reservations)
-            {
-                if (reservation.Equipment.EquipmentId == equipmentId)
-                {
-                    unavailableDates.Add(reservation.ReservationDate.Date);
-                }
-            }
-
-            return unavailableDates;
+            return _availabilityManager.GetUnavailableDates(equipment, Basket, Quantity);
         }
+
     }
 }

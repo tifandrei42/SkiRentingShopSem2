@@ -23,7 +23,7 @@
 
             <div class="form-group">
                 <label asp-for="ReservationDate">Reservation Date:</label>
-                <input asp-for="ReservationDate" id="reservationDate" type="date" class="form-control" />
+                <input asp-for="ReservationDate" id="reservationDate" class="form-control" type="text"/>
                 <span asp-validation-for="ReservationDate" class="text-danger"></span>
             </div>
 
@@ -37,16 +37,15 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script>
-        const unavailableDates = @Html.Raw(JsonConvert.SerializeObject(Model.UnavailableDates));
+        const unavailableDates = @Html.Raw(JsonConvert.SerializeObject(Model.UnavailableDates.Select(d => d.ToString("yyyy-MM-dd"))));
 
-        document.getElementById("reservationDate").addEventListener("input", function () {
-            const selectedDate = new Date(this.value).toISOString().split('T')[0];
-
-            if (unavailableDates.includes(selectedDate)) {
-                alert("This date is already reserved. Please choose another date.");
-                this.value = "";
-            }
+        flatpickr("#reservationDate", {
+            dateFormat: "Y-m-d",      
+            disable: unavailableDates, // Disable unavailable dates
+            minDate: "today",         // Disable past dates
+            defaultDate: '@Model.ReservationDate.ToString("yyyy-MM-dd")' // Set default date
         });
     </script>
 }

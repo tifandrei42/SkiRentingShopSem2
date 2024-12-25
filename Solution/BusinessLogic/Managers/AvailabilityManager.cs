@@ -20,6 +20,38 @@ namespace BusinessLogic.Managers
             reservationManager = new ReservationManager();
         }
 
+        public List<DateTime> GetUnavailableDates(Equipment equipment, List<Reservation> basket, int qt)
+        {
+            List<DateTime> unavailableDates = new List<DateTime>();
+
+            // Get all interesting dates
+            List<DateTime> interestingDates = GetInteresingDates(basket);
+
+            // Verify Dates
+            foreach (var date in interestingDates)
+            {
+                // Check if the equipment is unavailable on this date
+                if (!CheckAvailability(date, equipment, basket, qt)) // If not available
+                {
+                    unavailableDates.Add(date); // Add to unavailable dates
+                }
+            }
+
+            return unavailableDates;
+        }
+
+        private List<DateTime> GetInteresingDates(List<Reservation> basket)
+        {
+            // Get existing reservations
+            List<Reservation> existingReservations = reservationManager.GetReservations();
+
+            // Extract dates from both lists
+            List<DateTime> existingDates = existingReservations.Select(r => r.ReservationDate.Date).ToList();
+            List<DateTime> basketDates = basket.Select(r => r.ReservationDate.Date).ToList();
+
+            return existingDates.Union(basketDates).ToList();
+        }
+
         public bool CheckAvailability(DateTime reservationDate, Equipment equipment, List<Reservation> basket, int qt)
         {
             var currentCount = GetCurrentReservationCount(reservationDate, equipment)
@@ -58,21 +90,6 @@ namespace BusinessLogic.Managers
                     r.ReservationDate.Date == reservationDate.Date &&
                     r.Status != Enums.Status.Canceled)
                 .Sum(r => r.Quantity);
-        }
-
-        private List<Reservation> GetReservationsByDate(DateTime reservationDate)
-        {
-            List<Reservation> input = reservationManager.GetReservations();
-            List<Reservation> output = new List<Reservation>();
-
-            foreach (Reservation reservation in input) 
-            {
-                if (reservation.ReservationDate == reservationDate)
-                {
-                    output.Add(reservation);
-                }
-            }
-            return output;
         }
     }
 }
