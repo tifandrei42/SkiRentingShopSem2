@@ -6,9 +6,11 @@ using BusinessLogic.Entities;
 using Newtonsoft.Json; // Use Newtonsoft for better JSON handling
 using BusinessLogic.Enums;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Renting_Website.Pages
 {
+    [Authorize(Roles = "Customer")]
     public class ReserveEquipmentModel : PageModel
     {
         private readonly ReservationManager _reservationManager;
