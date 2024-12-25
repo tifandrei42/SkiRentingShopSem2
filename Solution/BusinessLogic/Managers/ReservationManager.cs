@@ -42,5 +42,27 @@ namespace BusinessLogic.Managers
         {
             return _reservationMediator.GetReservations();
         }
+
+        public List<Reservation> GetReservationsByStatus(string status)
+        {
+            return _reservationMediator.GetReservations()
+                .Where(r => r.Status.ToString() == status)
+                .ToList();
+        }
+
+        public void UpdateReservationStatus(int reservationId, string newStatus)
+        {
+            _reservationMediator.UpdateReservationStatus(reservationId, newStatus);
+        }
+
+        public void UpdateGroupStatus(int customerId, DateTime reservationDate, string newStatus)
+        {
+            _reservationMediator.UpdateGroupStatus(customerId, reservationDate, newStatus);
+        }
+
+        public List<ReservationGroup> GetGroupedReservations()
+        {
+            return _reservationMediator.GetGroupedReservations();
+        }
     }
 }

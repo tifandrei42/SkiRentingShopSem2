@@ -33,6 +33,7 @@
             btnEquipment = new Button();
             btnLogout = new Button();
             label2 = new Label();
+            btnRezervationsManagement = new Button();
             SuspendLayout();
             // 
             // label1
@@ -49,7 +50,7 @@
             // btnStaff
             // 
             btnStaff.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnStaff.Location = new Point(12, 258);
+            btnStaff.Location = new Point(12, 225);
             btnStaff.Name = "btnStaff";
             btnStaff.Size = new Size(250, 56);
             btnStaff.TabIndex = 1;
@@ -60,7 +61,7 @@
             // btnEquipment
             // 
             btnEquipment.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnEquipment.Location = new Point(12, 155);
+            btnEquipment.Location = new Point(12, 133);
             btnEquipment.Name = "btnEquipment";
             btnEquipment.Size = new Size(250, 56);
             btnEquipment.TabIndex = 2;
@@ -89,11 +90,23 @@
             label2.TabIndex = 4;
             label2.Text = "Overview";
             // 
+            // btnRezervationsManagement
+            // 
+            btnRezervationsManagement.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnRezervationsManagement.Location = new Point(12, 316);
+            btnRezervationsManagement.Name = "btnRezervationsManagement";
+            btnRezervationsManagement.Size = new Size(250, 56);
+            btnRezervationsManagement.TabIndex = 5;
+            btnRezervationsManagement.Text = "Rezervations management";
+            btnRezervationsManagement.UseVisualStyleBackColor = true;
+            btnRezervationsManagement.Click += btnRezervationsManagement_Click;
+            // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1089, 489);
+            Controls.Add(btnRezervationsManagement);
             Controls.Add(label2);
             Controls.Add(btnLogout);
             Controls.Add(btnEquipment);
@@ -112,5 +125,6 @@
         private Button btnEquipment;
         private Button btnLogout;
         private Label label2;
+        private Button btnRezervationsManagement;
     }
 }

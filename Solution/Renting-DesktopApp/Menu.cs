@@ -20,6 +20,7 @@ namespace Renting_Application
         //private StaffMember _loggedInStaffMember;
         private readonly EquipmentManager _equipmentManager;
         private LoginService loginService;
+        private User staffMember;
 
         public Menu(User user)
         {
@@ -28,6 +29,7 @@ namespace Renting_Application
 
             IEquipmentMediator mediator = new EquipmentMediator();
             _equipmentManager = new EquipmentManager(mediator);
+            staffMember = user;
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -43,7 +45,7 @@ namespace Renting_Application
         private void btnEquipment_Click(object sender, EventArgs e)
         {
             this.Hide();
-            EquipmentManagement equipmentManagement = new EquipmentManagement(_equipmentManager);
+            EquipmentManagement equipmentManagement = new EquipmentManagement(_equipmentManager, staffMember);
             equipmentManagement.Show();
         }
 
@@ -52,6 +54,13 @@ namespace Renting_Application
             this.Close();
             LoginForm loginForm = new();
             loginForm.Show();
+        }
+
+        private void btnRezervationsManagement_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            RezervationManagement rezervationManagement = new RezervationManagement(staffMember);
+            rezervationManagement.Show();
         }
     }
 }

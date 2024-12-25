@@ -228,7 +228,6 @@ namespace BusinessLogic.DataAccess
             return reservations;
         }
 
-        // Update Reservation Status
         public void UpdateReservationStatus(int reservationId, string newStatus)
         {
             string query = @"
@@ -380,5 +379,84 @@ namespace BusinessLogic.DataAccess
             return reservations;
         }
 
+        public void UpdateGroupStatus(int customerId, DateTime reservationDate, string newStatus)
+        {
+            string query = @"
+                UPDATE Reservation
+                SET Status = @Status
+                WHERE Customer_Id = @CustomerId AND ReservationDate = @ReservationDate";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Status", newStatus);
+                    cmd.Parameters.AddWithValue("@CustomerId", customerId);
+                    cmd.Parameters.AddWithValue("@ReservationDate", reservationDate);
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating reservation status: {ex.Message}");
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+
+        public List<ReservationGroup> GetGroupedReservations()
+        {
+            List<ReservationGroup> groups = new List<ReservationGroup>();
+
+            string query = @"
+                SELECT 
+                    r.Customer_Id,
+                    r.ReservationDate,
+                    COUNT(*) AS TotalReservations,
+                    SUM(r.TotalPrice) AS TotalPrice,
+                    STRING_AGG(e.Name, ', ') AS EquipmentNames,
+                    STRING_AGG(r.Status, ', ') AS Statuses
+                FROM Reservation r
+                INNER JOIN ReservationEquipment re ON r.Reservation_Id = re.Reservation_Id
+                INNER JOIN Equipment e ON re.Equipment_Id = e.Equipment_Id
+                GROUP BY r.Customer_Id, r.ReservationDate";
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            groups.Add(new ReservationGroup
+                            {
+                                CustomerId = (int)reader["Customer_Id"],
+                                ReservationDate = (DateTime)reader["ReservationDate"],
+                                TotalReservations = (int)reader["TotalReservations"],
+                                TotalPrice = (decimal)reader["TotalPrice"],
+                                EquipmentNames = reader["EquipmentNames"].ToString(),
+                                Statuses = reader["Statuses"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching grouped reservations: {ex.Message}");
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return groups;
+        }
     }
 }

@@ -17,13 +17,14 @@ namespace Renting_Application
     public partial class EquipmentManagement : Form
     {
         private readonly EquipmentManager _equipmentManager;
-
-        public EquipmentManagement(EquipmentManager equipmentManager)
+        private User staffMember;
+        public EquipmentManagement(EquipmentManager equipmentManager, User user)
         {
             InitializeComponent();
             _equipmentManager = equipmentManager;
 
             dgvEquipment.AllowUserToAddRows = false;
+            staffMember = user;
 
             CustomizeDataGridView();
             LoadEquipmentData();
@@ -135,12 +136,12 @@ namespace Renting_Application
 
         private void CustomizeDataGridView()
         {
-            dgvEquipment.EnableHeadersVisualStyles = false; 
+            dgvEquipment.EnableHeadersVisualStyles = false;
             dgvEquipment.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(80, 80, 120);
             dgvEquipment.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgvEquipment.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
 
-            dgvEquipment.DefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240); 
+            dgvEquipment.DefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
             dgvEquipment.DefaultCellStyle.ForeColor = Color.Black;
             dgvEquipment.DefaultCellStyle.SelectionBackColor = Color.FromArgb(80, 80, 120);
             dgvEquipment.DefaultCellStyle.SelectionForeColor = Color.White;
@@ -166,6 +167,42 @@ namespace Renting_Application
             int headerHeight = dgvEquipment.ColumnHeadersHeight;
 
             dgvEquipment.Height = totalRowsHeight + headerHeight + 5;
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string searchText = tbSearch.Text.Trim();
+
+            try
+            {
+                var equipmentList = _equipmentManager.GetAllEquipment();
+
+                var filteredEquipment = equipmentList
+                    .Where(e =>
+                        e.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                        e.Category.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                        e.Brand.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                dgvEquipment.DataSource = new BindingList<Equipment>(filteredEquipment);
+
+                dgvEquipment.Columns["EquipmentId"].Visible = false;
+                dgvEquipment.Columns["Name"].HeaderText = "Equipment Name";
+                dgvEquipment.Columns["ImagePath"].Visible = false;
+
+                AdjustDataGridViewHeight();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error searching equipment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnMenu_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Menu menu = new Menu(staffMember);
+            menu.Show();
         }
     }
 }

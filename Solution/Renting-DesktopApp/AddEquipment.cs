@@ -73,12 +73,27 @@ namespace Renting_Application
         {
             if (currentEquipment != null)
             {
-                tbName.Text = currentEquipment.Name ?? ""; // Handle null values
-                tbBrand.Text = currentEquipment.Brand.ToString() ?? ""; // Handle null values
-                tbSize.Text = currentEquipment.Size ?? ""; // Handle null values
+                tbName.Text = currentEquipment.Name ?? "";
+                tbBrand.Text = currentEquipment.Brand.ToString() ?? "";
+                tbSize.Text = currentEquipment.Size ?? "";
                 tbPrice.Text = currentEquipment.PricePerDay.ToString();
-                cbCategory.SelectedValue = currentEquipment.CategoryId; // Handle CategoryId
-                _imagePath = currentEquipment.ImagePath; // Handle image path
+                nudQuantity.Value = currentEquipment.Quantity;
+                cbCategory.SelectedValue = currentEquipment.CategoryId;
+                _imagePath = currentEquipment.ImagePath; 
+
+                string webAppImagePath = @"C:\Users\tifan\IndividualAssignment\Solution\Renting-WebApp\wwwroot\" + _imagePath;
+
+                if (File.Exists(webAppImagePath))
+                {
+                    pictureBoxEquipment.Image = Image.FromFile(webAppImagePath);
+                    pictureBoxEquipment.SizeMode = PictureBoxSizeMode.Zoom;
+                }
+                else
+                {
+                    MessageBox.Show("Image not found at:\n" + webAppImagePath);
+                }
+                pictureBoxEquipment.SizeMode = PictureBoxSizeMode.Zoom;
+
             }
         }
 
