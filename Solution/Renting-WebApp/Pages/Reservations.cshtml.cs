@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace Renting_Website.Pages
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize(Policy = "CustomerOnly")]
     public class ReservationsModel : PageModel
     {
         private readonly ReservationManager _reservationManager;

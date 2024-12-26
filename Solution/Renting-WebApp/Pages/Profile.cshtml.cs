@@ -9,8 +9,7 @@ using BusinessLogic.Interfaces;
 using BusinessLogic.Entities;
 
 namespace Renting_Website.Pages
-{
-    [Authorize(Roles = "Customer")]  
+{ 
     public class CustomerProfileModel : PageModel
     {
         private readonly UserManager _userManager;

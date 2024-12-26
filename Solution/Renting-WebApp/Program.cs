@@ -22,9 +22,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
 });
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
