@@ -1,0 +1,51 @@
+﻿@page
+@model Renting_Website.Pages.AdminPageModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+<h1>Admin Dashboard</h1>
+
+<h2>Customer List with Reservations</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+            <th>Reservations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model.Customers)
+        {
+            <tr>
+                <td>@customer.UserName</td>
+                <td>@customer.Email</td>
+                <td>@customer.PhoneNumber</td>
+                <td>@customer.Address</td>
+                <td>
+                    <ul>
+                        @if (Model.CustomerReservations.ContainsKey(customer.User_Id) && Model.CustomerReservations[customer.User_Id].Any())
+                        {
+                            foreach (var reservation in Model.CustomerReservations[customer.User_Id])
+                            {
+                                <li>
+                                    Date: @reservation.ReservationDate.ToShortDateString() |
+                                    Status: @reservation.Status |
+                                    Total: @reservation.TotalPrice.ToString("C")
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No reservations</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
