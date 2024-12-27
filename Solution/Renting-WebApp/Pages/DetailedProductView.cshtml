@@ -20,13 +20,34 @@
             <h2>@Model.Equipment.Name</h2>
             <p><strong>Brand:</strong> @Model.Equipment.Brand</p>
             <p><strong>Size:</strong> @Model.Equipment.Size</p>
-            <p><strong>Type:</strong> @Model.Equipment.EquipmentType</p>
+            <p><strong>Type:</strong> @Model.Equipment.Category</p>
             <p><strong>Price per Day:</strong> @Model.Equipment.PricePerDay.ToString("C")</p>
-            <p><strong>Stock:</strong> @Model.Stock</p>
+            <p><strong>Stock:</strong> @Model.Equipment.Quantity</p>
 
-            <a asp-page="/ReserveEquipment" asp-route-id="@Model.Equipment.EquipmentId" class="btn btn-primary">Make Reservation</a>
-            <a asp-page="/Content" class="btn btn-secondary">Back to Equipment List</a>
+            <form method="get" asp-page="/ReserveEquipment">
+                <input type="hidden" name="id" value="@Model.Equipment.EquipmentId" />
+                <div class="form-group">
+                    <label for="quantity"><strong>Select Quantity:</strong></label>
+                    <select id="quantity" name="quantity" class="form-control">
+                        @for (int i = 1; i <= Model.Equipment.Quantity; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <button type="submit" class="btn btn-primary mt-3">Make Reservation</button>
+                    }
+                    else
+                    {
+                        <a asp-page="/Login" asp-route-returnUrl="@Url.Page("/DetailedProductView", new { id = Model.Equipment.EquipmentId })" class="btn btn-primary mt-3">Login to Reserve</a>
+                    }
+                </div>
+            </form>
+
+            <a asp-page="/Content" class="btn btn-secondary mt-3">Back to Equipment List</a>
         </div>
     </div>
 </div>
+
 

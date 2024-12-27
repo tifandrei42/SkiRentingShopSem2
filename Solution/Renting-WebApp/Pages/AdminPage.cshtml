@@ -1,0 +1,36 @@
+﻿@page
+@model Renting_Website.Pages.AdminPageModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>Customer List with Reservations</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+            <th>Finished</th>
+            <th>Pending</th>
+            <th>Total Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model.Customers)
+        {
+            var summary = Model.CustomerSummaries[customer.User_Id];
+            <tr>
+                <td>@customer.UserName</td>
+                <td>@customer.Email</td>
+                <td>@customer.PhoneNumber</td>
+                <td>@customer.Address</td>
+                <td>@summary.FinishedCount</td>
+                <td>@summary.PendingCount</td>
+                <td>@summary.TotalPrice.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -10,29 +10,35 @@
     <div class="row">
         <div class="col-md-4">
             <label for="brandFilter">Brand</label>
-            <input type="text" id="brandFilter" name="BrandFilter" value="@Model.BrandFilter" class="form-control" placeholder="Enter brand name" />
+            <input type="text" id="brandFilter" name="BrandFilter" value="@Model.BrandFilter" class="form-control" placeholder="Enter brand name"
+                   onchange="this.form.submit()" />
+        </div>
+        <div class="col-md-4">
+            <label for="nameFilter">Name</label>
+            <input type="text" id="nameFilter" name="NameFilter" value="@Model.NameFilter" class="form-control" placeholder="Enter equipment name"
+                   onchange="this.form.submit()" />
         </div>
         <div class="col-md-4">
             <label for="minPrice">Min Price</label>
-            <input type="number" id="minPrice" name="MinPrice" value="@Model.MinPrice" class="form-control" placeholder="Enter minimum price" />
+            <input type="number" id="minPrice" name="MinPrice" value="@Model.MinPrice" class="form-control" placeholder="Enter minimum price"
+                   onchange="this.form.submit()" />
         </div>
         <div class="col-md-4">
             <label for="maxPrice">Max Price</label>
-            <input type="number" id="maxPrice" name="MaxPrice" value="@Model.MaxPrice" class="form-control" placeholder="Enter maximum price" />
+            <input type="number" id="maxPrice" name="MaxPrice" value="@Model.MaxPrice" class="form-control" placeholder="Enter maximum price"
+                   onchange="this.form.submit()" />
         </div>
     </div>
+
     <div class="row mt-3">
-        <div class="col-md-6">
-            <button type="submit" class="btn btn-primary">Apply Filters</button>
-        </div>
-        <div class="col-md-6 text-right">
-            <a asp-page="/Content" class="btn btn-secondary">Clear Filters</a>
+        <div class="col-md-12 text-center">
+            <a href="/Content" class="btn btn-secondary mt-2">Clear Filters</a> 
         </div>
     </div>
 </form>
 
-<div class="row">
-    @foreach (var equipment in Model.EquipmentList)
+<div class="row mt-4">
+    @foreach (var equipment in Model.PagedEquipmentList)
     {
         <div class="col-md-4">
             <div class="card mb-4 shadow-sm">
@@ -46,10 +52,52 @@
                 }
                 <div class="card-body text-center">
                     <h5 class="card-title">@equipment.Name</h5>
-                    <p class="card-text">@equipment.PricePerDay.ToString("C")</p>
+                    <p class="card-text">Price: @equipment.PricePerDay.ToString("C")</p>
+                    <p class="card-text">Brand: @equipment.Brand</p>
                     <a asp-page="/DetailedProductView" asp-route-id="@equipment.EquipmentId" class="btn btn-primary">View Details</a>
                 </div>
             </div>
         </div>
     }
+</div>
+
+<div class="row mt-4">
+    <div class="col text-center">
+        <nav>
+            <ul class="pagination justify-content-center">
+                @if (Model.PageNumber > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-page="/Content" asp-route-PageNumber="@(Model.PageNumber - 1)"
+                           asp-route-BrandFilter="@Model.BrandFilter"
+                           asp-route-NameFilter="@Model.NameFilter"
+                           asp-route-MinPrice="@Model.MinPrice"
+                           asp-route-MaxPrice="@Model.MaxPrice">Previous</a>
+                    </li>
+                }
+
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-page="/Content" asp-route-PageNumber="@i"
+                           asp-route-BrandFilter="@Model.BrandFilter"
+                           asp-route-NameFilter="@Model.NameFilter"
+                           asp-route-MinPrice="@Model.MinPrice"
+                           asp-route-MaxPrice="@Model.MaxPrice">@i</a>
+                    </li>
+                }
+
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-page="/Content" asp-route-PageNumber="@(Model.PageNumber + 1)"
+                           asp-route-BrandFilter="@Model.BrandFilter"
+                           asp-route-NameFilter="@Model.NameFilter"
+                           asp-route-MinPrice="@Model.MinPrice"
+                           asp-route-MaxPrice="@Model.MaxPrice">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
 </div>

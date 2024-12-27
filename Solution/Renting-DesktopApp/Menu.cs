@@ -19,15 +19,19 @@ namespace Renting_Application
     {
         //private StaffMember _loggedInStaffMember;
         private readonly EquipmentManager _equipmentManager;
+        private readonly ReservationManager _reservationManager;
         private LoginService loginService;
+        private User staffMember;
 
         public Menu(User user)
         {
             InitializeComponent();
             //_loggedInStaffMember = staffMember;
-
+            IReservationMediator reservationMediator = new ReservationMediator();
             IEquipmentMediator mediator = new EquipmentMediator();
             _equipmentManager = new EquipmentManager(mediator);
+            _reservationManager = new ReservationManager(reservationMediator);
+            staffMember = user;
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -43,7 +47,7 @@ namespace Renting_Application
         private void btnEquipment_Click(object sender, EventArgs e)
         {
             this.Hide();
-            EquipmentManagement equipmentManagement = new EquipmentManagement(_equipmentManager);
+            EquipmentManagement equipmentManagement = new EquipmentManagement(_equipmentManager, staffMember);
             equipmentManagement.Show();
         }
 
@@ -52,6 +56,44 @@ namespace Renting_Application
             this.Close();
             LoginForm loginForm = new();
             loginForm.Show();
+        }
+
+        private void btnRezervationsManagement_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            RezervationManagement rezervationManagement = new RezervationManagement(staffMember);
+            rezervationManagement.Show();
+        }
+
+        private void LoadStatistics()
+        {
+            try
+            {
+                // Fetch data from the reservation manager
+                var allReservations = _reservationManager.GetReservations();
+
+                // Total Reservations
+                int totalReservations = allReservations.Count;
+
+                // Pending Reservations
+                int pendingReservations = allReservations.Count(r => r.Status == BusinessLogic.Enums.Status.Pending);
+
+                // Completed Reservations
+                int completedReservations = allReservations.Count(r => r.Status == BusinessLogic.Enums.Status.Finished);
+
+                // Revenue Calculation
+                decimal totalRevenue = allReservations.Sum(r => r.TotalPrice);
+
+                // Display data in labels or any control
+                lblTotalReservations.Text = $"Total Reservations: {totalReservations}";
+                lblPendingReservations.Text = $"Pending: {pendingReservations}";
+                lblCompletedReservations.Text = $"Completed: {completedReservations}";
+                lblRevenue.Text = $"Total Revenue: ${totalRevenue:F2}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading statistics: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

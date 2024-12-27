@@ -1,14 +1,17 @@
 using BusinessLogic.DataAccess;
 using BusinessLogic.Entities;
+using BusinessLogic.Enums;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Managers;
 using BusinessLogic.Strategies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
 namespace Renting_Website.Pages
 {
+    [Authorize(Roles = "Customer")]
     public class RegisterModel : PageModel
     {
         [BindProperty]

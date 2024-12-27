@@ -3,94 +3,125 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using BusinessLogic.Managers;
 using BusinessLogic.Entities;
+using Newtonsoft.Json; // Use Newtonsoft for better JSON handling
+using BusinessLogic.Enums;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using BusinessLogic.Interfaces;
+using BusinessLogic.DataAccess;
 
 namespace Renting_Website.Pages
 {
+    [Authorize(Policy = "CustomerOnly")]
     public class ReserveEquipmentModel : PageModel
     {
         private readonly ReservationManager _reservationManager;
         private readonly EquipmentManager _equipmentManager;
-
-        public ReserveEquipmentModel(EquipmentManager equipmentManager)
-        {
-            _reservationManager = new ReservationManager();
-            _equipmentManager = equipmentManager;
-        }
+        private readonly AvailabilityManager _availabilityManager;
 
         [BindProperty(SupportsGet = true)]
-        public int Id { get; set; }  
+        public int Id { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int Quantity { get; set; }
 
         [BindProperty]
-        public DateTime StartDate { get; set; }
-
-        [BindProperty]
-        public DateTime EndDate { get; set; }
+        public DateTime ReservationDate { get; set; }
 
         public Equipment Equipment { get; set; }
+        public List<Reservation> Basket { get; set; } = new();
+        public List<DateTime> UnavailableDates { get; set; } = new();
+
+
+        public ReserveEquipmentModel()
+        {
+            IReservationMediator reservationMediator = new ReservationMediator();
+            IEquipmentMediator equipmentMediator = new EquipmentMediator();
+            _reservationManager = new ReservationManager(reservationMediator);
+            _equipmentManager = new EquipmentManager(equipmentMediator);
+            _availabilityManager = new AvailabilityManager(_reservationManager);
+        }
 
         public IActionResult OnGet()
         {
             Equipment = _equipmentManager.GetEquipmentById(Id);
+           
+
             if (Equipment == null)
             {
                 return RedirectToPage("/Error", new { errorMessage = "The requested equipment was not found." });
             }
 
-            StartDate = DateTime.Today;
-            EndDate = DateTime.Today.AddDays(1);
+            if (Quantity <= 0 || Quantity > Equipment.Quantity)
+            {
+                return RedirectToPage("/Error", new { errorMessage = "Invalid quantity selected." });
+            }
+            ReservationDate = DateTime.Today;
+
+            // Load the basket
+            var basketJson = HttpContext.Session.GetString("Basket");
+            if (!string.IsNullOrEmpty(basketJson))
+            {
+                try
+                {
+                    Basket = JsonConvert.DeserializeObject<List<Reservation>>(basketJson) ?? new List<Reservation>();
+                }
+                catch (JsonSerializationException ex)
+                {
+                    Console.WriteLine($"JSON Deserialization Error: {ex.Message}");
+                    Basket = new List<Reservation>();
+                }
+            }
+            UnavailableDates = GetUnavailableDates(Equipment);
 
             return Page();
         }
 
-        public IActionResult OnPost()
+        public IActionResult OnPostAddToBasket()
         {
-            Equipment = _equipmentManager.GetEquipmentById(Id); 
-
-            var userId = User.FindFirst("UserId")?.Value;
+            Equipment = _equipmentManager.GetEquipmentById(Id);
 
             if (Equipment == null)
             {
-                return RedirectToPage("/Error", new { errorMessage = "The requested equipment was not found." });
+                return RedirectToPage("/Error", new { errorMessage = "Equipment not found." });
             }
 
-            if (userId == null)
+            if (!_availabilityManager.CheckAvailability(ReservationDate, Equipment, Basket, Quantity))
             {
-                return Unauthorized();
-            }
-            int customerId = int.Parse(userId);
-
-            if (StartDate >= EndDate)
-            {
-                ModelState.AddModelError(string.Empty, "End date must be after start date.");
+                ModelState.AddModelError(string.Empty, "The equipment is not available on the selected date.");
                 return Page();
             }
 
-            try
+            var basketJson = HttpContext.Session.GetString("Basket");
+            List<Reservation>? basket = string.IsNullOrEmpty(basketJson)
+                ? new List<Reservation>()
+                : JsonConvert.DeserializeObject<List<Reservation>>(basketJson);
+
+            var customerIdClaim = User.FindFirst("UserId");
+            int customerId = customerIdClaim != null ? int.Parse(customerIdClaim.Value) : 0;
+
+
+            basket.Add(new Reservation
             {
-                var reservation = new Reservation
-                {
-                    EquipmentId = Id,
-                    CustomerId = customerId,
-                    StartDate = StartDate,
-                    EndDate = EndDate,
-                    Status = "Pending"
-                };
+                ReservationId = -1,
+                Equipment = Equipment,
+                CustomerId = customerId,
+                ReservationDate = ReservationDate,
+                CreationDate = DateTime.Today.Date,
+                TotalPrice = Equipment.PricePerDay,
+                Status = Status.Pending,
+                Quantity = Quantity
+            });
 
-                bool success = _reservationManager.CreateReservation(reservation);
+            HttpContext.Session.SetString("Basket", JsonConvert.SerializeObject(basket));
 
-                if (!success)
-                {
-                    ModelState.AddModelError(string.Empty, "The equipment is not available for the selected dates.");
-                    return Page();
-                }
 
-                return RedirectToPage("/Reservations", new { reservationId = reservation.ReservationId });
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
-                return Page();
-            }
+            return RedirectToPage("/Content");
         }
+
+        private List<DateTime> GetUnavailableDates(Equipment equipment)
+        {
+            return _availabilityManager.GetUnavailableDates(equipment, Basket, Quantity);
+        }
+
     }
 }

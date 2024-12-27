@@ -1,0 +1,62 @@
+﻿@page
+@model Renting_Website.Pages.BasketModel
+@{
+    ViewData["Title"] = "Basket";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">My Basket</h2>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    @if (Model.Basket.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Equipment</th>
+                        <th>Date</th>
+                        <th>Price/Day</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Basket)
+                    {
+                        <tr>
+                            <td>@item.Equipment.Name</td>
+                            <td>@item.ReservationDate.ToShortDateString()</td>
+                            <td>@item.Equipment.PricePerDay.ToString("C")</td>
+                            <td>@item.Quantity</td>
+                            <td>@(item.Equipment.PricePerDay * item.Quantity)</td>
+                            <td>
+                                <form method="post" asp-page-handler="Remove" asp-route-id="@item.Equipment.EquipmentId">
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <form method="post" asp-page-handler="CompleteReservation">
+                <button type="submit" class="btn btn-success btn-lg">Complete Reservation</button>
+            </form>
+        </div>
+
+        <div class="text-center mt-4">
+            <form method="post" asp-page-handler="Clear">
+                <button type="submit" class="btn btn-warning">Clear Basket</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <p class="text-center">Your basket is empty.</p>
+    }
+</div>
