@@ -38,7 +38,9 @@ builder.Services.AddScoped<EncriptionManager>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ReservationManager>();
 builder.Services.AddScoped<AvailabilityManager>();
-
+builder.Services.AddScoped<IReservationMediator, ReservationMediator>();
+builder.Services.AddScoped<ReservationManager>();
+builder.Services.AddScoped<AvailabilityManager>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
