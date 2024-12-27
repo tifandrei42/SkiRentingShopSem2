@@ -3,9 +3,8 @@
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
-<h1>Admin Dashboard</h1>
 
-<h2>Customer List with Reservations</h2>
+<h1>Customer List with Reservations</h1>
 
 <table class="table table-striped">
     <thead>
@@ -14,38 +13,24 @@
             <th>Email</th>
             <th>Phone Number</th>
             <th>Address</th>
-            <th>Reservations</th>
+            <th>Finished</th>
+            <th>Pending</th>
+            <th>Total Price</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var customer in Model.Customers)
         {
+            var summary = Model.CustomerSummaries[customer.User_Id];
             <tr>
                 <td>@customer.UserName</td>
                 <td>@customer.Email</td>
                 <td>@customer.PhoneNumber</td>
                 <td>@customer.Address</td>
-                <td>
-                    <ul>
-                        @if (Model.CustomerReservations.ContainsKey(customer.User_Id) && Model.CustomerReservations[customer.User_Id].Any())
-                        {
-                            foreach (var reservation in Model.CustomerReservations[customer.User_Id])
-                            {
-                                <li>
-                                    Date: @reservation.ReservationDate.ToShortDateString() |
-                                    Status: @reservation.Status |
-                                    Total: @reservation.TotalPrice.ToString("C")
-                                </li>
-                            }
-                        }
-                        else
-                        {
-                            <li>No reservations</li>
-                        }
-                    </ul>
-                </td>
+                <td>@summary.FinishedCount</td>
+                <td>@summary.PendingCount</td>
+                <td>@summary.TotalPrice.ToString("C")</td>
             </tr>
         }
     </tbody>
 </table>
-

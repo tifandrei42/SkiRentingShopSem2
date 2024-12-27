@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Renting_Website.Pages
 {
-    [Authorize(Policy = "AdminOnly")] // Only admins can access this page
+    [Authorize(Policy = "AdminOnly")]
     public class AdminPageModel : PageModel
     {
         private readonly UserManager _userManager;
         private readonly ReservationManager _reservationManager;
 
-        public List<User> Customers { get; set; } // List of all customers
-        public Dictionary<int, List<Reservation>> CustomerReservations { get; set; } // Reservations per customer
+        public List<User> Customers { get; set; } // List of customers
+        public Dictionary<int, CustomerSummary> CustomerSummaries { get; set; } // Customer summary data
 
         public AdminPageModel(UserManager userManager, ReservationManager reservationManager)
         {
@@ -23,15 +23,23 @@ namespace Renting_Website.Pages
 
         public void OnGet()
         {
-            
             Customers = _userManager.GetUsersByRole("Customer");
 
-            // Fetch reservations for each customer
-            CustomerReservations = new Dictionary<int, List<Reservation>>();
+            CustomerSummaries = new Dictionary<int, CustomerSummary>();
             foreach (var customer in Customers)
             {
                 var reservations = _reservationManager.GetReservationsByCustomerId(customer.User_Id);
-                CustomerReservations[customer.User_Id] = reservations;
+
+                var finishedCount = reservations.Count(r => r.Status.ToString() == "Finished");
+                var pendingCount = reservations.Count(r => r.Status.ToString() == "Pending");
+                var totalPrice = reservations.Sum(r => r.TotalPrice);
+
+                CustomerSummaries[customer.User_Id] = new CustomerSummary
+                {
+                    FinishedCount = finishedCount,
+                    PendingCount = pendingCount,
+                    TotalPrice = totalPrice
+                };
             }
         }
     }

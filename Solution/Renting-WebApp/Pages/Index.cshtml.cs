@@ -1,3 +1,5 @@
+using BusinessLogic.Entities;
+using BusinessLogic.Managers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -14,7 +16,6 @@ namespace Renting_Website.Pages
 
         public void OnGet()
         {
-
         }
     }
 }
