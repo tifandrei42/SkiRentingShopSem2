@@ -14,5 +14,6 @@ namespace BusinessLogic.Entities
         public decimal TotalPrice { get; set; }
         public string EquipmentNames { get; set; }
         public string Statuses { get; set; }
+        public List<Reservation> Reservations { get; set; }
     }
 }

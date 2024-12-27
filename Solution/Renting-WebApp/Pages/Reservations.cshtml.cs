@@ -1,3 +1,4 @@
+using BusinessLogic.DataAccess;
 using BusinessLogic.Entities;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Managers;
@@ -19,7 +20,8 @@ namespace Renting_Website.Pages
         private int customerId;
         public ReservationsModel(IUserMediator userMediator)
         {
-            _reservationManager = new ReservationManager();
+            IReservationMediator reservationMediator = new ReservationMediator();
+            _reservationManager = new ReservationManager(reservationMediator);
             userManager = new(userMediator);
         }
 

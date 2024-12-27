@@ -7,6 +7,8 @@ using Newtonsoft.Json; // Use Newtonsoft for better JSON handling
 using BusinessLogic.Enums;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using BusinessLogic.Interfaces;
+using BusinessLogic.DataAccess;
 
 namespace Renting_Website.Pages
 {
@@ -30,11 +32,13 @@ namespace Renting_Website.Pages
         public List<DateTime> UnavailableDates { get; set; } = new();
 
 
-        public ReserveEquipmentModel(EquipmentManager equipmentManager)
+        public ReserveEquipmentModel()
         {
-            _reservationManager = new ReservationManager();
-            _equipmentManager = equipmentManager;
-            _availabilityManager = new AvailabilityManager();
+            IReservationMediator reservationMediator = new ReservationMediator();
+            IEquipmentMediator equipmentMediator = new EquipmentMediator();
+            _reservationManager = new ReservationManager(reservationMediator);
+            _equipmentManager = new EquipmentManager(equipmentMediator);
+            _availabilityManager = new AvailabilityManager(_reservationManager);
         }
 
         public IActionResult OnGet()

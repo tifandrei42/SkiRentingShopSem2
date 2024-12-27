@@ -17,7 +17,7 @@ public class AvailabilityManagerTests
     {
         _fakeMediator = new FakeReservationMediator();
         _reservationManager = new ReservationManager(_fakeMediator);
-        _availabilityManager = new AvailabilityManager();
+        _availabilityManager = new AvailabilityManager(_reservationManager);
     }
 
     [TestMethod]
@@ -29,7 +29,8 @@ public class AvailabilityManagerTests
             EquipmentId = 1,
             Name = "Helmet",
             Quantity = 10,
-            PricePerDay = 15.00m
+            PricePerDay = 15.00m,
+            Brand = "Atomic"
         };
 
         var basket = new List<Reservation>();
@@ -50,7 +51,8 @@ public class AvailabilityManagerTests
             EquipmentId = 1,
             Name = "Helmet",
             Quantity = 3,
-            PricePerDay = 15.00m
+            PricePerDay = 15.00m,
+            Brand = "Atomic"
         };
 
         // Add existing reservations
@@ -81,7 +83,8 @@ public class AvailabilityManagerTests
             EquipmentId = 1,
             Name = "Helmet",
             Quantity = 2,
-            PricePerDay = 10.00m
+            PricePerDay = 10.00m,
+            Brand = "Atomic"
         };
 
         // Add reservations
@@ -113,7 +116,8 @@ public class AvailabilityManagerTests
             EquipmentId = 1,
             Name = "Helmet",
             Quantity = 2,
-            PricePerDay = 10.00m
+            PricePerDay = 10.00m,
+            Brand = "Atomic"
         };
 
         var basket = new List<Reservation>
