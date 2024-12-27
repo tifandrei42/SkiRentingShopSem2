@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.DataAccess;
 using BusinessLogic.Entities;
 using BusinessLogic.Enums;
+using BusinessLogic.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -8,11 +9,11 @@ namespace BusinessLogic.Managers
 {
     public class ReservationManager
     {
-        private readonly ReservationMediator _reservationMediator;
+        private readonly IReservationMediator _reservationMediator;
 
-        public ReservationManager()
+        public ReservationManager(IReservationMediator reservationMediator)
         {
-            _reservationMediator = new ReservationMediator();
+            _reservationMediator = reservationMediator;
         }
 
         public bool CreateReservation(Reservation reservation)

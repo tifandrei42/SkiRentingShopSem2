@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Entities;
 using BusinessLogic.Enums;
+using BusinessLogic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,7 +8,7 @@ using System.Transactions;
 
 namespace BusinessLogic.DataAccess
 {
-    public class ReservationMediator : DbAccess
+    public class ReservationMediator : DbAccess, IReservationMediator
     {
         private bool connectionOpen;
 
@@ -457,6 +458,11 @@ namespace BusinessLogic.DataAccess
             }
 
             return groups;
+        }
+
+        public List<Reservation> GetReservationsByStatus(string status)
+        {
+            throw new NotImplementedException();
         }
     }
 }

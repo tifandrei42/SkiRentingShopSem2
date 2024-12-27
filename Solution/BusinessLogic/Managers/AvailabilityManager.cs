@@ -13,11 +13,11 @@ namespace BusinessLogic.Managers
 {
     public class AvailabilityManager
     {
-        public ReservationManager reservationManager;
+        private ReservationManager _reservationManager;
 
-        public AvailabilityManager() 
+        public AvailabilityManager(ReservationManager reservationManager) 
         {
-            reservationManager = new ReservationManager();
+            _reservationManager = reservationManager ?? throw new ArgumentNullException(nameof(reservationManager));
         }
 
         public List<DateTime> GetUnavailableDates(Equipment equipment, List<Reservation> basket, int qt)
@@ -43,7 +43,7 @@ namespace BusinessLogic.Managers
         private List<DateTime> GetInteresingDates(List<Reservation> basket)
         {
             // Get existing reservations
-            List<Reservation> existingReservations = reservationManager.GetReservations();
+            List<Reservation> existingReservations = _reservationManager.GetReservations();
 
             // Extract dates from both lists
             List<DateTime> existingDates = existingReservations.Select(r => r.ReservationDate.Date).ToList();
@@ -82,7 +82,7 @@ namespace BusinessLogic.Managers
         private int GetCurrentReservationCount(DateTime reservationDate, Equipment equipment)
         {
             // Get only reservations for this date 
-            List<Reservation> reservations = reservationManager.GetReservations();
+            List<Reservation> reservations = _reservationManager.GetReservations();
 
             return reservations
                 .Where(r =>
