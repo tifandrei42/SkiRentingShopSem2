@@ -39,6 +39,7 @@
             // 
             // dgvReservations
             // 
+            dgvReservations.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvReservations.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvReservations.GridColor = SystemColors.Info;
             dgvReservations.Location = new Point(12, 61);

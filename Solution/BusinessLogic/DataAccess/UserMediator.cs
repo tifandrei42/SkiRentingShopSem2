@@ -280,52 +280,47 @@ namespace BusinessLogic.DataAccess
             return user;
         }
 
-
-
-        public List<User> GetUsersByRole(UserRole role)
+        public List<User> GetUsersByRole(string roleName)
         {
-            List<User> users = new();
+            List<User> users = new List<User>();
+
             string query = @"
-                SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId 
-                FROM [dbo].[User]
-                WHERE RoleId = @RoleId;
-            ";
+                SELECT u.User_Id, u.Username, u.Email, u.PhoneNumber, u.Address
+                FROM [User] u -- Escaped table name
+                JOIN UserRoles r ON u.RoleId = r.RoleId
+                WHERE r.RoleName = @RoleName;";
 
             try
             {
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@RoleId", (int)role);
+                    cmd.Parameters.AddWithValue("@RoleName", roleName);
                     connection.Open();
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            User user = new User
+                            users.Add(new User
                             {
-                                User_Id = reader.GetInt32(reader.GetOrdinal("User_Id")),
-                                UserName = reader.GetString(reader.GetOrdinal("UserName")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Password = reader.GetString(reader.GetOrdinal("Password")),
-                                DateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
-                                Role = (UserRole)reader.GetInt32(reader.GetOrdinal("RoleId"))
-                            };
-                            users.Add(user);
+                                User_Id = (int)reader["User_Id"],
+                                UserName = reader["Username"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                Address = reader["Address"].ToString()
+                            });
                         }
                     }
                 }
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                Console.Error.WriteLine("Error retrieving users by role: " + ex.Message);
+                Console.WriteLine($"SQL Error in GetUsersByRole: {ex.Message}");
+                throw;
             }
             finally
             {
-                if (connection.State == System.Data.ConnectionState.Open)
-                    connection.Close();
+                connection.Close();
             }
 
             return users;

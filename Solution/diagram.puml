@@ -1,0 +1,21 @@
+@startuml
+class User {
+    +string Name
+    +string Email
+    +Login()
+}
+
+class Equipment {
+    +string Name
+    +string Type
+}
+
+class Reservation {
+    +DateTime StartDate
+    +DateTime EndDate
+}
+
+User "1" -- "0..*" Reservation
+Equipment "1" -- "0..*" Reservation
+
+@enduml

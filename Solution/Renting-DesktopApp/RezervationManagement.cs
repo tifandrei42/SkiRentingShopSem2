@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.DataAccess;
 using BusinessLogic.Entities;
+using BusinessLogic.Interfaces;
 using BusinessLogic.Managers;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,8 @@ namespace Renting_Application
         public RezervationManagement(User user)
         {
             InitializeComponent();
-            _reservationManager = new ReservationManager();
+            IReservationMediator reservationMediator = new ReservationMediator();
+            _reservationManager = new ReservationManager(reservationMediator);
             staffMember = user;
             LoadGroupedReservations();
         }

@@ -10,6 +10,6 @@ namespace BusinessLogic.Interfaces
         void DeleteUser(int userId);
         User GetUserById(int userId);
         User GetUserByEmail(string email);
-        List<User> GetUsersByRole(UserRole role);
+        List<User> GetUsersByRole(string role);
     }
 }

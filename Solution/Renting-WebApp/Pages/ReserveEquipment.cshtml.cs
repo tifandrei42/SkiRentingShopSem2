@@ -7,10 +7,12 @@ using Newtonsoft.Json; // Use Newtonsoft for better JSON handling
 using BusinessLogic.Enums;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using BusinessLogic.Interfaces;
+using BusinessLogic.DataAccess;
 
 namespace Renting_Website.Pages
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize(Policy = "CustomerOnly")]
     public class ReserveEquipmentModel : PageModel
     {
         private readonly ReservationManager _reservationManager;
@@ -30,16 +32,17 @@ namespace Renting_Website.Pages
         public List<DateTime> UnavailableDates { get; set; } = new();
 
 
-        public ReserveEquipmentModel(EquipmentManager equipmentManager)
+        public ReserveEquipmentModel()
         {
-            _reservationManager = new ReservationManager();
-            _equipmentManager = equipmentManager;
-            _availabilityManager = new AvailabilityManager();
+            IReservationMediator reservationMediator = new ReservationMediator();
+            IEquipmentMediator equipmentMediator = new EquipmentMediator();
+            _reservationManager = new ReservationManager(reservationMediator);
+            _equipmentManager = new EquipmentManager(equipmentMediator);
+            _availabilityManager = new AvailabilityManager(_reservationManager);
         }
 
         public IActionResult OnGet()
         {
-            // Retrieve Equipment
             Equipment = _equipmentManager.GetEquipmentById(Id);
            
 
@@ -60,13 +63,12 @@ namespace Renting_Website.Pages
             {
                 try
                 {
-                    // Deserialize basket as a List
                     Basket = JsonConvert.DeserializeObject<List<Reservation>>(basketJson) ?? new List<Reservation>();
                 }
                 catch (JsonSerializationException ex)
                 {
                     Console.WriteLine($"JSON Deserialization Error: {ex.Message}");
-                    Basket = new List<Reservation>(); // Reset basket if corrupted
+                    Basket = new List<Reservation>();
                 }
             }
             UnavailableDates = GetUnavailableDates(Equipment);
@@ -76,7 +78,6 @@ namespace Renting_Website.Pages
 
         public IActionResult OnPostAddToBasket()
         {
-            // Retrieve Equipment
             Equipment = _equipmentManager.GetEquipmentById(Id);
 
             if (Equipment == null)
@@ -90,7 +91,6 @@ namespace Renting_Website.Pages
                 return Page();
             }
 
-            // Load basket from session
             var basketJson = HttpContext.Session.GetString("Basket");
             List<Reservation>? basket = string.IsNullOrEmpty(basketJson)
                 ? new List<Reservation>()
@@ -112,7 +112,6 @@ namespace Renting_Website.Pages
                 Quantity = Quantity
             });
 
-            // Save updated basket as JSON
             HttpContext.Session.SetString("Basket", JsonConvert.SerializeObject(basket));
 
 

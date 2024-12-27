@@ -62,9 +62,9 @@ namespace BusinessLogic.Managers
             return _userMediator.GetUserByEmail(email);
         }
 
-        public List<User> GetUsersByRole(UserRole role)
+        public List<User> GetUsersByRole(string rolename)
         {
-            return _userMediator.GetUsersByRole(role);
+            return _userMediator.GetUsersByRole(rolename);
         }
     }
 }
