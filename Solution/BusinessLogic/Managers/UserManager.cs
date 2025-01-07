@@ -66,5 +66,10 @@ namespace BusinessLogic.Managers
         {
             return _userMediator.GetUsersByRole(rolename);
         }
+
+        public List<User> GetAllUsers()
+        {
+            return _userMediator.GetAllUsers();
+        }
     }
 }

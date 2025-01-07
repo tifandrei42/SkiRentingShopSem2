@@ -44,5 +44,13 @@ namespace BusinessLogic.Strategies
 
             userManager.AddUser(user);
         }
+
+        public void Update(User user, string password)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            user.Password = encriptionManager.HashPassword(password);
+            userManager.UpdateUser(user);
+        }
     }
 }

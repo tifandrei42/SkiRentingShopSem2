@@ -76,7 +76,8 @@ namespace BusinessLogic.DataAccess
         public List<User> GetAllUsers()
         {
             List<User> users = new List<User>();
-            string query = "SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId FROM [dbo].[User];";
+
+            string query = @"SELECT User_Id, UserName, FirstName, LastName, Email, Password, PhoneNumber, Address, DateOfBirth, RoleId FROM [dbo].[User]";
 
             try
             {
@@ -87,7 +88,7 @@ namespace BusinessLogic.DataAccess
                     {
                         while (reader.Read())
                         {
-                            User user = new User
+                            User user = new()
                             {
                                 User_Id = reader.GetInt32(reader.GetOrdinal("User_Id")),
                                 UserName = reader.GetString(reader.GetOrdinal("UserName")),
@@ -95,6 +96,8 @@ namespace BusinessLogic.DataAccess
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
                                 Password = reader.GetString(reader.GetOrdinal("Password")),
+                                PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                                Address = reader.GetString(reader.GetOrdinal("Address")),
                                 DateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
                                 Role = (UserRole)reader.GetInt32(reader.GetOrdinal("RoleId"))
                             };
@@ -144,6 +147,8 @@ namespace BusinessLogic.DataAccess
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
                                 Password = reader.GetString(reader.GetOrdinal("Password")),
+                                PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                                Address = reader.GetString(reader.GetOrdinal("Address")),
                                 DateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
                                 Role = (UserRole)reader.GetInt32(reader.GetOrdinal("RoleId"))
                             };
@@ -179,6 +184,8 @@ namespace BusinessLogic.DataAccess
                     Email = @Email,
                     Password = @Password,
                     DateOfBirth = @DateOfBirth,
+                    PhoneNumber = @PhoneNumber,
+                    Address = @Address,
                     RoleId = @RoleId
                 WHERE User_Id = @UserId;
             ";
@@ -193,6 +200,8 @@ namespace BusinessLogic.DataAccess
                     cmd.Parameters.AddWithValue("@LastName", user.LastName);
                     cmd.Parameters.AddWithValue("@Email", user.Email);
                     cmd.Parameters.AddWithValue("@Password", user.Password);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@Address", user.Address);
                     cmd.Parameters.AddWithValue("@DateOfBirth", user.DateOfBirth);
                     cmd.Parameters.AddWithValue("@RoleId", (int)user.Role);
 
@@ -257,7 +266,7 @@ namespace BusinessLogic.DataAccess
                                 PhoneNumber = reader["PhoneNumber"] as string ?? string.Empty,
                                 Password = reader["Password"] as string ?? string.Empty,
                                 DateOfBirth = reader.IsDBNull(reader.GetOrdinal("DateOfBirth"))
-                                    ? DateTime.MinValue // Default value if null
+                                    ? DateTime.MinValue 
                                     : reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
                                 Role = reader.IsDBNull(reader.GetOrdinal("RoleId"))
                                     ? UserRole.None

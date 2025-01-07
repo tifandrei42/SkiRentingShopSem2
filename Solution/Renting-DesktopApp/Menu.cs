@@ -41,7 +41,9 @@ namespace Renting_Application
 
         private void btnStaff_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            StaffManagement staffManagement = new StaffManagement(staffMember);
+            staffManagement.Show();
         }
 
         private void btnEquipment_Click(object sender, EventArgs e)
@@ -85,10 +87,10 @@ namespace Renting_Application
                 decimal totalRevenue = allReservations.Sum(r => r.TotalPrice);
 
                 // Display data in labels or any control
-                lblTotalReservations.Text = $"Total Reservations: {totalReservations}";
-                lblPendingReservations.Text = $"Pending: {pendingReservations}";
-                lblCompletedReservations.Text = $"Completed: {completedReservations}";
-                lblRevenue.Text = $"Total Revenue: ${totalRevenue:F2}";
+                //lblTotalReservations.Text = $"Total Reservations: {totalReservations}";
+                //lblPendingReservations.Text = $"Pending: {pendingReservations}";
+                //lblCompletedReservations.Text = $"Completed: {completedReservations}";
+                //lblRevenue.Text = $"Total Revenue: ${totalRevenue:F2}";
             }
             catch (Exception ex)
             {

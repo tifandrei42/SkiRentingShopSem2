@@ -11,5 +11,6 @@ namespace BusinessLogic.Interfaces
         User GetUserById(int userId);
         User GetUserByEmail(string email);
         List<User> GetUsersByRole(string role);
+        List<User> GetAllUsers();
     }
 }
