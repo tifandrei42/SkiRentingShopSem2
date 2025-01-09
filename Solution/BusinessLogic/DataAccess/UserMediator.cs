@@ -123,7 +123,7 @@ namespace BusinessLogic.DataAccess
         {
             User user = null;
             string query = @"
-                SELECT User_Id, UserName, FirstName, LastName, Email, Password, DateOfBirth, RoleId 
+                SELECT User_Id, UserName, FirstName, LastName, Email, Password, PhoneNumber, Address, DateOfBirth, RoleId 
                 FROM [dbo].[User] 
                 WHERE User_Id = @UserId;
             ";

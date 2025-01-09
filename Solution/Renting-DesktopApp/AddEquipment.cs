@@ -81,7 +81,7 @@ namespace Renting_Application
                 cbCategory.SelectedValue = currentEquipment.CategoryId;
                 _imagePath = currentEquipment.ImagePath; 
 
-                string webAppImagePath = @"C:\Users\tifan\IndividualAssignment\Solution\Renting-WebApp\wwwroot\" + _imagePath;
+                string webAppImagePath = @"C:\Users\Tifrea Andrei\Fontys\individual-assignment\Solution\Renting-WebApp\wwwroot\" + _imagePath;
 
                 if (File.Exists(webAppImagePath))
                 {

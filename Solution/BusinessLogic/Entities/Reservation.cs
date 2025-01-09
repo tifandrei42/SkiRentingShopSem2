@@ -12,9 +12,8 @@ namespace BusinessLogic.Entities
         private DateTime creationDate;
         private decimal totalPrice;
         private Status status;
-        private int quantity; // Added quantity field
+        private int quantity; 
 
-        // Properties
         public int ReservationId
         {
             get => reservationId;
@@ -63,12 +62,10 @@ namespace BusinessLogic.Entities
             set => quantity = value;
         }
 
-        // Default Constructor
         public Reservation()
         {
         }
 
-        // Constructor without creation date and status
         public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, decimal totalPrice, int quantity)
         {
             this.reservationId = reservationId;
@@ -79,19 +76,6 @@ namespace BusinessLogic.Entities
             this.totalPrice = totalPrice;
             this.quantity = quantity; 
             this.status = Status.Pending;
-        }
-
-        // Constructor with all fields
-        public Reservation(int reservationId, Equipment equipment, int customerId, DateTime reservationDate, DateTime creationDate, decimal totalPrice, Status status, int quantity)
-        {
-            this.reservationId = reservationId;
-            this.equipment = equipment;
-            this.customerId = customerId;
-            this.reservationDate = reservationDate;
-            this.creationDate = creationDate;
-            this.totalPrice = totalPrice;
-            this.status = status;
-            this.quantity = quantity; // Initialize quantity
         }
     }
 }

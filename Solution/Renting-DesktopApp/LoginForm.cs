@@ -30,15 +30,22 @@ namespace Renting_Application
 
             var User = _loginService.Login(email, password);
 
-            if (User.Role == UserRole.StaffMember)
+            if (User != null) // Valid user
             {
-                this.Hide();
-                Menu menu = new Menu(User);
-                menu.Show();
+                if (User.Role == UserRole.StaffMember) // Check role
+                {
+                    this.Hide();
+                    Menu menu = new Menu(User);
+                    menu.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Access denied. Not a staff member.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            else
+            else // Invalid credentials
             {
-                MessageBox.Show("Invalid email or password. Please try again.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Invalid email or password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

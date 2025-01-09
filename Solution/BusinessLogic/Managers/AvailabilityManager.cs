@@ -46,10 +46,22 @@ namespace BusinessLogic.Managers
             List<Reservation> existingReservations = _reservationManager.GetReservations();
 
             // Extract dates from both lists
-            List<DateTime> existingDates = existingReservations.Select(r => r.ReservationDate.Date).ToList();
-            List<DateTime> basketDates = basket.Select(r => r.ReservationDate.Date).ToList();
+            List<DateTime> existingDates = GetDates(existingReservations);
+            List<DateTime> basketDates = GetDates(basket);
 
+            // Union ensures no duplicates
             return existingDates.Union(basketDates).ToList();
+        }
+
+        private List<DateTime> GetDates(List<Reservation> existingReservations)
+        {
+            List<DateTime> reservationDates = new List<DateTime>();
+
+            foreach (Reservation reservation in existingReservations) 
+            {
+                reservationDates.Add(reservation.ReservationDate.Date);
+            }
+            return reservationDates;
         }
 
         public bool CheckAvailability(DateTime reservationDate, Equipment equipment, List<Reservation> basket, int qt)
@@ -59,7 +71,7 @@ namespace BusinessLogic.Managers
 
             var maximumCount = equipment.Quantity;
 
-            if (currentCount + qt > maximumCount) 
+            if (currentCount + qt > maximumCount)
             {
                 return false;
             }
@@ -68,7 +80,7 @@ namespace BusinessLogic.Managers
 
         private int GetBasketCount(DateTime reservationDate, Equipment equipment, List<Reservation> basket)
         {
-            if (basket == null || !basket.Any())
+            if (basket == null || basket.Count == 0)
                 return 0;
 
             return basket
