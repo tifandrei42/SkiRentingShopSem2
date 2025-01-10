@@ -3,137 +3,162 @@ using BusinessLogic.Enums;
 using BusinessLogic.Managers;
 using SolutionTest.Utils;
 
-namespace SolutionTest;
-
-[TestClass]
-public class AvailabilityManagerTests
+namespace SolutionTest
 {
-    private AvailabilityManager? _availabilityManager;
-    private FakeReservationMediator? _fakeMediator;
-    private ReservationManager? _reservationManager;
-
-    [TestInitialize]
-    public void Setup()
+    [TestClass]
+    public class AvailabilityManagerTests
     {
-        _fakeMediator = new FakeReservationMediator();
-        _reservationManager = new ReservationManager(_fakeMediator);
-        _availabilityManager = new AvailabilityManager(_reservationManager);
-    }
+        private AvailabilityManager? _availabilityManager;
+        private FakeReservationMediator? _fakeMediator;
+        private ReservationManager? _reservationManager;
 
-    [TestMethod]
-    public void CheckAvailability_ShouldReturnTrue_WhenStockIsAvailable()
-    {
-        // Arrange
-        var equipment = new Equipment
+        [TestInitialize]
+        public void Setup()
         {
-            EquipmentId = 1,
-            Name = "Helmet",
-            Quantity = 10,
-            PricePerDay = 15.00m,
-            Brand = "Atomic"
-        };
+            _fakeMediator = new FakeReservationMediator();
+            _reservationManager = new ReservationManager(_fakeMediator);
+            _availabilityManager = new AvailabilityManager(_reservationManager);
+        }
 
-        var basket = new List<Reservation>();
-
-        // Act
-        bool result = _availabilityManager.CheckAvailability(DateTime.Today, equipment, basket, 2);
-
-        // Assert
-        Assert.IsTrue(result, "Availability check failed when stock is available.");
-    }
-
-    [TestMethod]
-    public void CheckAvailability_ShouldReturnFalse_WhenStockIsInsufficient()
-    {
-        // Arrange
-        var equipment = new Equipment
+        [TestMethod]
+        public void CheckAvailability_ShouldReturnTrue_WhenStockIsAvailable()
         {
-            EquipmentId = 1,
-            Name = "Helmet",
-            Quantity = 3,
-            PricePerDay = 15.00m,
-            Brand = "Atomic"
-        };
-
-        // Add existing reservations
-        var reservation = new Reservation
-        {
-            Equipment = equipment,
-            Quantity = 3,
-            ReservationDate = DateTime.Today,
-            Status = Status.Pending
-        };
-        _reservationManager.CreateReservation(reservation);
-
-        var basket = new List<Reservation>();
-
-        // Act
-        bool result = _availabilityManager.CheckAvailability(DateTime.Today, equipment, basket, 1);
-
-        // Assert
-        Assert.IsFalse(result, "Availability check failed when stock is insufficient.");
-    }
-
-    [TestMethod]
-    public void GetUnavailableDates_ShouldReturnUnavailableDates()
-    {
-        // Arrange
-        var equipment = new Equipment
-        {
-            EquipmentId = 1,
-            Name = "Helmet",
-            Quantity = 2,
-            PricePerDay = 10.00m,
-            Brand = "Atomic"
-        };
-
-        // Add reservations
-        var reservation1 = new Reservation
-        {
-            Equipment = equipment,
-            Quantity = 2,
-            ReservationDate = DateTime.Today.AddDays(1),
-            Status = Status.Pending
-        };
-        _reservationManager.CreateReservation(reservation1);
-
-        var basket = new List<Reservation>();
-
-        // Act
-        var unavailableDates = _availabilityManager.GetUnavailableDates(equipment, basket, 1);
-
-        // Assert
-        Assert.AreEqual(1, unavailableDates.Count, "Unavailable dates count mismatch.");
-        Assert.AreEqual(DateTime.Today.AddDays(1), unavailableDates[0], "Unavailable date mismatch.");
-    }
-
-    [TestMethod]
-    public void GetUnavailableDates_ShouldIncludeBasketDates()
-    {
-        // Arrange
-        var equipment = new Equipment
-        {
-            EquipmentId = 1,
-            Name = "Helmet",
-            Quantity = 2,
-            PricePerDay = 10.00m,
-            Brand = "Atomic"
-        };
-
-        var basket = new List<Reservation>
+            var equipment = new Equipment
             {
-                new Reservation
-                {
-                    Equipment = equipment,
-                    Quantity = 2,
-                    ReservationDate = DateTime.Today.AddDays(2),
-                    Status = Status.Pending
-                }
+                EquipmentId = 1,
+                Name = "Helmet",
+                Brand = "Generic Brand",
+                Size = "Medium",
+                PricePerDay = 15.99m,
+                Category = EquipmentCategory.Helmet,
+                ImagePath = "helmet.jpg",
+                Quantity = 10
             };
 
-        var unavailableDates = _availabilityManager.GetUnavailableDates(equipment, basket, 1);
+            var basket = new List<Reservation>();
+            bool result = _availabilityManager.CheckAvailability(DateTime.Today, equipment, basket, 2);
 
-        Assert.AreEqual(1, unavailableDates.Count, "Unavailable dates count mismatch.");
-        Assert.AreEqual(DateTime.Today.AddDays(2), unavailableDates[0], "Unavailable date mismatch.");
+            Assert.IsTrue(result, "Stock was incorrectly marked as unavailable.");
+        }
+
+        [TestMethod]
+        public void CheckAvailability_ShouldReturnFalse_WhenStockIsInsufficient()
+        {
+            var equipment = new Equipment
+            {
+                EquipmentId = 1,
+                Name = "Helmet",
+                Brand = "Generic Brand",
+                Size = "Large",
+                PricePerDay = 15.99m,
+                Category = EquipmentCategory.Helmet,
+                ImagePath = "helmet_large.jpg",
+                Quantity = 3
+            };
+
+            var reservation = new Reservation
+            {
+                Equipment = equipment,
+                Quantity = 3,
+                ReservationDate = DateTime.Today,
+                Status = Status.Pending
+            };
+
+            _reservationManager.CreateReservation(reservation);
+            var basket = new List<Reservation>();
+            bool result = _availabilityManager.CheckAvailability(DateTime.Today, equipment, basket, 1);
+
+            Assert.IsFalse(result, "Stock was incorrectly marked as available.");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CheckAvailability_ShouldThrowException_WhenEquipmentIsNull()
+        {
+            _availabilityManager.CheckAvailability(DateTime.Today, null, new List<Reservation>(), 1);
+        }
+
+        [TestMethod]
+        public void GetUnavailableDates_ShouldReturnUnavailableDates()
+        {
+            var equipment = new Equipment
+            {
+                EquipmentId = 1,
+                Name = "Helmet",
+                Brand = "Generic Brand",
+                Size = "Small",
+                PricePerDay = 10.00m,
+                Category = EquipmentCategory.Helmet,
+                ImagePath = "helmet_small.jpg",
+                Quantity = 2
+            };
+
+            var reservation = new Reservation
+            {
+                Equipment = equipment,
+                Quantity = 2,
+                ReservationDate = DateTime.Today.AddDays(1),
+                Status = Status.Pending
+            };
+
+            _reservationManager.CreateReservation(reservation);
+            var basket = new List<Reservation>();
+            var unavailableDates = _availabilityManager.GetUnavailableDates(equipment, basket, 1);
+
+            Assert.AreEqual(1, unavailableDates.Count, "Unavailable dates count mismatch.");
+            Assert.AreEqual(DateTime.Today.AddDays(1), unavailableDates[0], "Unavailable date mismatch.");
+        }
+
+        [TestMethod]
+        public void GetUnavailableDates_ShouldIncludeBasketDates()
+        {
+            var equipment = new Equipment
+            {
+                EquipmentId = 1,
+                Name = "Helmet",
+                Brand = "Generic Brand",
+                Size = "Large",
+                PricePerDay = 10.00m,
+                Category = EquipmentCategory.Helmet,
+                ImagePath = "helmet_large.jpg",
+                Quantity = 2
+            };
+
+            var basket = new List<Reservation>
+        {
+            new Reservation
+            {
+                Equipment = equipment,
+                Quantity = 2,
+                ReservationDate = DateTime.Today.AddDays(2),
+                Status = Status.Pending
+            }
+        };
+
+            var unavailableDates = _availabilityManager.GetUnavailableDates(equipment, basket, 1);
+
+            Assert.AreEqual(1, unavailableDates.Count, "Unavailable dates count mismatch.");
+            Assert.AreEqual(DateTime.Today.AddDays(2), unavailableDates[0], "Unavailable date mismatch.");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetUnavailableDates_ShouldThrowException_WhenEquipmentHasNoQuantity()
+        {
+            var equipment = new Equipment
+            {
+                EquipmentId = 1,
+                Name = "Helmet",
+                Brand = "Generic Brand",
+                Size = "Small",
+                PricePerDay = 10.00m,
+                Category = EquipmentCategory.Helmet,
+                ImagePath = "helmet_small.jpg",
+                Quantity = 0
+            };
+
+            _availabilityManager.GetUnavailableDates(equipment, new List<Reservation>(), 1);
+        }
     }
+
 }

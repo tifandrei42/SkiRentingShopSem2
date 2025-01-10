@@ -31,7 +31,6 @@ namespace BusinessLogic.DataAccess
             }
         }
 
-
         public void CreateReservation(Reservation reservation)
         {
             string query = @"
@@ -77,8 +76,6 @@ namespace BusinessLogic.DataAccess
                 CloseConnection(); // Always close the connection
             }
         }
-
-
 
         // Get Reservation by ID
         public Reservation? GetReservationById(int reservationId)
@@ -280,8 +277,7 @@ namespace BusinessLogic.DataAccess
             {
                 CloseConnection();
             }
-        }
-
+        }     
         public void AddReservationEquipment(int reservationId, int equipmentId, int quantity, SqlTransaction transaction = null)
         {
             string query = @"
@@ -306,9 +302,7 @@ namespace BusinessLogic.DataAccess
                 throw;
             }
         }
-
-
-
+        
         public List<Reservation> GetReservations()
         {
             List<Reservation> reservations = new List<Reservation>();

@@ -18,6 +18,9 @@ namespace BusinessLogic.Managers
 
         public void AddUser(User user)
         {
+            if (_userMediator.GetUserByEmail(user.Email) != null)
+                throw new ArgumentException($"A user with email {user.Email} already exists.", nameof(user));
+
             try
             {
                 _userMediator.AddUser(user);
@@ -30,6 +33,10 @@ namespace BusinessLogic.Managers
 
         public void UpdateUser(User user)
         {
+            var existingUser = _userMediator.GetUserById(user.User_Id);
+            if (existingUser == null)
+                throw new KeyNotFoundException($"User with ID {user.User_Id} does not exist.");
+
             try
             {
                 _userMediator.UpdateUser(user);
@@ -42,6 +49,10 @@ namespace BusinessLogic.Managers
 
         public void DeleteUser(int userId)
         {
+            var user = _userMediator.GetUserById(userId);
+            if (user == null)
+                throw new KeyNotFoundException($"User with ID {userId} does not exist.");
+
             try
             {
                 _userMediator.DeleteUser(userId);
@@ -54,6 +65,10 @@ namespace BusinessLogic.Managers
 
         public User GetUserById(int userId)
         {
+            var user = _userMediator.GetUserById(userId);
+            if (user == null)
+                throw new KeyNotFoundException($"User with ID {userId} does not exist.");
+
             return _userMediator.GetUserById(userId);
         }
 
@@ -65,6 +80,11 @@ namespace BusinessLogic.Managers
         public List<User> GetUsersByRole(string rolename)
         {
             return _userMediator.GetUsersByRole(rolename);
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return _userMediator.GetAllUsers();
         }
     }
 }
