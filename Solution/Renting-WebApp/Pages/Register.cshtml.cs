@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Renting_Website.Pages
 {
-    [Authorize(Roles = "Customer")]
+    
     public class RegisterModel : PageModel
     {
         [BindProperty]

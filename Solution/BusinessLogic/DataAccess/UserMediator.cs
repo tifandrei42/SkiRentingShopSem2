@@ -50,21 +50,44 @@ namespace BusinessLogic.DataAccess
 
         public void DeleteUser(int userId)
         {
-            string query = "DELETE FROM [dbo].[User] WHERE User_Id = @UserId;";
+            string deleteReservationEquipmentQuery = @"
+        DELETE FROM [dbo].[ReservationEquipment] 
+        WHERE Reservation_Id IN (
+            SELECT Reservation_Id FROM [dbo].[Reservation] WHERE Customer_Id = @UserId
+        );";
+            string deleteReservationsQuery = "DELETE FROM [dbo].[Reservation] WHERE Customer_Id = @UserId;";
+            string deleteUserQuery = "DELETE FROM [dbo].[User] WHERE User_Id = @UserId;";
 
             try
             {
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                using (SqlCommand cmd = new SqlCommand(deleteReservationEquipmentQuery, connection))
                 {
                     cmd.Parameters.AddWithValue("@UserId", userId);
 
                     connection.Open();
+                    // Delete linked reservation equipment
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (SqlCommand cmd = new SqlCommand(deleteReservationsQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    // Delete reservations linked to the user
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (SqlCommand cmd = new SqlCommand(deleteUserQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    // Delete the user
                     cmd.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Error deleting user: " + ex.Message);
+                Console.Error.WriteLine("Error deleting user and their reservations: " + ex.Message);
             }
             finally
             {
@@ -72,6 +95,9 @@ namespace BusinessLogic.DataAccess
                     connection.Close();
             }
         }
+
+
+
 
         public List<User> GetAllUsers()
         {

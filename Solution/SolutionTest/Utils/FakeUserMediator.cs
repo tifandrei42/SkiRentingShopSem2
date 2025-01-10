@@ -50,7 +50,12 @@ namespace SolutionTest.Utils
 
         public User GetUserByEmail(string email)
         {
-            return _users.Values.FirstOrDefault(user => user.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var user = _users.Values.FirstOrDefault(user => user.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"No user found with email: {email}");
+            }
+            return user;
         }
 
         public List<User> GetUsersByRole(string role)

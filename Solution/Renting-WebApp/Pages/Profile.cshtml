@@ -25,7 +25,8 @@
             </ul>
 
             <div class="mt-4">
-                <a href="/Profile/Edit" class="btn btn-primary">Edit Profile</a>
+                <a asp-page="/Edit" asp-route-id="@Model.Customer.User_Id" class="btn btn-primary">Edit Profile</a>
+                <a asp-page="/DeleteAccount" asp-route-id="@Model.Customer.User_Id" class="btn btn-danger">Delete Account</a>
             </div>
         </div>
     </div>

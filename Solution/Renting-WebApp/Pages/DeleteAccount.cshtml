@@ -1,0 +1,15 @@
+﻿@page "{id:int}"
+@model Renting_Website.Pages.DeleteAccountModel
+@{
+    ViewData["Title"] = "Delete Account";
+}
+
+<div class="container text-center">
+    <h2 class="text-danger">Delete Account</h2>
+    <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+
+    <form method="post">
+        <button type="submit" class="btn btn-danger">Delete Account</button>
+        <a asp-page="/Profile" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
