@@ -22,6 +22,9 @@ namespace BusinessLogic.Managers
 
         public List<DateTime> GetUnavailableDates(Equipment equipment, List<Reservation> basket, int qt)
         {
+            if (equipment.Quantity <= 0)
+                throw new ArgumentException("Equipment quantity must be greater than 0.", nameof(equipment));
+
             List<DateTime> unavailableDates = new List<DateTime>();
 
             // Get all interesting dates
@@ -66,6 +69,10 @@ namespace BusinessLogic.Managers
 
         public bool CheckAvailability(DateTime reservationDate, Equipment equipment, List<Reservation> basket, int qt)
         {
+            ArgumentNullException.ThrowIfNull(equipment);
+
+            ArgumentNullException.ThrowIfNull(basket);
+
             var currentCount = GetCurrentReservationCount(reservationDate, equipment)
                              + GetBasketCount(reservationDate, equipment, basket);
 

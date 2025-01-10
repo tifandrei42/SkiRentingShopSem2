@@ -25,6 +25,11 @@ namespace BusinessLogic.Managers
                 throw new ArgumentException("Equipment name cannot be empty.");
             }
 
+            if (string.IsNullOrWhiteSpace(equipment.Brand))
+            {
+                throw new ArgumentException("Equipment brand is required.", nameof(equipment));
+            }
+
             if (equipment.CategoryId <= 0)
             {
                 throw new ArgumentException("Invalid category selected.");
@@ -45,6 +50,12 @@ namespace BusinessLogic.Managers
 
         public void UpdateEquipment(Equipment equipment)
         {
+            var existingEquipment = _equipmentMediator.GetEquipmentById(equipment.EquipmentId);
+            if (existingEquipment == null)
+            {
+                throw new KeyNotFoundException($"Equipment with ID {equipment.EquipmentId} does not exist.");
+            }
+
             if (equipment.EquipmentId <= 0)
             {
                 throw new ArgumentException("Invalid Equipment ID.");
@@ -65,6 +76,10 @@ namespace BusinessLogic.Managers
 
         public void DeleteEquipment(int equipmentId)
         {
+            var equipment = _equipmentMediator.GetEquipmentById(equipmentId);
+            if (equipment == null)
+                throw new KeyNotFoundException($"Equipment with ID {equipmentId} does not exist.");
+
             _equipmentMediator.DeleteEquipment(equipmentId);
         }
 
