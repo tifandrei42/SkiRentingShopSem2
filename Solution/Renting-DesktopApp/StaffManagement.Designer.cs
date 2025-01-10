@@ -49,6 +49,7 @@ namespace Renting_Application
             btnMenu.TabIndex = 15;
             btnMenu.Text = "Back to menu";
             btnMenu.UseVisualStyleBackColor = true;
+            btnMenu.Click += btnMenu_Click_1;
             // 
             // label1
             // 
@@ -99,7 +100,7 @@ namespace Renting_Application
             btnUpdateStaff.TabIndex = 10;
             btnUpdateStaff.Text = "Update selected equipment";
             btnUpdateStaff.UseVisualStyleBackColor = true;
-            btnUpdateStaff.Click += this.btnUpdateStaff_Click;
+            btnUpdateStaff.Click += btnUpdateStaff_Click;
             // 
             // dgvStaff
             // 

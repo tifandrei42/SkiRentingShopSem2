@@ -167,10 +167,14 @@ namespace Renting_Application
 
         private void btnMenu_Click(object sender, EventArgs e)
         {
+            
+        }
+
+        private void btnMenu_Click_1(object sender, EventArgs e)
+        {
             this.Close();
             Menu menu = new Menu(staffMember);
             menu.Show();
         }
-        
     }
 }
