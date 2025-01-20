@@ -74,10 +74,8 @@ namespace Renting_Application
         {
             try
             {
-                // 1. Get all reservations
                 var reservations = _reservationManager.GetReservations();
 
-                // 2. Calculate sales per category
                 Dictionary<string, decimal> salesByCategory = new Dictionary<string, decimal>();
                 foreach (var reservation in reservations)
                 {
@@ -92,48 +90,42 @@ namespace Renting_Application
                     }
                 }
 
-                // 3. Clear previous chart data
                 chartSalesByCategory.Series.Clear();
                 chartSalesByCategory.ChartAreas.Clear();
-                chartSalesByCategory.Legends.Clear(); // Clear previous legends
-                chartSalesByCategory.Width = 600;  // Increase width
-                chartSalesByCategory.Height = 500; // Increase height
-                // 4. Add Chart Area
+                chartSalesByCategory.Legends.Clear();
+                chartSalesByCategory.Width = 600;  
+                chartSalesByCategory.Height = 500; 
+
                 ChartArea chartArea = new ChartArea();
                 chartSalesByCategory.ChartAreas.Add(chartArea);
 
 
-                // 5. Add Legend
                 Legend legend = new Legend()
                 {
-                    Docking = Docking.Right, // Position legend on the right side
+                    Docking = Docking.Right, 
                     Alignment = StringAlignment.Center
                 };
                 chartSalesByCategory.Legends.Add(legend);
 
-                // 6. Add Series
                 Series series = new Series
                 {
                     ChartType = SeriesChartType.Pie,
-                    IsValueShownAsLabel = true, // Show values directly on pie chart
-                    Label = "#PERCENT",         // Show percentage labels
-                    LegendText = "#VALX"       // Show category names in legend
+                    IsValueShownAsLabel = true,
+                    Label = "#PERCENT",         
+                    LegendText = "#VALX"       
                 };
 
-                // 7. Add Data Points
                 foreach (var category in salesByCategory)
                 {
                     DataPoint point = new DataPoint();
-                    point.AxisLabel = category.Key;         // Category name
-                    point.YValues = new double[] { (double)category.Value }; // Total sales
-                    point.LegendText = category.Key;       // Legend entry
+                    point.AxisLabel = category.Key;   
+                    point.YValues = new double[] { (double)category.Value };
+                    point.LegendText = category.Key; 
                     series.Points.Add(point);
                 }
 
-                // 8. Add Series to Chart
                 chartSalesByCategory.Series.Add(series);
 
-                // 9. Set Chart Title
                 chartSalesByCategory.Titles.Clear();
                 chartSalesByCategory.Titles.Add("Sales by Category");
             }
@@ -147,14 +139,11 @@ namespace Renting_Application
         {
             try
             {
-                // 1. Get all reservations
                 var reservations = _reservationManager.GetReservations();
 
-                // 2. Calculate total sales
                 decimal totalSales = reservations.Sum(r => r.TotalPrice);
 
-                // 3. Display in the label
-                lblTotalSales.Text = $"Total Sales: ${totalSales:F2}"; // Format to 2 decimal places
+                lblTotalSales.Text = $"Total Sales: ${totalSales:F2}";
             }
             catch (Exception ex)
             {
