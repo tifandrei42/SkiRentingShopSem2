@@ -1,78 +1,136 @@
-## Introduction
+# SkiRentingShopSem2
 
-This is a simple pipeline example for a .NET Core application, showing just
-how easy it is to get up and running with .NET development using GitLab.
+A ski & snowboard equipment **rental shop** system built as a Semester 2 software
+project. Customers can browse and reserve gear through a web app, while staff
+manage the equipment catalogue and stock through a dedicated Windows desktop app.
 
-# Reference links
+The whole thing is one Visual Studio solution that shares a single business-logic /
+data-access layer (`BusinessLogic`) between two front-ends, backed by a Microsoft
+SQL Server database.
 
-- [GitLab CI Documentation](https://docs.gitlab.com/ee/ci/)
-- [.NET Hello World tutorial](https://dotnet.microsoft.com/learn/dotnet/hello-world-tutorial/)
+## Features
 
-If you're new to .NET you'll want to check out the tutorial, but if you're
-already a seasoned developer considering building your own .NET app with GitLab,
-this should all look very familiar.
+### Customer web app (`Renting-WebApp`)
+- Register, log in / log out, and manage a personal profile
+- Browse the equipment catalogue and open a detailed product view
+- Reserve equipment and view your own reservations
 
-## What's contained in this project
+### Staff desktop app (`Renting-DesktopApp`)
+- Staff login
+- Equipment management (add / view equipment)
+- Stock management
+- Central menu to navigate the management screens
 
-The root of the repository contains the out of the `dotnet new console` command,
-which generates a new console application that just prints out "Hello, World."
-It's a simple example, but great for demonstrating how easy GitLab CI is to
-use with .NET. Check out the `Program.cs` and `dotnetcore.csproj` files to
-see how these work.
+## Architecture
 
-In addition to the .NET Core content, there is a ready-to-go `.gitignore` file
-sourced from the the .NET Core [.gitignore](https://github.com/dotnet/core/blob/master/.gitignore). This
-will help keep your repository clean of build files and other configuration.
-
-Finally, the `.gitlab-ci.yml` contains the configuration needed for GitLab
-to build your code. Let's take a look, section by section.
-
-First, we note that we want to use the official Microsoft .NET SDK image
-to build our project.
+The solution follows a layered design so both front-ends reuse the same logic:
 
 ```
-image: microsoft/dotnet:latest
+UI layer        Renting-WebApp (Razor Pages)   Renting-DesktopApp (WinForms)
+                              \                 /
+Business layer                 Managers   (ClassLibrary/Managers)
+Data-access layer              Mediators  (ClassLibrary/DataAccess)
+Domain layer                   Entities   (ClassLibrary/Entities)
+Database                       Microsoft SQL Server
 ```
 
-We're defining two stages here: `build`, and `test`. As your project grows
-in complexity you can add more of these.
+- **Entities** – domain classes: an abstract `User` base with `Customer` and
+  `StaffMember` derivatives, plus `Equipment`, `Reservation`, and `Stock`.
+  (e.g. `Equipment` holds `Name`, `Brand`, `Size`, `PricePerDay`,
+  `EquipmentType`, `ImagePath`; `Reservation` links a customer to equipment over
+  a date range with a `TotalPrice` and `Status`.)
+- **Mediators** (`DataAccess`) – handle all SQL access (`CustomerMediator`,
+  `EquipmentMediator`, `ReservationMediator`, `StaffMediator`, `StockMediator`),
+  with the connection created in `DbAccess`.
+- **Managers** – business logic between the UI and the mediators
+  (`CustomerManager`, `EquipmentManager`, `ReservationManager`, `StaffManager`,
+  `StockManager`).
+- **Interfaces** – abstractions such as `IEquipmentMediator` that let the
+  managers be unit-tested with fakes instead of a live database.
+
+## Project structure
 
 ```
-stages:
-    - build
-    - test
+SkiRentingShopSem2/
+├── Documents/                 # ERD, class diagram, project plan, URS, ideation docs
+└── Solution/
+    ├── Basic-Renting.sln      # Visual Studio solution
+    ├── ClassLibrary/          # Shared business logic (BusinessLogic.csproj)
+    │   ├── Entities/
+    │   ├── DataAccess/        # Mediators + DbAccess
+    │   ├── Managers/
+    │   └── Interfaces/
+    ├── Renting-WebApp/        # ASP.NET Core Razor Pages (customer-facing)
+    ├── Renting-DesktopApp/    # Windows Forms (staff-facing)
+    ├── SolutionTest/          # Unit tests (uses fake mediators)
+    ├── UnitTests/             # Additional unit tests
+    └── TestDesktop/           # Desktop test project
 ```
 
-Next, we define our build job which simply runs the `dotnet build` command and
-identifies the `bin` folder as the output directory. Anything in the `bin` folder
-will be automatically handed off to future stages, and is also downloadable through
-the web UI.
+> The `Basic-Renting.sln` solution contains `BusinessLogic`, `Renting-WebApp`,
+> `Renting-DesktopApp`, and `SolutionTest`. `UnitTests` and `TestDesktop` also
+> live in the repository as separate test projects.
 
+## Tech stack
+
+- **Language / runtime:** C# on .NET 8 (web targets `net8.0`, desktop targets `net8.0-windows`)
+- **Web:** ASP.NET Core Razor Pages, Bootstrap, jQuery (+ jQuery Validation)
+- **Desktop:** Windows Forms
+- **Data access:** Microsoft SQL Server via `System.Data.SqlClient`
+- **Security:** password hashing with `BCrypt.Net-Next`
+- **Testing:** MSTest
+- **IDE:** Visual Studio 2022
+
+## Getting started
+
+### Prerequisites
+- [.NET 8 SDK](https://dotnet.microsoft.com/download) and Visual Studio 2022 with
+  the **.NET desktop development** and **ASP.NET and web development** workloads
+- Access to a Microsoft SQL Server instance with the rental-shop schema
+- Windows is required to build and run the Windows Forms desktop app
+
+### Build & run
+
+Open `Solution/Basic-Renting.sln` in Visual Studio, then:
+
+- **Web app:** set `Renting-WebApp` as the startup project and run (F5).
+- **Desktop app:** set `Renting-DesktopApp` as the startup project and run (F5).
+
+Or from the command line:
+
+```bash
+cd Solution
+dotnet build Basic-Renting.sln
+
+# customer web app
+dotnet run --project Renting-WebApp
+
+# staff desktop app (Windows only)
+dotnet run --project Renting-DesktopApp
 ```
-build:
-    stage: build
-    script:
-        - "dotnet build"
-    artifacts:
-      paths:
-        - bin/
+
+### Configuration
+
+The database connection string is defined in
+`Solution/ClassLibrary/DataAccess/DbAccess.cs`. Update it to point at your own
+SQL Server instance before running.
+
+## Running the tests
+
+```bash
+cd Solution
+dotnet test SolutionTest/SolutionTest.csproj
 ```
 
-Similar to the build step, we get our test output simply by running `dotnet test`.
+The `SolutionTest` project uses fake mediators (e.g. `FakeEquipmentMediator`) so
+the managers can be tested without a real database connection.
 
-```
-test:
-    stage: test
-    script: 
-        - "dotnet test"
-```
+## Documentation
 
-This should be enough to get you started. There are many, many powerful options 
-for your `.gitlab-ci.yml`. You can read about them in our documentation 
-[here](https://docs.gitlab.com/ee/ci/yaml/).
+The `Documents/` folder contains the supporting project documentation:
 
-## Developing with Gitpod
-
-This template repository also has a fully-automated dev setup for [Gitpod](https://docs.gitlab.com/ee/integration/gitpod.html).
-
-The `.gitpod.yml` ensures that, when you open this repository in Gitpod, you'll get a cloud workspace with .NET Core pre-installed, and your project will automatically be built and start running.
+- Ideation document
+- User Requirements Specification (URS)
+- Project plan
+- Entity-Relationship Diagram (ERD)
+- Class diagram
